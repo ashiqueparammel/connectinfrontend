@@ -3,9 +3,14 @@ import { Card, CardBody, CardFooter, Typography, Input, Button } from "@material
 import googleImage from '../../Assets/googleAuth.png'
 import logo from '../../Assets/Connectlogo.png';
 import SignupImage from '../../Assets/SignupImage.png'
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+    const navigate = useNavigate()
 
+    const Signup = () => {
+        navigate('/choose')
+    }
 
     return (
         <div className='flex '>
@@ -32,14 +37,15 @@ function Login() {
                         <Button variant="filled" className='bg-[#0A3863] font-prompt text-xl font-prompt-normal' fullWidth >
                             LOGIN
                         </Button>
-                        <p className='text-white ml-2 mt-2'>_______________  or  __________________</p>
+                        <br />
+                        <p className='text-white ml-2 text-center'>  or  </p>
                         <br />
                         <Button variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
                             <img src={googleImage} className='w-8  h-8 ml-2' alt="" />
                             SIGN IN WITH GOOGLE
                         </Button>
 
-                        <Button variant="filled" className='bg-[#0A3863] font-prompt text-sm font-prompt-xlight mt-5' fullWidth >
+                        <Button onClick={Signup} variant="filled" className='bg-[#0A3863] font-prompt text-sm font-prompt-xlight mt-5' fullWidth >
                             New connection?Join Now
                         </Button>
                     </CardFooter>

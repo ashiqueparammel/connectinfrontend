@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Card, CardBody, CardFooter, Typography, Input, Button } from "@material-tailwind/react";
 import googleImage from '../../Assets/googleAuth.png'
 import logo from '../../Assets/Connectlogo.png';
@@ -8,7 +8,12 @@ import SignupImage from '../../Assets/SignupImage.png'
 
 function Signup() {
     const location = useLocation()
+    const navigate = useNavigate()
     const data = location.state?.data || ''
+
+    const toLogin = () => {
+        navigate('/login')
+    }
     console.log(data, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
     return (
         <div className='flex '>
@@ -41,7 +46,8 @@ function Signup() {
                         <Button variant="filled" className='bg-[#0A3863] font-prompt text-xl font-prompt-normal' fullWidth >
                             SIGN UP
                         </Button>
-                        <p className='text-white ml-2 mt-2'>_______________  or  __________________</p>
+                        <br />
+                        <p className='text-white ml-2 text-center'> or  </p>
                         <br />
                         <Button variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
                             <img src={googleImage} className='w-8  h-8 ml-2' alt="" />
@@ -49,9 +55,9 @@ function Signup() {
                         </Button>
                         <Typography variant="small" className="mt-6  text-[#b7b7b7] flex justify-center">
                             have an account?
-                            <Typography
+                            <Typography onClick={toLogin}
                                 as="a"
-                                href="#signup"
+                                href=""
                                 variant="small"
                                 color="blue-gray"
                                 className="ml-1 font-bold text-white"

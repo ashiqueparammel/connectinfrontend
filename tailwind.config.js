@@ -1,5 +1,5 @@
 import withMT from "@material-tailwind/react/utils/withMT";
- 
+
 export default withMT({
   content: [
     "./index.html",
@@ -12,16 +12,16 @@ export default withMT({
       ...require('tailwindcss/colors'),
       'blue-100': '#1e1d85',
       'gray-900': 'rgba(0,0,0,0.35)',
-      'indigo-750':'#6d6cb0',
-      'white-100' : 'rgba(255, 255, 255, 0.4)',
-      'white-50' : 'rgba(255, 255, 255, 0.85)'
+      'indigo-750': '#6d6cb0',
+      'white-100': 'rgba(255, 255, 255, 0.4)',
+      'white-50': 'rgba(255, 255, 255, 0.85)'
     },
     fontFamily: {
       'poppins': ['Poppins', 'sans-serif'],
       'prompt': ['Prompt', 'sans-serif'],
       'Kantumruy': ['Kantumruy', 'sans-serif'],
       'roboto-mono': ['Roboto Mono', 'monospace'],
-    
+
     },
     fontWeight: {
       'prompt-light': 50,
@@ -36,6 +36,6 @@ export default withMT({
       },
     },
   },
-  
+
   plugins: [],
 });
