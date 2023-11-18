@@ -12,7 +12,9 @@ function FirstPage() {
     const navigate = useNavigate()
 
     const hiringSignup = () => {
+        
         navigate('/signup', { state: { data: true } })
+        
     }
     const normalSignup = () => {
         navigate('/signup', { state: { data: false } })

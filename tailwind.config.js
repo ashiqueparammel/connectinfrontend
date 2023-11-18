@@ -26,6 +26,7 @@ export default withMT({
     fontWeight: {
       'prompt-light': 50,
       'prompt-xlight': 200,
+      'prompt-lrlight': 300,
       'prompt-normal': 550,
       'prompt-semibold': 800,
     },

@@ -1,16 +1,32 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Card, CardBody, CardFooter, Typography, Input, Button } from "@material-tailwind/react";
 import googleImage from '../../Assets/googleAuth.png'
 import logo from '../../Assets/Connectlogo.png';
 import SignupImage from '../../Assets/SignupImage.png'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { UserLoginUrl } from '../../Constants/Constants';
+import { jwtDecode } from 'jwt-decode';
+import toast, { Toaster } from 'react-hot-toast'
 
 function Login() {
+    const location = useLocation();
+    let message = new URLSearchParams(location.search).get('message');
     const navigate = useNavigate()
-
     const Signup = () => {
         navigate('/choose')
     }
+
+    useEffect(() => {
+        setTimeout(() => {
+            if (message) {
+                toast.success(message);
+                message = null
+            };
+        }, 500);
+
+    }, [])
+
 
     return (
         <div className='flex '>
@@ -27,28 +43,30 @@ function Login() {
                     <Typography variant="h3" className='text-center font-roboto-mono text-3xl  mt-5' color="white">
                         LOGIN
                     </Typography>
-                    <CardBody className="flex flex-col font-prompt gap-5">
-                        <Input label="Enter Your Email or Phonenumber" size="lg" className='bg-white' />
-                        <Input label="Enter Your Password" size="lg" className='bg-white' />
-                        <div className="-ml-2.5">
-                        </div>
-                    </CardBody>
-                    <CardFooter className="pt-0">
-                        <Button variant="filled" className='bg-[#0A3863] font-prompt text-xl font-prompt-normal' fullWidth >
-                            LOGIN
-                        </Button>
-                        <br />
-                        <p className='text-white ml-2 text-center'>  or  </p>
-                        <br />
-                        <Button variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
-                            <img src={googleImage} className='w-8  h-8 ml-2' alt="" />
-                            SIGN IN WITH GOOGLE
-                        </Button>
+                    <form onSubmit={(e) => loginuser(e)}>
+                        <CardBody className="flex flex-col font-prompt gap-5">
+                            <Input label="Enter Your Email or Phonenumber" size="lg" className='bg-white' />
+                            <Input label="Enter Your Password" size="lg" className='bg-white' />
+                            <div className="-ml-2.5">
+                            </div>
+                        </CardBody>
+                        <CardFooter className="pt-0">
+                            <Button variant="filled" className='bg-[#0A3863] font-prompt text-xl font-prompt-normal' fullWidth >
+                                LOGIN
+                            </Button>
+                            <br />
+                            <p className='text-white ml-2 text-center'>  or  </p>
+                            <br />
+                            <Button variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
+                                <img src={googleImage} className='w-8  h-8 ml-2' alt="" />
+                                SIGN IN WITH GOOGLE
+                            </Button>
 
-                        <Button onClick={Signup} variant="filled" className='bg-[#0A3863] font-prompt text-sm font-prompt-xlight mt-5' fullWidth >
-                            New connection?Join Now
-                        </Button>
-                    </CardFooter>
+                            <Button onClick={Signup} variant="filled" className='bg-[#0A3863] font-prompt text-sm font-prompt-xlight mt-5' fullWidth >
+                                New connection?Join Now
+                            </Button>
+                        </CardFooter>
+                    </form>
                 </Card>
             </div>
             <div className='flex flex-col justify-center'>
@@ -67,6 +85,7 @@ function Login() {
 
 
             </div>
+            <Toaster />
         </div>
     )
 }
