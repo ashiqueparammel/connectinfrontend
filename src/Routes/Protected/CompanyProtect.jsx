@@ -1,11 +1,10 @@
-import React from 'react';
-import { jwtDecode } from 'jwt-decode';
+import React from 'react'
 import AdminRoutes from '../AdminRoutes';
-import CompanyRoutes from '../CompanyRoutes';
 import UserRoutes from '../UserRoutes';
+import { Outlet } from 'react-router-dom';
 import Login from '../../Pages/Login/Login';
 
-function ProtectedRoutes() {
+function CompanyProtect() {
     const token = localStorage.getItem('token');
     localStorage.clear
     console.log(token,'ppppppprotection ');
@@ -18,7 +17,7 @@ function ProtectedRoutes() {
         }
         else {  
             if (decoded.is_company) {
-                return <CompanyRoutes />
+                return <Outlet />
             }
             else {
                 return <UserRoutes />
@@ -27,7 +26,6 @@ function ProtectedRoutes() {
     } else {
         return <Login />
     }
-
 }
 
-export default ProtectedRoutes
+export default CompanyProtect

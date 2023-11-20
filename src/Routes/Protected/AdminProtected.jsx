@@ -1,11 +1,11 @@
-import React from 'react';
-import { jwtDecode } from 'jwt-decode';
-import AdminRoutes from '../AdminRoutes';
+import React from 'react'
 import CompanyRoutes from '../CompanyRoutes';
 import UserRoutes from '../UserRoutes';
+import { Outlet } from 'react-router-dom';
 import Login from '../../Pages/Login/Login';
 
-function ProtectedRoutes() {
+
+function AdminProtected() {
     const token = localStorage.getItem('token');
     localStorage.clear
     console.log(token,'ppppppprotection ');
@@ -14,7 +14,7 @@ function ProtectedRoutes() {
         const decoded = jwtDecode(token);
         console.log(decoded,'chehehehcked');
         if (decoded.is_superuser) {
-            return <AdminRoutes />
+            return <Outlet />
         }
         else {  
             if (decoded.is_company) {
@@ -27,7 +27,6 @@ function ProtectedRoutes() {
     } else {
         return <Login />
     }
-
 }
 
-export default ProtectedRoutes
+export default AdminProtected

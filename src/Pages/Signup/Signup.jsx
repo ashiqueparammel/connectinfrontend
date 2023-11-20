@@ -4,10 +4,13 @@ import { Card, CardBody, CardFooter, Typography, Input, Button } from "@material
 import googleImage from '../../Assets/googleAuth.png'
 import logo from '../../Assets/Connectlogo.png';
 import SignupImage from '../../Assets/SignupImage.png'
-import { UserSignUpUrl } from '../../Constants/Constants';
+import { Google_Access_Token, UserLoginUrl, UserSignUpUrl, User_Google_Signup } from '../../Constants/Constants';
 import toast, { Toaster } from 'react-hot-toast'
 import axios from 'axios';
-
+import { useGoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+import { useDispatch } from 'react-redux';
+import { setUserDetails } from '../../Redux/Users';
 
 function Signup() {
 
@@ -15,6 +18,9 @@ function Signup() {
     const navigate = useNavigate()
     const checkData = location.state || ''
     const [company_data, setCompany_data] = useState('')
+    const dispatch = useDispatch()
+
+ 
 
     useEffect(() => {
         if (checkData) {
@@ -102,21 +108,113 @@ function Signup() {
                         toast.error(response.Text.phone_number[0])
                     }
                 }
-
             } catch (error) {
                 console.error('Error during signup:', error);
                 toast.error(error);
             }
-
         }
-
-
     }
 
+    let googleData = ''
+    const signUpWithGoogle = useGoogleLogin({
+        onSuccess: (codeResponse) => {
+            googleData = codeResponse
+            console.log(googleData.access_token, 'googleDataTOken');
+            GoogleAuth();
+        },
+        onError: (error) => console.log("Login Failed:", error),
+    });
 
+    const GoogleAuth = async () => {
+        try {
+            if (!googleData) return;
+            const tokenData = await axios.get(
+                `${Google_Access_Token}access_token=${googleData.access_token}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${googleData.access_token}`,
+                        Accept: "application/json",
+                    },
+                }
+            );
+            googleData = tokenData.data;
+            const googleUser = {
+                username: googleData.given_name,
+                email: googleData.email,
+                password: googleData.id,
+                password2: googleData.id,
+                phone_number: '',
+                is_company: company_data,
+                is_google: true,
+            }
+            try {
+                const googleResponse = await axios.post(User_Google_Signup, googleUser);
+                const response = googleResponse.data
+                console.log(response, 'lotttttttttttaaa');
+                console.log(googleResponse, 'lotttttttttttaaa');
+                if (response.status === 201) {
+                    setTimeout(() => {
+                        toast.error(response.token)
+                    }, 500);
+                    navigate('/login')
+                }
 
+                if (response.status === 200) {
+                    if (response.signup === 'signup') {
+                        toast.success(response.token);
+                    }
+                    if (response.login === 'login') {
+                        toast.success(response.token);
+                    }
+                    const loginData = {
+                        email: googleData.email,
+                        password: googleData.id,
+                    }
 
+                    const userToken = await axios.post(UserLoginUrl, loginData);
+                    console.log(userToken, 'shaaaaaaaaaaaaaaaaafffffi');
+                    const data = userToken.data;
+                    try {
+                        const token = jwtDecode(data.access)
+                        const setUser = {
+                            "user_id": token.user_id,
+                            "email": token.email,
+                            "is_superuser": token.is_superuser,
+                            "is_company": token.is_company,
+                            "is_google": token.is_google,
+                            "is_active": token.is_active,
+                        }
+                        console.log(setUser, 'sssssssssssssssssssssahahahahhal');
 
+                        dispatch(setUserDetails({ userinfo: setUser }))
+                        localStorage.setItem('token', JSON.stringify(data));
+                        navigate('/');
+
+                    } catch (error) {
+                        console.error('Error decoding JWT:', error);
+                    }
+                }
+                else if (response.status === 404) {
+
+                    if (response.Text.username) {
+                        toast.error(response.Text.username[0])
+                    }
+                    else if (response.Text.email) {
+                        toast.error(response.Text.email[0])
+                    }
+                    else if (response.Text.phone_number) {
+                        toast.error(response.Text.phone_number[0])
+                    }
+                }
+            } catch (error) {
+                console.error('Error during signup:', error);
+                toast.error(error);
+            }
+        } catch (error) {
+            console.log(error.response);
+            toast.error(error.response);
+        }
+    };
 
 
     return (
@@ -154,7 +252,7 @@ function Signup() {
                             <br />
                             <p className='text-white ml-2 text-center'> or  </p>
                             <br />
-                            <Button variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
+                            <Button onClick={() => signUpWithGoogle()} variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
                                 <img src={googleImage} className='w-8  h-8 ml-2' alt="" />
                                 SIGN IN WITH GOOGLE
                             </Button>
@@ -190,6 +288,7 @@ function Signup() {
 
 
             </div>
+
             <Toaster />
         </div>
     )

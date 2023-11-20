@@ -3,7 +3,7 @@ import { Card, CardBody, CardFooter, Typography, Input, Button } from "@material
 import googleImage from '../../Assets/googleAuth.png'
 import logo from '../../Assets/Connectlogo.png';
 import SignupImage from '../../Assets/SignupImage.png'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { UserLoginUrl } from '../../Constants/Constants';
 import { jwtDecode } from 'jwt-decode';
@@ -16,7 +16,8 @@ function Login() {
     const Signup = () => {
         navigate('/choose')
     }
-
+  
+    
     useEffect(() => {
         setTimeout(() => {
             if (message) {

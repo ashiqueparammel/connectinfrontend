@@ -9,7 +9,7 @@ export const userSlice = createSlice({
     initialState: INITIAL_STATE,
     reducers: {
         setUserDetails: (state, action) => {
-            state.userInfo = action.payload.userInfo
+            state.userInfo = action.payload.userInfo;
         },
         resetState: (state) => {
             return INITIAL_STATE;
