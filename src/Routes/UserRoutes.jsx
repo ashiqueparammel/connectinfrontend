@@ -9,7 +9,7 @@ function UserRoutes() {
 
         <Routes>
             <Route element={<UserProtected />}>
-            <Route element={Home} path='/' />
+            <Route element={<Home/>} path='/' />
             </Route>
         </Routes>
     )

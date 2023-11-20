@@ -3,21 +3,133 @@ import { Card, CardBody, CardFooter, Typography, Input, Button } from "@material
 import googleImage from '../../Assets/googleAuth.png'
 import logo from '../../Assets/Connectlogo.png';
 import SignupImage from '../../Assets/SignupImage.png'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { UserLoginUrl } from '../../Constants/Constants';
-import { jwtDecode } from 'jwt-decode';
+import { useLocation, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast'
+import axios from 'axios';
+import { Google_Access_Token, UserLoginUrl, User_Google_Signup } from '../../Constants/Constants';
+import { setUserDetails } from '../../Redux/Users';
+import { useGoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+import { useDispatch } from 'react-redux';
+
 
 function Login() {
     const location = useLocation();
+    const dispatch = useDispatch()
     let message = new URLSearchParams(location.search).get('message');
     const navigate = useNavigate()
     const Signup = () => {
         navigate('/choose')
     }
-  
-    
+
+    let googleData = ''
+
+    const LoginWithGoogleAuth = useGoogleLogin({
+        onSuccess: (codeResponse) => {
+            googleData = codeResponse
+            console.log(googleData.access_token, 'googleDataTOken');
+            GoogleAuth();
+        },
+        onError: (error) => console.log("Login Failed:", error),
+    });
+
+    const GoogleAuth = async () => {
+        try {
+            if (!googleData) return;
+            const tokenData = await axios.get(
+                `${Google_Access_Token}access_token=${googleData.access_token}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${googleData.access_token}`,
+                        Accept: "application/json",
+                    },
+                }
+            );
+            googleData = tokenData.data;
+            const googleUser = {
+                username: googleData.given_name,
+                email: googleData.email,
+                password: googleData.id,
+                password2: googleData.id,
+                phone_number: '',
+                is_company: '',
+                is_google: true,
+            }
+            try {
+                const googleResponse = await axios.post(User_Google_Signup, googleUser);
+                const response = googleResponse.data
+                if (response.status ===204){
+                    setTimeout(() => {
+                        toast.error(response.token)
+                        console.log(response.token,'lllllllllllllloottaa');
+                    }, 500);
+                    if (response.is_company==='is_company'){
+                        navigate('/choose')
+                    }
+                }
+                if (response.status === 201) {
+                    setTimeout(() => {
+                        toast.error(response.token)
+                    }, 500);
+                    navigate('/login')
+                }
+
+                if (response.status === 200) {
+                    if (response.signup === 'signup') {
+                        toast.success(response.token);
+                    }
+                    if (response.login === 'login') {
+                        toast.success(response.token);
+                    }
+                    const loginData = {
+                        email: googleData.email,
+                        password: googleData.id,
+                    }
+
+                    const userToken = await axios.post(UserLoginUrl, loginData);
+                    const data = userToken.data;
+                    try {
+                        const token = jwtDecode(data.access)
+                        const setUser = {
+                            "user_id": token.user_id,
+                            "email": token.email,
+                            "is_superuser": token.is_superuser,
+                            "is_company": token.is_company,
+                            "is_google": token.is_google,
+                            "is_active": token.is_active,
+                        }
+                        dispatch(setUserDetails({ userinfo: setUser }))
+                        localStorage.setItem('token', JSON.stringify(data));
+                        navigate('/');
+
+                    } catch (error) {
+                        console.error('Error decoding JWT:', error);
+                    }
+                }
+                else if (response.status === 404) {
+
+                    if (response.Text.username) {
+                        toast.error(response.Text.username[0])
+                    }
+                    else if (response.Text.email) {
+                        toast.error(response.Text.email[0])
+                    }
+                    else if (response.Text.phone_number) {
+                        toast.error(response.Text.phone_number[0])
+                    }
+                }
+            } catch (error) {
+                console.error('Error during signup:', error);
+                toast.error(error.message);
+            }
+        } catch (error) {
+            console.log(error.response);
+            toast.error(error.message);
+        }
+    };
+
+
+
     useEffect(() => {
         setTimeout(() => {
             if (message) {
@@ -27,6 +139,7 @@ function Login() {
         }, 500);
 
     }, [])
+
 
 
     return (
@@ -58,7 +171,7 @@ function Login() {
                             <br />
                             <p className='text-white ml-2 text-center'>  or  </p>
                             <br />
-                            <Button variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
+                            <Button onClick={() => LoginWithGoogleAuth()} variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
                                 <img src={googleImage} className='w-8  h-8 ml-2' alt="" />
                                 SIGN IN WITH GOOGLE
                             </Button>

@@ -20,8 +20,6 @@ function Signup() {
     const [company_data, setCompany_data] = useState('')
     const dispatch = useDispatch()
 
- 
-
     useEffect(() => {
         if (checkData) {
             if (checkData.data) {
@@ -150,8 +148,6 @@ function Signup() {
             try {
                 const googleResponse = await axios.post(User_Google_Signup, googleUser);
                 const response = googleResponse.data
-                console.log(response, 'lotttttttttttaaa');
-                console.log(googleResponse, 'lotttttttttttaaa');
                 if (response.status === 201) {
                     setTimeout(() => {
                         toast.error(response.token)
@@ -172,7 +168,6 @@ function Signup() {
                     }
 
                     const userToken = await axios.post(UserLoginUrl, loginData);
-                    console.log(userToken, 'shaaaaaaaaaaaaaaaaafffffi');
                     const data = userToken.data;
                     try {
                         const token = jwtDecode(data.access)
@@ -184,8 +179,6 @@ function Signup() {
                             "is_google": token.is_google,
                             "is_active": token.is_active,
                         }
-                        console.log(setUser, 'sssssssssssssssssssssahahahahhal');
-
                         dispatch(setUserDetails({ userinfo: setUser }))
                         localStorage.setItem('token', JSON.stringify(data));
                         navigate('/');
@@ -208,11 +201,11 @@ function Signup() {
                 }
             } catch (error) {
                 console.error('Error during signup:', error);
-                toast.error(error);
+                toast.error(error.message);
             }
         } catch (error) {
             console.log(error.response);
-            toast.error(error.response);
+            toast.error(error.message);
         }
     };
 
@@ -254,7 +247,7 @@ function Signup() {
                             <br />
                             <Button onClick={() => signUpWithGoogle()} variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
                                 <img src={googleImage} className='w-8  h-8 ml-2' alt="" />
-                                SIGN IN WITH GOOGLE
+                                SIGN UP WITH GOOGLE
                             </Button>
                             <Typography variant="small" className="mt-6  text-[#b7b7b7] flex justify-center">
                                 have an account?
@@ -294,4 +287,4 @@ function Signup() {
     )
 }
 
-export default Signup
+export default Signup 
