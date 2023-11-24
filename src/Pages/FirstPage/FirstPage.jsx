@@ -5,11 +5,31 @@ import hiring from '../../Assets/Hiring.jpg'
 import searching from '../../Assets/Searching.jpg'
 import { Card, CardHeader, CardBody, Button } from "@material-tailwind/react";
 import { useNavigate } from 'react-router-dom';
+// import { useSelector } from 'react-redux';
 
 
 
 function FirstPage() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    // const { userInfo } = useSelector((state) => state.user)
+    // console.log(userInfo.is_superuser, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhjjjjjjjaaa');
+
+    // useEffect(() => {
+    //     if (userInfo) {
+    //         if (userInfo.is_superuser) {
+    //             console.log('ggggggggggggggggggggggggggggggggggg');
+    //             navigate('/admin/');
+
+    //         }
+    //         else if (userInfo.is_company) {
+    //             navigate('/company/');
+    //         }
+    //         else {
+    //             navigate('/');
+    //         }
+    //     }
+    // }, [userInfo])
+    
 
     const hiringSignup = () => {
         

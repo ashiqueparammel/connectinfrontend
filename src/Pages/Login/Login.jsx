@@ -6,7 +6,7 @@ import SignupImage from '../../Assets/SignupImage.png'
 import { useLocation, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast'
 import axios from 'axios';
-import { Google_Access_Token, UserLoginUrl, User_Google_Signup } from '../../Constants/Constants';
+import { Google_Access_Token, UserLoginUrl, User_Google_Login} from '../../Constants/Constants';
 import { setUserDetails } from '../../Redux/Users';
 import { useGoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
@@ -17,22 +17,24 @@ function Login() {
     const location = useLocation();
     const dispatch = useDispatch()
     let message = new URLSearchParams(location.search).get('message');
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
     const Signup = () => {
         navigate('/choose')
     }
 
     let googleData = ''
-
     const LoginWithGoogleAuth = useGoogleLogin({
         onSuccess: (codeResponse) => {
             googleData = codeResponse
             console.log(googleData.access_token, 'googleDataTOken');
             GoogleAuth();
         },
-        onError: (error) => console.log("Login Failed:", error),
+        onError: (error) => {
+            toast.error(error);
+            console.log("Login Failed:", error);
+        }
     });
-
     const GoogleAuth = async () => {
         try {
             if (!googleData) return;
@@ -45,33 +47,67 @@ function Login() {
                     },
                 }
             );
+            const backend_access = googleData.access_token
+            console.log(backend_access,'<<<<<<<<<<<<<<<< google acccses token>>>>>>>>>>>>>>');
             googleData = tokenData.data;
             const googleUser = {
-                username: googleData.given_name,
                 email: googleData.email,
-                password: googleData.id,
-                password2: googleData.id,
-                phone_number: '',
-                is_company: '',
-                is_google: true,
+                access_token:backend_access
             }
             try {
-                const googleResponse = await axios.post(User_Google_Signup, googleUser);
+                const googleResponse = await axios.post(User_Google_Login, googleUser);
                 const response = googleResponse.data
-                if (response.status ===204){
+                if (response.status === 406) {
                     setTimeout(() => {
-                        toast.error(response.token)
-                        console.log(response.token,'lllllllllllllloottaa');
-                    }, 500);
-                    if (response.is_company==='is_company'){
-                        navigate('/choose')
-                    }
-                }
-                if (response.status === 201) {
-                    setTimeout(() => {
-                        toast.error(response.token)
+                        toast.error(response.message)
                     }, 500);
                     navigate('/login')
+                }
+                if (response.status === 403) {
+                    setTimeout(() => {
+                        toast.error(response.message)
+                    }, 500);
+                    navigate('/login')
+                }
+                // if already signup with form   work this 
+
+                if (response.status === 201) {
+                    setTimeout(() => {
+                        toast.success(response.message)
+                    }, 500);
+                    const data = (response.token)
+                    localStorage.setItem('token', JSON.stringify(data));
+
+                    console.log(data, '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<++++++<<<<<accses>>>>>+++++====================...jwttoken');
+                    try {
+                        const token = jwtDecode(data.access)
+                        console.log(token, '>>>>>>>>>>>>>>>>>>>>>=======================decoded');
+                        const setUser = {
+                            "user_id": token.user_id,
+                            "email": token.email,
+                            "is_superuser": token.is_superuser,
+                            "is_company": token.is_company,
+                            "is_google": token.is_google,
+                            "is_active": token.is_active,
+                        }
+                        dispatch(setUserDetails({ userinfo: setUser }))
+                        if (token.is_superuser) {
+                            toast.success('Login successfully!')
+                            navigate('/admin/');
+                        }
+                        else if (token.is_company) {
+                            toast.success('Login successfully!')
+                            navigate('/company/');
+                        }
+                        else {
+                            toast.success('Login successfully!')
+                            navigate('/');
+                        }
+
+                    } catch (error) {
+                        console.error('Error decoding JWT:', error);
+                    }
+
                 }
 
                 if (response.status === 200) {
@@ -88,6 +124,7 @@ function Login() {
 
                     const userToken = await axios.post(UserLoginUrl, loginData);
                     const data = userToken.data;
+                    localStorage.setItem('token', JSON.stringify(data));
                     try {
                         const token = jwtDecode(data.access)
                         const setUser = {
@@ -99,8 +136,18 @@ function Login() {
                             "is_active": token.is_active,
                         }
                         dispatch(setUserDetails({ userinfo: setUser }))
-                        localStorage.setItem('token', JSON.stringify(data));
-                        navigate('/');
+                        if (token.is_superuser) {
+                            toast.success('Login successfully!')
+                            navigate('/admin/');
+                        }
+                        else if (token.is_company) {
+                            toast.success('Login successfully!')
+                            navigate('/company/');
+                        }
+                        else {
+                            toast.success('Login successfully!')
+                            navigate('/');
+                        }
 
                     } catch (error) {
                         console.error('Error decoding JWT:', error);
@@ -128,6 +175,82 @@ function Login() {
         }
     };
 
+    const loginUser = async (e) => {
+        e.preventDefault();
+
+        const user = {
+            email: e.target.email.value,
+            password: e.target.password.value,
+        };
+        console.log('User data:', user);
+        const validateForm = () => {
+            if (user.email.trim() === "") {
+                toast.error('Email should not be empty!');
+                return false;
+            }
+            else if (user.password.trim() === "") {
+                toast.error('Password should not be empty!');
+                return false;
+            }
+            // else if (user.password.length < 8) {
+            //     toast.error('Password Should be need 8 length!');
+            //     return false;
+            // }
+            return true;
+        };
+        if (validateForm()) {
+            try {
+                const responseData = await axios.post(UserLoginUrl, user);
+                console.log(responseData, 'cccccccccchhhhhhheckckckkck');
+
+                const response = responseData.data;
+                localStorage.setItem('token', JSON.stringify(response));
+                try {
+                    console.log(response, '==============================================<<<<<<<<<<<<<<<<<<<token>>>>>>>>>>>>>>>>>');
+                    const token = jwtDecode(response.access)
+                    const setUser = {
+                        "user_id": token.user_id,
+                        "email": token.email,
+                        "is_superuser": token.is_superuser,
+                        "is_company": token.is_company,
+                        "is_google": token.is_google,
+                        "is_active": token.is_active,
+                    }
+                    console.log(setUser, 'lotttttttttttttttttaa');
+
+                    dispatch(setUserDetails(setUser));
+                    console.log(token.is_superuser, 'faaaaaaaaaaaaassi');
+                    if (token.is_superuser) {
+                        toast.success('Login successfully!')
+                        navigate('/admin/');
+                    }
+                    else if (token.is_company) {
+                        toast.success('Login successfully!')
+                        navigate('/company/');
+                    }
+                    else {
+                        toast.success('Login successfully!')
+                        navigate('/');
+                    }
+
+
+
+                } catch (error) {
+                    console.error('Error decoding JWT:', error);
+                }
+            } catch (error) {
+                console.error('Error during signup:', error);
+                const errorMessage = error.response.data.detail
+                if (errorMessage) {
+                    toast.error(errorMessage);
+                } else {
+                    toast.error(error.message);
+
+                }
+            }
+        }
+    }
+
 
 
     useEffect(() => {
@@ -137,8 +260,7 @@ function Login() {
                 message = null
             };
         }, 500);
-
-    }, [])
+    }, [message])
 
 
 
@@ -157,15 +279,15 @@ function Login() {
                     <Typography variant="h3" className='text-center font-roboto-mono text-3xl  mt-5' color="white">
                         LOGIN
                     </Typography>
-                    <form onSubmit={(e) => loginuser(e)}>
+                    <form onSubmit={(e) => loginUser(e)}>
                         <CardBody className="flex flex-col font-prompt gap-5">
-                            <Input label="Enter Your Email or Phonenumber" size="lg" className='bg-white' />
-                            <Input label="Enter Your Password" size="lg" className='bg-white' />
+                            <Input type='email' name='email' label="Enter Your Email " size="lg" className='bg-white' />
+                            <Input type='password' name='password' label="Enter Your Password" size="lg" className='bg-white' />
                             <div className="-ml-2.5">
                             </div>
                         </CardBody>
                         <CardFooter className="pt-0">
-                            <Button variant="filled" className='bg-[#0A3863] font-prompt text-xl font-prompt-normal' fullWidth >
+                            <Button type='submit' variant="filled" className='bg-[#0A3863] font-prompt text-xl font-prompt-normal' fullWidth >
                                 LOGIN
                             </Button>
                             <br />

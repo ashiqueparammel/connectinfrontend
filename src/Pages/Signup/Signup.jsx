@@ -75,7 +75,7 @@ function Signup() {
                 return false;
             }
             else if (user.password.length < 8) {
-                toast.error('Password should not be empty!');
+                toast.error('Password Should be need 8 length!');
                 return false;
             }
             else if (user.password !== user.password2) {
@@ -91,7 +91,10 @@ function Signup() {
                 const response = responseData.data
                 if (response.status === 200) {
                     toast.success('Sign Up successfully!')
+                    console.log('hhhhhhhhhhhhhhhheeello--------------------->hello');
                     navigate('/verification', { state: { data: user.email } })
+                    console.log('hhhhhhhhhhhhhhhheeello--------------------->lotta');
+
                 }
 
                 else if (response.status === 404) {
@@ -148,19 +151,20 @@ function Signup() {
             try {
                 const googleResponse = await axios.post(User_Google_Signup, googleUser);
                 const response = googleResponse.data
-                if (response.status === 201) {
+                if (response.status === 204) {
                     setTimeout(() => {
-                        toast.error(response.token)
+                        toast.error(response.Text)
+                    }, 500);
+                    navigate('/choose')
+                } if (response.status === 403) {
+                    setTimeout(() => {
+                        toast.error(response.Text)
                     }, 500);
                     navigate('/login')
                 }
-
                 if (response.status === 200) {
                     if (response.signup === 'signup') {
-                        toast.success(response.token);
-                    }
-                    if (response.login === 'login') {
-                        toast.success(response.token);
+                        toast.success(response.Text);
                     }
                     const loginData = {
                         email: googleData.email,

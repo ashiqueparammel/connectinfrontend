@@ -1,24 +1,13 @@
+import React from 'react'
 import { Button } from "@material-tailwind/react";
-import React, { useEffect } from "react";
-// import toast, { Toaster } from 'react-hot-toast'
-import { useLocation, useNavigate } from "react-router-dom";
-// import logo from '../../Assets/Connectlogo.png';
 import Emailimage from '../../Assets/email.png';
 
 
-function ConfirmEmail() {
-    const location = useLocation()
-    const navigate = useNavigate()
-    const email = location.state.data || '';
-    console.log(email,'================================>>>>>email')
-    useEffect(() => {
-        if (!email) {
-            navigate('/signup')
-        }
-    
-    }, [])
-    
-  
+function Check() {
+
+    // const email = location.state || '';
+    const email = 'lotta'
+
     const Gmail = () => {
         window.open("https://mail.google.com/mail/u/0/#inbox", "_blank")
     };
@@ -68,4 +57,31 @@ function ConfirmEmail() {
     )
 }
 
-export default ConfirmEmail
+export default Check
+
+
+
+
+
+
+// import toast, { Toaster } from 'react-hot-toast'
+// import { useLocation, useNavigate } from "react-router-dom";
+// import logo from '../../Assets/Connectlogo.png';
+
+
+    // const location = useLocation()
+    // const navigate = useNavigate()
+    // const email = location.state || '';
+    // console.log(email,'================================>>>>>email')
+    // useEffect(() => {
+    //     if (!email) {
+    //         navigate('/signup')
+    //     }
+    
+    // }, [])
+    
+  
+    
+    
+
+

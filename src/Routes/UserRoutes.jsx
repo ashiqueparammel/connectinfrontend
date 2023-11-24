@@ -6,13 +6,16 @@ import UserProtected from './Protected/UserProtected'
 
 function UserRoutes() {
     return (
+        <div>
+            <Routes>
+                <Route element={<UserProtected />}>
+                    <Route element={<Home />} path='/' />
+                </Route>
+            </Routes>
+        </div>
 
-        <Routes>
-            <Route element={<UserProtected />}>
-            <Route element={<Home/>} path='/' />
-            </Route>
-        </Routes>
     )
 }
 
 export default UserRoutes
+

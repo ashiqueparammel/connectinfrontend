@@ -3,20 +3,22 @@ import CompanyRoutes from '../CompanyRoutes';
 import UserRoutes from '../UserRoutes';
 import { Outlet } from 'react-router-dom';
 import Login from '../../Pages/Login/Login';
+import { jwtDecode } from 'jwt-decode';
 
 
 function AdminProtected() {
+    console.log('hhhhhhhhhhhhhhhhhhhhha');
     const token = localStorage.getItem('token');
-    localStorage.clear
-    console.log(token,'ppppppprotection ');
+
+    console.log(token, 'admin cheeekkkkkkkkk ');
 
     if (token) {
         const decoded = jwtDecode(token);
-        console.log(decoded,'chehehehcked');
+        console.log(decoded, 'chehehehckedadmin');
         if (decoded.is_superuser) {
             return <Outlet />
         }
-        else {  
+        else {
             if (decoded.is_company) {
                 return <CompanyRoutes />
             }
