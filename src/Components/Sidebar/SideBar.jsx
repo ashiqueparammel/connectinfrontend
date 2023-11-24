@@ -1,5 +1,5 @@
 import { Button } from '@material-tailwind/react';
-import logo from '../../Assets/Frame 6.png';
+import logo from '../../Assets/ConnectWhitelogo.png';
 
 import React from 'react'
 import { useNavigate } from 'react-router-dom';

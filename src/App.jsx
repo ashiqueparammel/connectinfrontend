@@ -8,6 +8,7 @@ import ConfirmEmail from './Pages/ConfirmEmail/ConfirmEmail';
 import UserRoutes from './Routes/UserRoutes';
 import CompanyRoutes from './Routes/CompanyRoutes';
 import AdminRout from './Routes/AdminRout';
+import CompanySignup from './Pages/Company/CompanySignup/CompanySignup';
 
 // import Check from './Pages/Check/Check';
 
@@ -20,6 +21,8 @@ function App() {
 
         <Routes>
           <Route element={<FirstPage/>} path='/choose' />
+          <Route element={<CompanySignup/>} path='/companysignup' />
+
           {/* <Route element={<Check/>} path='/check' /> */}
           <Route element={<Signup/>} path='/signup' />
           <Route element={<ConfirmEmail/>} path='/verification' />

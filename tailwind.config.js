@@ -24,6 +24,7 @@ export default withMT({
 
     },
     fontWeight: {
+      'roboto-mono-md':500,
       'prompt-light': 50,
       'prompt-xlight': 200,
       'prompt-lrlight': 300,
