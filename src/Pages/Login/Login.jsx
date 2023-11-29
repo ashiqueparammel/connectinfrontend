@@ -6,7 +6,7 @@ import SignupImage from '../../Assets/SignupImage.png'
 import { useLocation, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast'
 import axios from 'axios';
-import { Google_Access_Token, UserLoginUrl, User_Google_Login} from '../../Constants/Constants';
+import { Google_Access_Token, UserLoginUrl, User_Google_Login } from '../../Constants/Constants';
 import { setUserDetails } from '../../Redux/Users';
 import { useGoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
@@ -22,7 +22,6 @@ function Login() {
     const Signup = () => {
         navigate('/choose')
     }
-
     let googleData = ''
     const LoginWithGoogleAuth = useGoogleLogin({
         onSuccess: (codeResponse) => {
@@ -48,11 +47,11 @@ function Login() {
                 }
             );
             const backend_access = googleData.access_token
-            console.log(backend_access,'<<<<<<<<<<<<<<<< google acccses token>>>>>>>>>>>>>>');
+            console.log(backend_access, '<<<<<<<<<<<<<<<< google acccses token>>>>>>>>>>>>>>');
             googleData = tokenData.data;
             const googleUser = {
                 email: googleData.email,
-                access_token:backend_access
+                access_token: backend_access
             }
             try {
                 const googleResponse = await axios.post(User_Google_Login, googleUser);
@@ -69,7 +68,13 @@ function Login() {
                     }, 500);
                     navigate('/login')
                 }
-                // if already signup with form   work this 
+                if (response.status === 202) {
+                    setTimeout(() => {
+                        toast.error(response.message)
+                    }, 500);
+                    navigate('/login')
+                }
+                // if already signup with form work this 
 
                 if (response.status === 201) {
                     setTimeout(() => {
@@ -78,10 +83,10 @@ function Login() {
                     const data = (response.token)
                     localStorage.setItem('token', JSON.stringify(data));
 
-                    console.log(data, '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<++++++<<<<<accses>>>>>+++++====================...jwttoken');
+                    console.log(data, '<<<<<accses>>>>>jwttoken');
                     try {
                         const token = jwtDecode(data.access)
-                        console.log(token, '>>>>>>>>>>>>>>>>>>>>>=======================decoded');
+                        console.log(token, '>>>>>>>>>>>>>>decoded');
                         const setUser = {
                             "user_id": token.user_id,
                             "email": token.email,
@@ -91,79 +96,27 @@ function Login() {
                             "is_active": token.is_active,
                         }
                         dispatch(setUserDetails({ userinfo: setUser }))
-                        if (token.is_superuser) {
+                        if (token.is_superuser && token.is_active) {
                             toast.success('Login successfully!')
                             navigate('/admin/');
                         }
-                        else if (token.is_company) {
-                            toast.success('Login successfully!')
+                        else if (token.is_company && token.is_active) {
                             navigate('/company/');
+                            toast.success('Login successfully!')
                         }
-                        else {
+                        else if (token.is_active) {
                             toast.success('Login successfully!')
                             navigate('/');
+                        }
+                        else {
+                            toast.error('Invalid Credentials!')
+                            navigate('/login');
                         }
 
                     } catch (error) {
                         console.error('Error decoding JWT:', error);
                     }
 
-                }
-
-                if (response.status === 200) {
-                    if (response.signup === 'signup') {
-                        toast.success(response.token);
-                    }
-                    if (response.login === 'login') {
-                        toast.success(response.token);
-                    }
-                    const loginData = {
-                        email: googleData.email,
-                        password: googleData.id,
-                    }
-
-                    const userToken = await axios.post(UserLoginUrl, loginData);
-                    const data = userToken.data;
-                    localStorage.setItem('token', JSON.stringify(data));
-                    try {
-                        const token = jwtDecode(data.access)
-                        const setUser = {
-                            "user_id": token.user_id,
-                            "email": token.email,
-                            "is_superuser": token.is_superuser,
-                            "is_company": token.is_company,
-                            "is_google": token.is_google,
-                            "is_active": token.is_active,
-                        }
-                        dispatch(setUserDetails({ userinfo: setUser }))
-                        if (token.is_superuser) {
-                            toast.success('Login successfully!')
-                            navigate('/admin/');
-                        }
-                        else if (token.is_company) {
-                            toast.success('Login successfully!')
-                            navigate('/company/');
-                        }
-                        else {
-                            toast.success('Login successfully!')
-                            navigate('/');
-                        }
-
-                    } catch (error) {
-                        console.error('Error decoding JWT:', error);
-                    }
-                }
-                else if (response.status === 404) {
-
-                    if (response.Text.username) {
-                        toast.error(response.Text.username[0])
-                    }
-                    else if (response.Text.email) {
-                        toast.error(response.Text.email[0])
-                    }
-                    else if (response.Text.phone_number) {
-                        toast.error(response.Text.phone_number[0])
-                    }
                 }
             } catch (error) {
                 console.error('Error during signup:', error);
@@ -192,21 +145,16 @@ function Login() {
                 toast.error('Password should not be empty!');
                 return false;
             }
-            // else if (user.password.length < 8) {
-            //     toast.error('Password Should be need 8 length!');
-            //     return false;
-            // }
             return true;
         };
         if (validateForm()) {
             try {
                 const responseData = await axios.post(UserLoginUrl, user);
-                console.log(responseData, 'cccccccccchhhhhhheckckckkck');
-
+                console.log(responseData, '>>>>>>>>>>Normal Login');
                 const response = responseData.data;
                 localStorage.setItem('token', JSON.stringify(response));
                 try {
-                    console.log(response, '==============================================<<<<<<<<<<<<<<<<<<<token>>>>>>>>>>>>>>>>>');
+                    console.log(response, '<<<<<<<<<<token>>>>>>>>>');
                     const token = jwtDecode(response.access)
                     const setUser = {
                         "user_id": token.user_id,
@@ -216,25 +164,24 @@ function Login() {
                         "is_google": token.is_google,
                         "is_active": token.is_active,
                     }
-                    console.log(setUser, 'lotttttttttttttttttaa');
-
+                    console.log(setUser, '<<<user setting >>>');
                     dispatch(setUserDetails(setUser));
-                    console.log(token.is_superuser, 'faaaaaaaaaaaaassi');
-                    if (token.is_superuser) {
+                    if (token.is_superuser && token.is_active) {
                         toast.success('Login successfully!')
                         navigate('/admin/');
                     }
-                    else if (token.is_company) {
+                    else if (token.is_company && token.is_active) {
                         toast.success('Login successfully!')
                         navigate('/company/');
                     }
-                    else {
+                    else if (token.is_active) {
                         toast.success('Login successfully!')
                         navigate('/');
                     }
-
-
-
+                    else {
+                        toast.error('Invalid Credentials!')
+                        navigate('/login');
+                    }
                 } catch (error) {
                     console.error('Error decoding JWT:', error);
                 }

@@ -7,7 +7,11 @@ export const Google_Access_Token = import.meta.env.VITE_Google_Access_Token
 export const User_Google_Signup = import.meta.env.VITE_User_Google_Signup  
 export const User_Google_Login = import.meta.env.VITE_User_Google_Login  
 export const UserList = import.meta.env.VITE_UserList
+export const UserSearch = import.meta.env.VITE_UserSearch
 export const Companylist = import.meta.env.VITE_Companylist
+export const CompanySearch = import.meta.env.VITE_CompanySearch
 export const UserDetails = import.meta.env.VITE_UserDetails
 export const CompanyDetails = import.meta.env.VITE_CompanyDetails
+export const CompanyAdd = import.meta.env.VITE_CompanyAdd
+export const CompanyUpdate = import.meta.env.VITE_CompanyUpdate
 

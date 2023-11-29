@@ -91,11 +91,10 @@ function Signup() {
                 const response = responseData.data
                 if (response.status === 200) {
                     toast.success('Sign Up successfully!')
-                    console.log('hhhhhhhhhhhhhhhheeello--------------------->hello');
                     navigate('/verification', { state: { data: user.email } })
-                    console.log('hhhhhhhhhhhhhhhheeello--------------------->lotta');
 
                 }
+          
 
                 else if (response.status === 404) {
 

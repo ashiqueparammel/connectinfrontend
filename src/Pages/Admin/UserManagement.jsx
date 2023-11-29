@@ -1,68 +1,108 @@
-import React, { useState } from 'react'
-import { Typography } from "@material-tailwind/react";
+import React, { useState, useEffect } from 'react';
+import { Typography, Button, Dialog, DialogHeader, DialogBody, DialogFooter } from "@material-tailwind/react";
 import axios from 'axios';
-import { UserList } from '../../Constants/Constants';
-const TABLE_HEAD = ["Name", "Email", "Phonenumber", "Action"];
-const TABLE_ROWS = [
-  {
-    name: "John Michael",
-    job: "Manager",
-    date: "23/04/18",
-  },
-  {
-    name: "Alexa Liras",
-    job: "Developer",
-    date: "23/04/18",
-  },
-  {
-    name: "Laurent Perrier",
-    job: "Executive",
-    date: "19/09/17",
-  },
-  // {
-  //   name: "Michael Levi",
-  //   job: "Developer",
-  //   date: "24/12/08",
-  // },
-  {
-    name: "Richard Gran",
-    job: "Manager",
-    date: "04/10/21",
-  },
-];
+import toast, { Toaster } from 'react-hot-toast'
+import { UserDetails, UserList, UserSearch } from '../../Constants/Constants';
+const TABLE_HEAD = ["ID", "NAME", "EMAIL", "PHONENUMBER", "ACTION"];
+
 function UserManagement() {
+  const [users, setUsers] = useState([]);
+  const [open, setOpen] = React.useState(false);
+  const [selectedId, setSelectedId] = useState(null)
+  const [selectedState, setSelectedState] = useState(null)
+  const [checkState, setcheckState] = useState(null)
 
-  // const  [ListUser, setListUser] = useState([])
-  // useEffect(() => {
-  //  const users = axios.get(UserList).then((response)=>{
-  //   const responseData = response.data;
-  //   setListUser(responseData)
+  const SearchUser = async (keyword) => {
+    if (keyword) {
+      try {
+        const SearchRequest = await axios.get(`${UserSearch}${keyword}`);
+        setUsers(SearchRequest.data);
+      }
+      catch (error) {
+        console.log(error);
+        toast.error(error);
+      }
+    }
+  };
 
-  //  })
-  //   console.log(users);
-  
-    
-  // }, [])
-  
+  const SortingUser = async (keyword) => {
+    if (keyword) {
+      try {
+        let SortRequest;
+        switch (keyword) {
+          case 'sorting':
+            SortRequest = await axios.get(`${UserSearch}${''}`);
+            setUsers(SortRequest.data);
+            break;
+          case 'block':
+            SortRequest = await axios.get(`${UserSearch}${false}`);
+            setUsers(SortRequest.data);
+            break;
+          case 'unblock':
+            SortRequest = await axios.get(`${UserSearch}${true}`);
+            setUsers(SortRequest.data);
+
+            break;
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error);
+      }
+    }
+  };
+
+  const handleOpen = () => setOpen(!open);
+
+  const ModalOpen = (id, is_active) => {
+    setSelectedId(id)
+    setSelectedState(is_active)
+    handleOpen()
+  }
+  const userblock = () => {
+    const blockData = {
+      is_active: !selectedState
+    }
+    try {
+      axios.patch(`${UserDetails}${selectedId}/`, blockData);
+      setcheckState(true)
+    } catch (error) {
+      console.log(error);
+    }
+    handleOpen()
+  }
 
 
-
+  useEffect(() => {
+    setcheckState(null)
+    const getUser = axios.get(UserList)
+      .then((response) => {
+        const responseData = response.data;
+        setUsers(responseData);
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+      });
+  }, [checkState]);
 
   return (
     <div className='w-full'>
-
+      <div className='flex justify-between border-blue-gray-200 bg-blue-gray-50 p-4' >
+        <input onChange={(e) => SearchUser(e.target.value)} className='w-96 rounded-lg h-11 ml-16 border-2 border-gray-300  font-roboto-mono text-black' type="text" placeholder='  Search' />
+        <select onChange={(e) => SortingUser(e.target.value)} className='w-32 rounded-md bg-white border-2 border-gray-300 font-prompt'>
+          <option value="sorting">All</option>
+          <option value="block">Block</option>
+          <option value="unblock">UnBlock</option>
+        </select>
+      </div>
       <table className="w-full min-w-max table-auto text-left">
         <thead>
           <tr>
             {TABLE_HEAD.map((head) => (
-              <th
-                key={head}
-                className="border-b border-blue-gray-200 bg-blue-gray-50 p-4"
-              >
+              <th key={head} className="border-b border-blue-gray-200 bg-blue-gray-50 p-4">
                 <Typography
                   variant="small"
-                  color="blue-gray"
-                  className="font-normal leading-none opacity-70"
+
+                  className="text-black font-prompt-normal  "
                 >
                   {head}
                 </Typography>
@@ -70,62 +110,75 @@ function UserManagement() {
             ))}
           </tr>
         </thead>
-        <tbody>
-          {TABLE_ROWS.map(({ name, job, date }, index) => {
-            const isLast = index === TABLE_ROWS.length - 1;
-            const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
+
+
+        <tbody>
+          {users.map(({ id, username, email, phone_number, is_active }) => {
+            const classes = "p-4 border-b border-blue-gray-50";
             return (
-              <tr key={name}>
+              <tr key={username}>
                 <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {name}
+                  <Typography variant="small" color="blue-gray" className="font-roboto-mono text-lg ">
+                    {id}
                   </Typography>
                 </td>
                 <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {job}
+                  <Typography variant="small" color="blue-gray" className="font-roboto-mono text-lg ">
+                    {username}
                   </Typography>
                 </td>
                 <td className={classes}>
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal"
-                  >
-                    {date}
+                  <Typography variant="small" color="blue-gray" className="font-roboto-mono text-lg">
+                    {email}
                   </Typography>
                 </td>
                 <td className={classes}>
-                  <Typography
-                    as="a"
-                    href="#"
-                    variant="small"
-                    color="blue-gray"
-                    className="font-medium"
-                  >
-                    Edit
+                  <Typography variant="small" color="blue-gray" className="font-roboto-mono text-lg">
+                    {phone_number}
                   </Typography>
+                </td>
+                <td className={classes}>
+                  {is_active ? (
+                    <Button onClick={() => ModalOpen(id, is_active)} className='bg-[#b03838] font-prompt-normal w-24'>Block</Button>
+                  ) : (
+                    <Button onClick={() => ModalOpen(id, is_active)} className='bg-[#236941] font-prompt-normal  w-24'><span className='-ml-2'>UnBlock</span></Button>
+                  )}
                 </td>
               </tr>
             );
           })}
+          <>
+            <Dialog open={open} handler={handleOpen}>
+              <DialogHeader className='font-prompt-normal'>Company {(selectedState ? 'Block' : 'UnBlock')}</DialogHeader>
+              <DialogBody className='font-prompt text-black text-lg'>
+                Are You Sure Do You Want to Confirm Company {(selectedState ? 'Block' : 'UnBlock')}?
+
+              </DialogBody>
+              <DialogFooter className='gap-2'>
+                <Button
+                  variant="filled"
+
+                  onClick={handleOpen}
+                  className="bg-[#236941] font-prompt-normal"
+                >
+                  <span>Cancel</span>
+                </Button>
+                <Button variant="filled" className='bg-[#c63030] font-prompt-normal' onClick={userblock}>
+                  <span>Confirm</span>
+                </Button>
+              </DialogFooter>
+            </Dialog>
+          </>
         </tbody>
       </table>
-
+      <Toaster />
     </div>
-  )
+  );
 }
 
-export default UserManagement
+export default UserManagement;
+
 
 
 

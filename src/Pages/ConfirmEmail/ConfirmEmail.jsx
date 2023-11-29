@@ -59,6 +59,12 @@ function ConfirmEmail() {
                             >
                                 Go to Gmail inbox
                             </Button>
+                            <Button
+                                onClick={() => navigate('/')}
+                                className="text-white bg-[#051339]  sm:px-6 px-4 ms-5 my-2 xs:me-0 me-3 font-prompt-normal"
+                            >
+                                Go to home
+                            </Button>
                         </div>
                     </div>
                 </div>
