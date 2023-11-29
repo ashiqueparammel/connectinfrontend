@@ -95,7 +95,7 @@ function Login() {
                             "is_google": token.is_google,
                             "is_active": token.is_active,
                         }
-                        dispatch(setUserDetails({ userinfo: setUser }))
+                        dispatch(setUserDetails(setUser));
                         if (token.is_superuser && token.is_active) {
                             toast.success('Login successfully!')
                             navigate('/admin/');

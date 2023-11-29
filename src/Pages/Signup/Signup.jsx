@@ -182,7 +182,7 @@ function Signup() {
                             "is_google": token.is_google,
                             "is_active": token.is_active,
                         }
-                        dispatch(setUserDetails({ userinfo: setUser }))
+                        dispatch(setUserDetails(setUser));
                         localStorage.setItem('token', JSON.stringify(data));
                         navigate('/');
 

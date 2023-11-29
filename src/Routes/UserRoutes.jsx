@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 import UserProtected from './Protected/UserProtected'
 import UserLayout from '../Pages/User/UserLayout/UserLayout'
 import UserHome from '../Pages/Home/UserHome'
+import UserMyItems from '../Pages/User/UserMyItems'
 
 
 function UserRoutes() {
@@ -13,6 +14,7 @@ function UserRoutes() {
                 <Route element={<UserProtected />}>
                 <Route element={<UserLayout />}>
                     <Route element={<UserHome />} path='/' />
+                    <Route element={<UserMyItems />} path='/myitems' />
                 </Route>
                 </Route>
             </Routes>
