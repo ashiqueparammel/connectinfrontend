@@ -29,11 +29,27 @@ function CompanyHome() {
         }
     }, []);
 
+    const handleshare=async ()=>{
+        if (navigator.share){
+            try {
+
+                await navigator.share({
+                    title:"hloo ",
+                    text:"hlofss ",
+                    url:window.location.href
+                })
+                
+            } catch (error) {
+                
+            }
+        }
+    }
+
 
     return (
         <div className=' flex mt-5'>
             <div className='mt-2'>
-                <Card className="h-[310px] bg-[#ededed] w-full max-w-[20rem]  ml-16  shadow-xl shadow-blue-gray-900/2">
+                <Card className="h-[310px] bg-[#ededed] max-w-[20rem]  ml-16  shadow-xl shadow-blue-gray-900/2">
                     {(userDetails.profile_cover_image ?
                         <Card style={{ backgroundImage: `url(${userDetails.profile_cover_image})`, backgroundSize: '100% 100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} className='  h-28 rounded-b-none   shadow-xl shadow-[#b9b7b7]'>
                             <div >
@@ -74,13 +90,13 @@ function CompanyHome() {
                 </Card>
             </div>
             <div className='max-w-[45rem] w-full '>
-                {/* <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
+                <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
                     <div className='flex flex-col gap-2 mb-5 '>
 
                     </div>
-                </Card> */}
+                </Card>
 
-                <Card className="h-[40rem] bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2">
+                <Card className="h-[40rem] bg-[#ededed] mt-4 ml-16  shadow-2xl shadow-blue-gray-900/2">
                     <div className='flex justify-between' >
                         <div className='flex'>
                             {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className='ml-4 rounded-full w-16 h-16  mt-4 ' /> :
@@ -94,7 +110,7 @@ function CompanyHome() {
                         <div>
                             <Menu>
                                 <MenuHandler>
-                                    <Button className='bg-0 mt-3 w-2  flex justify-center mr-3'><FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-7 h-7 ' /></Button>
+                                    <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className='rounded-full hover:text-[#000000]  w-7 h-7 mt-5 mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer' />
                                 </MenuHandler>
                                 <MenuList className="max-h-72">
                                     <MenuItem>Report</MenuItem>
@@ -118,7 +134,7 @@ function CompanyHome() {
                             <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} color='#051339' className=' w-7 h-7' /> like</h1>
                             <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} color='#051339' className=' w-7 h-7 ' />Comment</h1>
                             <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faSave} color='#051339' className=' w-7 h-7 ' /> Save</h1>
-                            <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faShareAlt} color='#051339' className=' w-7 h-7 ' /> Share</h1>
+                            <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon onClick={handleshare} icon={faShareAlt} color='#051339' className=' w-7 h-7 ' /> Share</h1>
                         </div>
                     </div>
                 </Card>
@@ -128,11 +144,14 @@ function CompanyHome() {
                 <Card className=" flex flex-row gap-2 h-[6rem] rounded-b-none bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2" style={{ borderBottom: '1px solid #9da3a3 ' }}>
                     {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className='ml-4 rounded-full w-14 h-14  mt-4 ' /> :
                         <UserCircleIcon className="ml-4 rounded-full w-14 h-14  mt-4 " />)}
-                    <h1 className='font-prompt-normal mt-9 text-sm '>{userDetails.username}</h1>
-                    <Button className='w-24 h-9 mt-7 text-center font-prompt-normal bg-[#051339] rounded-md'>Message</Button>
+                    <h1 className='font-prompt-normal ml-3 mt-9 text-sm '>{userDetails.username}</h1>
+                    <div className='text-center w-24  mt-8 h-7 ml-12 font-prompt bg-[#051339] rounded-xl text-white  hover:bg-[#1e2c51] hover:cursor-pointer'>
+                        <p className='mt-[2px]'>Message</p>
+
+                    </div>
                     <Menu>
                         <MenuHandler>
-                            <Button className='bg-0 mt-6 w-1 h-10 flex justify-center '><FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-5 h-5 ' /></Button>
+                            <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-5 h-5 mt-9 rounded-full hover:text-[#000000]   mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer ' />
                         </MenuHandler>
                         <MenuList className="max-h-72">
                             <MenuItem>Delete</MenuItem>

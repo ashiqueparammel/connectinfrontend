@@ -13,5 +13,8 @@ export const CompanySearch = import.meta.env.VITE_CompanySearch
 export const UserDetails = import.meta.env.VITE_UserDetails
 export const CompanyDetails = import.meta.env.VITE_CompanyDetails
 export const CompanyAdd = import.meta.env.VITE_CompanyAdd
+export const JobAdd = import.meta.env.VITE_JobAdd
 export const CompanyUpdate = import.meta.env.VITE_CompanyUpdate
+export const JobUpdate = import.meta.env.VITE_JobUpdate 
+export const JobList = import.meta.env.VITE_JobList 
 

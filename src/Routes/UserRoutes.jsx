@@ -4,7 +4,8 @@ import { Route, Routes } from 'react-router-dom'
 import UserProtected from './Protected/UserProtected'
 import UserLayout from '../Pages/User/UserLayout/UserLayout'
 import UserHome from '../Pages/Home/UserHome'
-import UserMyItems from '../Pages/User/UserMyItems'
+import UserMyItems from '../Pages/User/MyItems/UserMyItems'
+
 
 
 function UserRoutes() {
