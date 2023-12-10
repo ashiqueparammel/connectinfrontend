@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { CompanyDetails } from '../../Constants/Constants';
+import { Company_Profile } from '../../Constants/Constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
+import { useNavigate } from 'react-router-dom';
+import { setCompanyDetails } from '../../Redux/Companyees';
+import toast, { Toaster } from 'react-hot-toast'
 
 
 function CompanyHome() {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [userDetails, setuserDetails] = useState([])
+    const [companyDetail, setCompanyDetail] = useState([])
 
     const userInfo = useSelector((state) => state.user.userInfo)
     console.log(userInfo, '=================>>>>>>>>>>>>>>>')
@@ -19,15 +25,36 @@ function CompanyHome() {
 
     useEffect(() => {
         if (userInfo) {
-            const userData = axios.get(`${CompanyDetails}${userInfo.user_id}/`).then((response) => {
-                const responseData = response.data;
-                setuserDetails(responseData)
+            const userData = axios.get(`${Company_Profile}${userInfo.user_id}/`).then((response) => {
+                const responseData = response.data[0];
+                const {user_id} = responseData
+              
+                setuserDetails(user_id)
+                setCompanyDetail(responseData)
+                const setCompany = {
+                    Company_id:responseData.id,
+                    user_id:responseData.user_id,
+                    Address:responseData.Address,
+                    Company_Size:responseData.Company_Size, 
+                    Industry:responseData.Industry,
+                    Location:responseData.Location,
+                    company_name:responseData.company_name,
+                    is_available:responseData.is_available
+                }
+                console.log(setCompany, '<<<user setting >>>');
+                dispatch(setCompanyDetails(setCompany));
+
             })
                 .catch((error) => {
+                    
+                    navigate('/company/profileverify')
                     console.error("Error fetching user data:", error);
                 });
         }
     }, []);
+    console.log(userDetails,'<<<<<<<<<<<<<<<<++++');
+    console.log(companyDetail,'>>>>>>>>>>>>>>>>>+++++');
+    
 
     const handleshare=async ()=>{
         if (navigator.share){
@@ -53,16 +80,16 @@ function CompanyHome() {
                     {(userDetails.profile_cover_image ?
                         <Card style={{ backgroundImage: `url(${userDetails.profile_cover_image})`, backgroundSize: '100% 100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} className='  h-28 rounded-b-none   shadow-xl shadow-[#b9b7b7]'>
                             <div >
-                                {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className=' ml-28 rounded-full w-24 h-24 mt-14' /> :
-                                    <UserCircleIcon className="h-24 w-24 mt-14 ml-28" />)}
+                                {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className=' ml-28 rounded-md shadow-2xl w-24 h-24 mt-14' /> :
+                                    <UserCircleIcon className="h-24 w-24 mt-14 ml-28 bg-[#e7e7e7] rounded-full"  />)}
                             </div>
 
                         </Card> :
                         <Card className='bg-[#c1e0b7]  h-28  shadow-xl w-full rounded-b-none  shadow-[#b9b7b7]'>
 
                             <div >
-                                {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className='ml-28 rounded-full w-24 h-24 mt-14 ' /> :
-                                    <UserCircleIcon className="h-24 w-24 mt-14 ml-28" />)}
+                                {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className='ml-28 rounded-md shadow-2xl w-24 h-24 mt-14 ' /> :
+                                    <UserCircleIcon className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] rounded-full" />)}
                             </div>
                         </Card>)}
                     <div className='mt-10 p-3 text-center'>
@@ -82,7 +109,7 @@ function CompanyHome() {
 
                 <Card className="h-[247px]  bg-[#ededed] w-full max-w-[20rem] mt-10 ml-16  shadow-2xl shadow-blue-gray-900/2">
                     <div className='flex  flex-col gap-2    '>
-                        <Button className='bg-[#051339]  rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faBookBookmark} className='w-7 h-7 mt-1' /> <span className='mt-1 '>My Items</span></Button>
+                        <Button onClick={() => navigate('/company/myitems')} className='bg-[#051339]  rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faBookBookmark} className='w-7 h-7 mt-1' /> <span className='mt-1 '>My Items</span></Button>
                         <Button className='bg-[#051339] rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faUsers} className='w-7 h-7 mt-1' /><span className='mt-1 '>Following & Followers</span></Button>
                         <Button className='bg-[#051339] rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faMessage} className='w-7 h-7 mt-1' /><span className='mt-1 '>Messages</span></Button>
                         <Button className='bg-[#051339] rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faUserPlus} className='w-7 h-7 mt-1' /><span className='mt-1 '>Connections</span></Button>
@@ -90,21 +117,21 @@ function CompanyHome() {
                 </Card>
             </div>
             <div className='max-w-[45rem] w-full '>
-                <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
+                {/* <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
                     <div className='flex flex-col gap-2 mb-5 '>
 
                     </div>
-                </Card>
+                </Card> */}
 
-                <Card className="h-[40rem] bg-[#ededed] mt-4 ml-16  shadow-2xl shadow-blue-gray-900/2">
+                <Card className="h-[40rem] bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2">
                     <div className='flex justify-between' >
                         <div className='flex'>
-                            {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className='ml-4 rounded-full w-16 h-16  mt-4 ' /> :
+                            {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
                                 <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
                             <div className='flex flex-col ml-2 mt-5'>
                                 <h1 className='font-prompt-normal text-sm '>{userDetails.username}</h1>
                                 <h1 className='font-prompt text-sm '>{userDetails.email}</h1>
-                                <h1 className='font-prompt text-sm '>{userDetails.id}</h1>
+                                {/* <h1 className='font-prompt text-sm '>{userDetails.id}</h1> */}
                             </div>
                         </div>
                         <div>
@@ -125,7 +152,7 @@ function CompanyHome() {
                             {/* {userDetails.email} */}
                             space post text showing this side
                         </Typography>
-                        <img className="max-h-96 mt-1 w-full " src={userDetails.profile_image} alt="nature" />
+                        <img className="max-h-96 mt-1 w-full " src='https://t3.ftcdn.net/jpg/05/55/05/20/360_F_555052045_pR45HJOz1KhZjZPRNkSY0dkU6Pt3WsLz.jpg' alt="nature" />
                         <div className='flex justify-between' style={{ borderBottom: '1px solid #9da3a3 ' }}>
                             <h1 className='font-prompt ml-5 mb-2 mt-4'><FontAwesomeIcon icon={faHeart} color='#051339' className=' w-5 h-5 ' /> liked <span className='font-prompt-semibold'>{userDetails.id}</span></h1>
                             <h1 className='font-prompt mr-5 mb-2 mt-4'><span className='font-prompt-semibold'>{userDetails.id}</span> Commented <FontAwesomeIcon icon={faComment} color='#051339' className=' w-5 h-5 ' /></h1>
@@ -142,11 +169,11 @@ function CompanyHome() {
             <div className='flex flex-col max-w-[24rem] w-full'>
                 <h1 className='ml-20  font-prompt-normal'>Recent Chats </h1>
                 <Card className=" flex flex-row gap-2 h-[6rem] rounded-b-none bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2" style={{ borderBottom: '1px solid #9da3a3 ' }}>
-                    {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className='ml-4 rounded-full w-14 h-14  mt-4 ' /> :
+                    {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl  w-14 h-14  mt-4 ' /> :
                         <UserCircleIcon className="ml-4 rounded-full w-14 h-14  mt-4 " />)}
                     <h1 className='font-prompt-normal ml-3 mt-9 text-sm '>{userDetails.username}</h1>
-                    <div className='text-center w-24  mt-8 h-7 ml-12 font-prompt bg-[#051339] rounded-xl text-white  hover:bg-[#1e2c51] hover:cursor-pointer'>
-                        <p className='mt-[2px]'>Message</p>
+                    <div className='text-center w-24  mt-8 h-7 ml-12 font-prompt bg-[#051339] rounded-md text-white  hover:bg-[#1e2c51] hover:cursor-pointer'>
+                        <p className='mt-[2px]'><span className='text-[#051339] ml-1'>.</span>Message<span className='text-[#051339] mr-1'>.</span></p>
 
                     </div>
                     <Menu>
@@ -164,6 +191,8 @@ function CompanyHome() {
                     <h1 className='font-prompt text-lg text-center text-[#051339]'>Connect In 2023</h1>
                 </Card>
             </div>
+            <Toaster />
+
         </div>
     )
 }

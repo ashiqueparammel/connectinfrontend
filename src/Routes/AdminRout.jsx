@@ -5,6 +5,7 @@ import DashBoard from '../Pages/Admin/DashBoard'
 import AdminLayout from '../Pages/Admin/AdminLayout/AdminLayout'
 import UserManagement from '../Pages/Admin/UserManagement'
 import CompanyManagement from '../Pages/Admin/CompanyManagement'
+import SkillsManagement from '../Pages/Admin/SkillsManagement'
 
 function AdminRout() {
     return (
@@ -13,8 +14,9 @@ function AdminRout() {
                 <Route element={<AdminProtected />}>
                     <Route element={<AdminLayout />}>
                         <Route element={<DashBoard />} path='/' />
-                        <Route element={<UserManagement />} path='/user' />
-                        <Route element={<CompanyManagement />} path='/company' />
+                        <Route element={<UserManagement  />} path='/user' />
+                        <Route element={<CompanyManagement  />} path='/company' />
+                        <Route element={<SkillsManagement  />} path='/skills' />
                     </Route>
                 </Route>
             </Routes>

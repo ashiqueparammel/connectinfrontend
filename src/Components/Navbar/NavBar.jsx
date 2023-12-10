@@ -1,11 +1,12 @@
 import React from "react";
-import { Navbar, MobileNav, Typography, Button, IconButton, Card, Input } from "@material-tailwind/react";
+import { Navbar, MobileNav, Typography, Button, IconButton, Card, Input, Menu, MenuHandler, MenuList, MenuItem } from "@material-tailwind/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faUsers, faBriefcase, faMessage, faBell, faUser, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faUsers, faBriefcase, faMessage, faBell, faUser, faSearch, faArrowRightToBracket, faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import Logo from '../../Assets/Frame 20.png'
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { resetState } from "../../Redux/Users";
+import { CompanyResetState } from "../../Redux/Companyees";
 
 
 
@@ -14,10 +15,11 @@ import { resetState } from "../../Redux/Users";
 function NavBar() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    
+
     const logout = () => {
         localStorage.removeItem('token')
         dispatch(resetState);
+        dispatch(CompanyResetState);
         navigate('/login');
     }
 
@@ -33,15 +35,15 @@ function NavBar() {
     const navList = (
         <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
             <Input
-              type="search"
-              placeholder="Search"
-              containerProps={{
-                className: "min-w-[288px]",
-              }}
-              className=" !border-black placeholder:text-black focus:!border-black bg-white "
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
+                type="search"
+                placeholder="Search"
+                containerProps={{
+                    className: "min-w-[288px]",
+                }}
+                className=" !border-black placeholder:text-black focus:!border-black placeholder:font-prompt bg-white "
+                labelProps={{
+                    className: "before:content-none after:content-none",
+                }}
             />
             <Typography
                 as="li"
@@ -65,7 +67,7 @@ function NavBar() {
                 color="blue-gray"
                 className="p-1 font-normal"
             >
-                <Button className='bg-[#051339] '><FontAwesomeIcon icon={faBriefcase} className='w-12 h-6' /></Button>
+                <Button onClick={() => navigate('/jobs')} className='bg-[#051339] '><FontAwesomeIcon icon={faBriefcase} className='w-12 h-6' /></Button>
             </Typography>
             <Typography
                 as="li"
@@ -89,7 +91,17 @@ function NavBar() {
                 color="blue-gray"
                 className="p-1 font-normal"
             >
-                <Button onClick={logout} className='bg-[#051339] '><FontAwesomeIcon icon={faUser} className='w-12 h-6' /></Button>
+                <Button className='bg-[#051339] '>
+                <Menu>
+                    <MenuHandler>
+                    <FontAwesomeIcon icon={faUser} className='text-white w-12 h-6' />
+                    </MenuHandler>
+                    <MenuList className="max-h-72">
+                        <MenuItem onClick={() => navigate('/profile')} className="font-prompt text-black" ><FontAwesomeIcon icon={faCircleUser} className='text-[#051339] w-6 h-4' />Profile</MenuItem>
+                        <MenuItem onClick={logout} className="font-prompt text-black"><FontAwesomeIcon icon={faArrowRightToBracket} className='text-[#051339] w-6 h-4' />Logout</MenuItem>
+                    </MenuList>
+                </Menu>
+                </Button>
             </Typography>
         </ul>
     );
@@ -165,7 +177,7 @@ function NavBar() {
                     {navList}
                 </MobileNav>
             </Navbar>
-           
+
         </div>
 
     )

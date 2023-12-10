@@ -5,10 +5,16 @@ import { Button, Card, Typography } from '@material-tailwind/react'
 import { Tabs, TabsHeader, TabsBody, Tab, } from "@material-tailwind/react";
 import axios from 'axios';
 import { JobAdd, JobList } from '../../../Constants/Constants';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 
 
 function CompanyMyItems() {
+  
+  // const company_Data
+  const CompanyDetails = useSelector((state) => state.company.companyInfo)
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('');
   const Head = [{ Heading: 'Posts' }, { Heading: 'Interviews' }, { Heading: 'Applications' }]
   const [JobDetails, setJobDetails] = useState([]);
@@ -20,7 +26,7 @@ function CompanyMyItems() {
   };
   
   useEffect(() => {
-    const response = axios.get(JobList).then((response) => {
+    const response = axios.get(`${JobList}${CompanyDetails.Company_id}/`).then((response) => {
       setJobDetails(response.data);
     }).catch((error) => {
       console.error("Error fetching job details:", error);
@@ -66,12 +72,12 @@ function CompanyMyItems() {
                { JobDetails.map((job, index) => (
                     <Card className=' flex flex-row mb-3 rounded-md w-[90%] mt-5 justify-between' key={index}>
                     <div className='ml-16'>
-                      <Typography className='mt-2 font-prompt text-xl text-black'>{job.Job_titile}</Typography>
+                      <Typography className='mt-2 font-prompt text-xl text-black'>{job.Job_title}</Typography>
                       <Typography className='font-prompt text-lg text-black'>{job.company_id.company_name}</Typography>
                       <Typography className='font-prompt text-sm text-black'>{job.company_id.Location}</Typography>
                       <Typography className='font-prompt text-sm text-black'>{formatPostedDate(job.posted_date)}</Typography>
                     </div>
-                    <Button className='mt-8 mr-16 h-10 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faEye} /><span>View</span></Button>
+                    <Button onClick={() => navigate('/company/postview',{ state: { data: job.id } }) } className='mt-8 mr-16 h-10 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faEye} /><span>View</span></Button>
                   </Card>
                   
                 ))} 

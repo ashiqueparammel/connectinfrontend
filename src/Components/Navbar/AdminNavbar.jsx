@@ -10,7 +10,7 @@ import { resetState } from '../../Redux/Users';
 
 
 
-function AdminNavbar() {
+function AdminNavbar({head}) {
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -28,15 +28,8 @@ function AdminNavbar() {
 
                 <div className='flex justify-between'>
                     <div>
-                        <Typography
-                            variant="h3"
-                            
-                            className="text-[#051339] ml-10 mt-5 font-prompt-normal"
-                        >
-                            USERS  
-                            {
-                                //heading want to change
-                            }
+                        <Typography variant="h3"className="text-[#051339] ml-10 mt-5 font-prompt-normal">
+                            {head}
                         </Typography>
 
                     </div>

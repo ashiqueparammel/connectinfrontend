@@ -18,8 +18,9 @@ import { useSelector } from 'react-redux';
 
 
 function CompanySignup() {
+  
 
-  const userInfo = useSelector((state) => state.user.userInfo.userinfo)
+  const userInfo = useSelector((state) => state.user.userInfo)
   // console.log(userInfo.user_id, '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<'); 
   const navigate = useNavigate()
   const fileInputRef = useRef(null);
@@ -29,15 +30,15 @@ function CompanySignup() {
   const [selectedSize, setSelectedSize] = useState('');
   const [is_Checked, setIs_Checked] = useState(true);
 
-//validation yup form
-  const companySchema = Yup.object().shape({
-    company_name: Yup.string().required('Company Name should not be empty!'),
-    Industry: Yup.string().required('Industry should not be empty!'),
-    Company_Size: Yup.string().required('Size should not be empty!'),
-    Location: Yup.string().required('Location should not be empty!'),
-    Address: Yup.string().required('Address should not be empty!'),
-    is_Checked: Yup.boolean().oneOf([true], 'Please Click Terms of Service & Privacy Policy!'),
-  });
+// //validation yup form
+//   const companySchema = Yup.object().shape({
+//     company_name: Yup.string().required('Company Name should not be empty!'),
+//     Industry: Yup.string().required('Industry should not be empty!'),
+//     Company_Size: Yup.string().required('Size should not be empty!'),
+//     Location: Yup.string().required('Location should not be empty!'),
+//     Address: Yup.string().required('Address should not be empty!'),
+//     is_Checked: Yup.boolean().oneOf([true], 'Please Click Terms of Service & Privacy Policy!'),
+//   });
   
   // image getting
   const handleButtonClick = () => {
@@ -74,43 +75,43 @@ function CompanySignup() {
 
     };
    
-    // const validateForm = () => {
+    const validateForm = () => {
 
-    //   if (CompanyData.company_name.trim() === "") {
-    //     toast.error('Company Name should not be empty!');
-    //     return false;
-    //   } else if (CompanyData.Industry.trim() === "") {
-    //     toast.error('Industry should not be empty!');
-    //     return false;
-    //   } else if (CompanyData.Company_Size.trim() === "") {
-    //     toast.error(' Size should not be empty!');
-    //     return false;
-    //   } else if (CompanyData.Location.trim() === "") {
-    //     toast.error('Location should not be empty!');
-    //     return false;
-    //   } else if (CompanyData.Address.trim() === "") {
-    //     toast.error('Address should not be empty!');
-    //     return false;
-    //   } if (is_Checked === false) {
-    //     toast.error('Please Click Terms of Service & Privacy Policy!');
-    //     return false;
-    //   }
-
-    //   return true;
-    // };
-
-//validation function
-    const validateForm = async () => {
-      try {
-        await companySchema.validate(CompanyData, { abortEarly: false });
-        return true;
-      } catch (validationError) {
-        validationError.inner.forEach(error => {
-          toast.error(error.message);
-        });
+      if (CompanyData.company_name.trim() === "") {
+        toast.error('Company Name should not be empty!');
+        return false;
+      } else if (CompanyData.Industry.trim() === "") {
+        toast.error('Industry should not be empty!');
+        return false;
+      } else if (CompanyData.Company_Size.trim() === "") {
+        toast.error(' Size should not be empty!');
+        return false;
+      } else if (CompanyData.Location.trim() === "") {
+        toast.error('Location should not be empty!');
+        return false;
+      } else if (CompanyData.Address.trim() === "") {
+        toast.error('Address should not be empty!');
+        return false;
+      } if (is_Checked === false) {
+        toast.error('Please Click Terms of Service & Privacy Policy!');
         return false;
       }
+
+      return true;
     };
+
+// //validation function
+//     const validateForm = async () => {
+//       try {
+//         await companySchema.validate(CompanyData, { abortEarly: false });
+//         return true;
+//       } catch (validationError) {
+//         validationError.inner.forEach(error => {
+//           toast.error(error.message);
+//         });
+//         return false;
+//       }
+//     };
     
     if (validateForm()) {
       try {

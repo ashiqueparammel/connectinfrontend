@@ -15,7 +15,7 @@ import { useDispatch } from 'react-redux';
 
 function Login() {
     const location = useLocation();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     let message = new URLSearchParams(location.search).get('message');
     const navigate = useNavigate();
 

@@ -5,6 +5,7 @@ import UserProtected from './Protected/UserProtected'
 import UserLayout from '../Pages/User/UserLayout/UserLayout'
 import UserHome from '../Pages/Home/UserHome'
 import UserMyItems from '../Pages/User/MyItems/UserMyItems'
+import Jobs from '../Pages/User/Jobs/Jobs'
 
 
 
@@ -16,6 +17,7 @@ function UserRoutes() {
                 <Route element={<UserLayout />}>
                     <Route element={<UserHome />} path='/' />
                     <Route element={<UserMyItems />} path='/myitems' />
+                    <Route element={<Jobs />} path='/jobs' />
                 </Route>
                 </Route>
             </Routes>

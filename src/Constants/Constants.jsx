@@ -17,4 +17,7 @@ export const JobAdd = import.meta.env.VITE_JobAdd
 export const CompanyUpdate = import.meta.env.VITE_CompanyUpdate
 export const JobUpdate = import.meta.env.VITE_JobUpdate 
 export const JobList = import.meta.env.VITE_JobList 
+export const JobListUser = import.meta.env.VITE_JobListUser 
+export const JobSearch = import.meta.env.VITE_JobSearch 
+export const Company_Profile = import.meta.env.VITE_Company_CompanyDetails 
 

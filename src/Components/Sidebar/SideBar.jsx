@@ -26,11 +26,11 @@ function Sidebar() {
                     <Button onClick={() => navigate('/admin/company')} variant="filled" className='bg-[#0A3863] font-roboto-mono text-xl font-prompt-normal ml-2 w-[260px]'  >
                         COMPANY
                     </Button>
-                    <Button variant="filled" className='bg-[#0A3863] font-roboto-mono text-xl font-prompt-normal ml-2 w-[260px]'  >
+                    <Button onClick={() => navigate('/admin/skills')}  variant="filled" className='bg-[#0A3863] font-roboto-mono text-xl font-prompt-normal ml-2 w-[260px]'  >
                         SKILLS
                     </Button>
 
-
+                    
 
                 </div>
 

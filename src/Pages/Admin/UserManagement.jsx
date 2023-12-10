@@ -111,8 +111,6 @@ function UserManagement() {
           </tr>
         </thead>
 
-
-
         <tbody>
           {users.map(({ id, username, email, phone_number, is_active }) => {
             const classes = "p-4 border-b border-blue-gray-50";
