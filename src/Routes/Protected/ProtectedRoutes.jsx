@@ -7,13 +7,13 @@ import AdminRout from '../AdminRout';
 
 function ProtectedRoutes() {
     const token = localStorage.getItem('token');
-    
-    console.log(token,'ppppppprotection ');
+
+    console.log(token,'protection check data ');
 
     if (token) {
+
         const decoded = jwtDecode(token);
-        console.log(decoded,'chehehehckedprotecthhhhhhllo');
-        // localStorage.removeItem('token')
+        console.log(decoded,'Check protect ');
         if (decoded.is_superuser) {
             return <AdminRout />
         }

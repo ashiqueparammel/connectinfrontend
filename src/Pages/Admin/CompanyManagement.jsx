@@ -50,6 +50,7 @@ function CompanyManagement() {
     }
   };
 
+  console.log(users,'+++++++++++++++++++>>>>>>>>>>>>>>>>>>>>>>>');
   const handleOpen = () => setOpen(!open);
 
   const ModalOpen = (id, is_active) => {

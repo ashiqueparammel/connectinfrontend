@@ -19,7 +19,11 @@ function CompanyHome() {
     const [companyDetail, setCompanyDetail] = useState([])
 
     const userInfo = useSelector((state) => state.user.userInfo)
-    console.log(userInfo, '=================>>>>>>>>>>>>>>>')
+    // console.log(userInfo, '=================>>>>>>>>>>>>>>>')
+
+    useEffect(()=>{
+
+    })
 
 
 
@@ -52,8 +56,8 @@ function CompanyHome() {
                 });
         }
     }, []);
-    console.log(userDetails,'<<<<<<<<<<<<<<<<++++');
-    console.log(companyDetail,'>>>>>>>>>>>>>>>>>+++++');
+    // console.log(userDetails,'<<<<<<<<<<<<<<<<++++');
+    // console.log(companyDetail,'>>>>>>>>>>>>>>>>>+++++');
     
 
     const handleshare=async ()=>{

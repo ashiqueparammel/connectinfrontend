@@ -13,27 +13,27 @@ function PostView() {
     const navigate = useNavigate()
     const job_id = location.state.data || ''
     const [jobViews, setJobViews] = useState([])
-    
-    // there is want to if condition  if job id show this page or else render to back page  not now want later
-    
 
-    
+    // there is want to if condition  if job id show this page or else render to back page  not now want later
+
+
+
     const formatPostedDate = (postedDate) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric'}; //  hour: 'numeric', minute: 'numeric', second: 'numeric'
+        const options = { year: 'numeric', month: 'long', day: 'numeric' }; //  hour: 'numeric', minute: 'numeric', second: 'numeric'
         const formattedDate = new Date(postedDate).toLocaleDateString(undefined, options);
         return formattedDate;
-      };
+    };
 
-    console.log(job_id,'hllllllllllllllllo');
+    console.log(job_id, 'hllllllllllllllllo');
     useEffect(() => {
         const response = axios.get(`${JobUpdate}${job_id}/`).then((response) => {
             setJobViews(response.data);
-            
+
         }).catch((error) => {
-          console.error("Error fetching job details:", error);
+            console.error("Error fetching job details:", error);
         });
-      }, [])
-      console.log(jobViews,'==============>>>>>>>>>>>>');
+    }, [])
+    console.log(jobViews, '==============>>>>>>>>>>>>');
 
     return (
         <div className='flex justify-center'>
@@ -76,29 +76,29 @@ function PostView() {
                     </Card>
 
                     <Card className='bg-[#FAFAFA] shadow-2xl mt-2 mb-2  rounded-md w-[90%]'>
-                        <Typography className='font-prompt text-lg ml-6 mt-2 '  >About The Job </Typography >
-                        <div className='ml-6 font-prompt'>
+                        <div className='m-6 font-prompt'>
+                            <Typography className='font-prompt text-lg  mb-1 '  >About The Job </Typography >
                             <h1>Company name :{CompanyDetails.company_name} </h1>
                             <h1>Location : {CompanyDetails.Location}</h1>
                             <h1>Job Title : {jobViews.Job_title}</h1>
                             <h1>Experiance : {jobViews.Experience}</h1>
                             <h1>job type : {jobViews.job_type}</h1>
                             <h1>salary : {jobViews.salary}</h1>
-                            <h1>posted date : {formatPostedDate(jobViews.posted_date)}</h1>
+                            <h1 >posted date : {formatPostedDate(jobViews.posted_date)}</h1>
 
                         </div>
                     </Card>
                     <Card className='bg-[#FAFAFA] shadow-2xl mt-2 mb-2  rounded-md w-[90%]'>
-                        <Typography className='font-prompt text-lg ml-6 mt-2'>Job Discription </Typography>
-                        <div className='ml-6 font-prompt'>
-                           
-                            <h1>job discription : {jobViews.job_description}</h1>
+                        <div className='m-6 font-prompt'>
+                        <Typography className='font-prompt text-lg mb-1'>Job Discription </Typography>
+
+                            <h1 >job discription : {jobViews.job_description}</h1>
 
                         </div>
                     </Card>
-                    <Card className='bg-[#FAFAFA] shadow-2xl mt-2 rounded-md w-[90%]'>
-                        <Typography className='font-prompt text-lg ml-6 mt-2'>Required Skills</Typography>
-                     
+                    <Card className='bg-[#FAFAFA] shadow-2xl py-2 px-5 rounded-md w-[90%]'>
+                        <Typography className='font-prompt text-lg '>Required Skills</Typography>
+
 
                     </Card>
                 </div>
