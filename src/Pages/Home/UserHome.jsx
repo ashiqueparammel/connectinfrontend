@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast'
 
 
 function UserHome() {
@@ -165,6 +166,8 @@ function UserHome() {
           <h1 className='font-prompt text-lg text-center text-[#051339]'>Connect In 2023</h1>
         </Card>
       </div>
+      <Toaster />
+
     </div>
   )
 }

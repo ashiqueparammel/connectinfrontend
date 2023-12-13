@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom';
 import CompanyRoutes from '../CompanyRoutes';
 import Login from '../../Pages/Login/Login';
@@ -13,12 +13,20 @@ function UserProtected() {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const token = localStorage.getItem('token');
-    const AuthCheck = JSON.parse(localStorage.getItem('token'));
+    useEffect(() => {
+        if (token === null) {
+            console.log("work done");
+            navigate('/login')
+        }
+    }, [])
 
-    console.log(AuthCheck, 'converting that token');
-    const { access } = AuthCheck
-    console.log('validate Access Token ', access);
+
     if (token) {
+        const AuthCheck = JSON.parse(localStorage.getItem('token'));
+
+        console.log(AuthCheck, 'converting that token');
+        const { access } = AuthCheck
+        console.log('validate Access Token ', access);
         const decoded = jwtDecode(token);
         const config = { headers: { Authorization: ` Bearer ${access}` } };
         const userAuthentication = async () => {

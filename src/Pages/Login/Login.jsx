@@ -97,15 +97,15 @@ function Login() {
                         }
                         dispatch(setUserDetails(setUser));
                         if (token.is_superuser && token.is_active) {
-                            toast.success('Login successfully!')
+                            // toast.success('Login successfully!')
                             navigate('/admin/');
                         }
                         else if (token.is_company && token.is_active) {
                             navigate('/company/');
-                            toast.success('Login successfully!')
+                            // toast.success('Login successfully!')
                         }
                         else if (token.is_active) {
-                            toast.success('Login successfully!')
+                            // toast.success('Login successfully!')
                             navigate('/');
                         }
                         else {

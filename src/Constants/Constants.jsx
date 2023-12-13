@@ -21,4 +21,5 @@ export const JobListUser = import.meta.env.VITE_JobListUser
 export const JobSearch = import.meta.env.VITE_JobSearch 
 export const Company_Profile = import.meta.env.VITE_Company_CompanyDetails 
 export const Authentication = import.meta.env.VITE_Authentication 
+export const JobUserView = import.meta.env.VITE_JobUserView 
 
