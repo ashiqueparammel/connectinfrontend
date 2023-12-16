@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Card, Input, Checkbox, Button, Typography, Textarea, Option, Select, } from "@material-tailwind/react";
 import logo from '../../../Assets/ConnectWhitelogo.png';
 import temp from '../../../Assets/Add image.png';
@@ -7,21 +7,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import toast, { Toaster } from 'react-hot-toast'
 import { allIndustries } from '../../../Helpers/Industries ';
 import { size } from '../../../Helpers/Size';
-import { CompanyAdd, CompanyDetails } from '../../../Constants/Constants';
+import { CompanyAdd, CompanyDetails, Company_Profile } from '../../../Constants/Constants';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 
 
-
-
-
 function CompanySignup() {
-  
 
   const userInfo = useSelector((state) => state.user.userInfo)
-  // console.log(userInfo.user_id, '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<'); 
+  const companyInfo = useSelector((state) => state.company.companyInfo)
+  console.log(userInfo.id, companyInfo, '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>i<<<<<<<<<<<<<<<<<<<<<<<<');
   const navigate = useNavigate()
   const fileInputRef = useRef(null);
   const [profileImage, setprofileImage] = useState(null)
@@ -30,16 +27,32 @@ function CompanySignup() {
   const [selectedSize, setSelectedSize] = useState('');
   const [is_Checked, setIs_Checked] = useState(true);
 
-// //validation yup form
-//   const companySchema = Yup.object().shape({
-//     company_name: Yup.string().required('Company Name should not be empty!'),
-//     Industry: Yup.string().required('Industry should not be empty!'),
-//     Company_Size: Yup.string().required('Size should not be empty!'),
-//     Location: Yup.string().required('Location should not be empty!'),
-//     Address: Yup.string().required('Address should not be empty!'),
-//     is_Checked: Yup.boolean().oneOf([true], 'Please Click Terms of Service & Privacy Policy!'),
-//   });
-  
+  useEffect(() => {
+
+    if (userInfo.id) {
+      const userData = axios.get(`${Company_Profile}${userInfo.id}/`).then((response) => {
+        const responseData = response.data[0];
+        if (responseData.id) {
+          navigate('/company/');
+        }
+      })
+        .catch((error) => {
+          navigate('/company/profileverify')
+          console.error("Error fetching user data:", error);
+        });
+    }
+  }, [])
+
+  // //validation yup form
+  //   const companySchema = Yup.object().shape({
+  //     company_name: Yup.string().required('Company Name should not be empty!'),
+  //     Industry: Yup.string().required('Industry should not be empty!'),
+  //     Company_Size: Yup.string().required('Size should not be empty!'),
+  //     Location: Yup.string().required('Location should not be empty!'),
+  //     Address: Yup.string().required('Address should not be empty!'),
+  //     is_Checked: Yup.boolean().oneOf([true], 'Please Click Terms of Service & Privacy Policy!'),
+  //   });
+
   // image getting
   const handleButtonClick = () => {
     fileInputRef.current.click();
@@ -66,7 +79,7 @@ function CompanySignup() {
     e.preventDefault();
 
     const CompanyData = {
-      user_id: userInfo.user_id,
+      user: userInfo.user_id,
       company_name: e.target.company_name.value,
       Industry: selectedIndustry,
       Company_Size: selectedSize,
@@ -74,7 +87,7 @@ function CompanySignup() {
       Address: e.target.Address.value,
 
     };
-   
+
     const validateForm = () => {
 
       if (CompanyData.company_name.trim() === "") {
@@ -100,20 +113,21 @@ function CompanySignup() {
       return true;
     };
 
-// //validation function
-//     const validateForm = async () => {
-//       try {
-//         await companySchema.validate(CompanyData, { abortEarly: false });
-//         return true;
-//       } catch (validationError) {
-//         validationError.inner.forEach(error => {
-//           toast.error(error.message);
-//         });
-//         return false;
-//       }
-//     };
-    
+    // //validation function
+    //     const validateForm = async () => {
+    //       try {
+    //         await companySchema.validate(CompanyData, { abortEarly: false });
+    //         return true;
+    //       } catch (validationError) {
+    //         validationError.inner.forEach(error => {
+    //           toast.error(error.message);
+    //         });
+    //         return false;
+    //       }
+    //     };
+
     if (validateForm()) {
+      console.log('chcek data');
       try {
         const responseData = await axios.post(CompanyAdd, CompanyData);
         // console.log(responseData.status, responseData.statusText, '[[[[[[[[[[[]]]]]]]]]]]]]');
@@ -124,7 +138,7 @@ function CompanySignup() {
             try {
               const formData = new FormData();
               formData.append('profile_image', profileImage);
-              const updateProfileImage = await axios.patch(`${CompanyDetails}${CompanyData.user_id}/`, formData)
+              const updateProfileImage = await axios.patch(`${CompanyDetails}${CompanyData.user}/`, formData)
             } catch (error) {
               console.log(error);
               toast.error('Somthing Wrong!');
@@ -138,6 +152,8 @@ function CompanySignup() {
           toast.error(error.response.data.company_name[0]);
         }
         else {
+          console.error('Error :', error);
+
           toast.error('Somthing Wrong!')
         }
       }

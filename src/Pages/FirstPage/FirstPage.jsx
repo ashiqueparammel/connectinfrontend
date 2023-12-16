@@ -64,7 +64,7 @@ function FirstPage() {
                     </CardHeader>
                     <CardBody>
                         <Button onClick={hiringSignup} className="font-prompt bg-[#051339] font-prompt-semibold mb-2 w-full lg:w-[150px]">
-                            HIRING JOB
+                            HIRING 
                         </Button>
                     </CardBody>
                 </Card>

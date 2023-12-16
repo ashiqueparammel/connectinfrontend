@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Card, CardBody, CardFooter, Typography, Input, Button } from "@material-tailwind/react";
+import { Card, CardBody, CardFooter, Typography, Button } from "@material-tailwind/react";
 import googleImage from '../../Assets/googleAuth.png'
 import logo from '../../Assets/Connectlogo.png';
 import SignupImage from '../../Assets/SignupImage.png'
@@ -226,29 +226,29 @@ function Signup() {
 
 
 
-                <Card className="w-96  bg-[#051339] lg:mt-8 lg:ml-10 ml-5 mt-5" >
+                <Card className="w-96  bg-[#051339] lg:mt-8 lg:ml-10 ml-5 mt-5 rounded-sm" >
                     <Typography variant="h3" className='text-center font-roboto-mono text-3xl  mt-5' color="white">
                         SIGN UP
                     </Typography>
                     <form onSubmit={(e) => signupform(e)}>
                         <CardBody className="flex flex-col font-prompt gap-5">
-                            <Input type='text' name='username' label="Enter Your username" size="lg" className='bg-white' />
-                            <Input type='email' name='email' label="Enter Your Email" size="lg" className='bg-white' />
-                            <Input type='phonenumber' name='phone_number' label="Enter Your Phonenumber" size="lg" className='bg-white' />
-                            <Input type='password' name='password' label="Enter Your Password" size="lg" className='bg-white' />
-                            <Input type='password' name='password2' label="Confirm Your Password" size="lg" className='bg-white' />
+                            <input type='text' name='username' placeholder="Enter Your username" size="lg" className='bg-white h-12 rounded-sm' style={{ paddingLeft: '20px' }}  />
+                            <input type='email' name='email' placeholder="Enter Your Email" size="lg" className='bg-white h-12 rounded-sm' style={{ paddingLeft: '20px' }} />
+                            <input type='phonenumber' name='phone_number' placeholder="Enter Your Phonenumber" size="lg" className='bg-white h-12 rounded-sm' style={{ paddingLeft: '20px' }}  />
+                            <input type='password' name='password' placeholder="Enter Your Password" size="lg" className='bg-white h-12 rounded-sm' style={{ paddingLeft: '20px' }}  />
+                            <input type='password' name='password2' placeholder="Confirm Your Password" size="lg" className='bg-white h-12 rounded-sm' style={{ paddingLeft: '20px' }} />
                             <div className="-ml-2.5">
 
                             </div>
                         </CardBody>
                         <CardFooter className="pt-0">
-                            <Button type='submit' variant="filled" className='bg-[#0A3863] font-prompt text-xl font-prompt-normal' fullWidth >
+                            <Button type='submit' variant="filled" className='bg-[#0A3863] font-prompt text-xl font-prompt-normal rounded-sm' fullWidth >
                                 SIGN UP
                             </Button>
                             <br />
                             <p className='text-white ml-2 text-center'> or  </p>
                             <br />
-                            <Button onClick={() => signUpWithGoogle()} variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
+                            <Button onClick={() => signUpWithGoogle()} variant="filled" className=' rounded-sm flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
                                 <img src={googleImage} className='w-8  h-8 ml-2' alt="" />
                                 SIGN UP WITH GOOGLE
                             </Button>

@@ -17,9 +17,9 @@ function CompanyProtect() {
     const token = localStorage.getItem('token');
     const AuthCheck = JSON.parse(localStorage.getItem('token'));
 
-    console.log(AuthCheck, 'converting that token');
+    // console.log(AuthCheck, 'converting that token');
     const { access } = AuthCheck
-    console.log('validate Access Token ', access);
+    // console.log('validate Access Token ', access);
     if (token) {
         const decoded = jwtDecode(token);
         const config = { headers: { Authorization: ` Bearer ${access}` } };
@@ -38,7 +38,7 @@ function CompanyProtect() {
         }
         userAuthentication()
 
-        console.log(decoded, 'chehehehckedcompany');
+        // console.log(decoded, 'chehehehckedcompany');
         if (decoded.is_superuser) {
             return <AdminRout />
         }

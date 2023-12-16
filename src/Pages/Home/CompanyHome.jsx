@@ -1,104 +1,125 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, } from "@material-tailwind/react";
+import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { Company_Profile } from '../../Constants/Constants';
+import { CompanyDetails, Company_Profile } from '../../Constants/Constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, } from '@fortawesome/free-solid-svg-icons';
+import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faCamera, faUser, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
 import { useNavigate } from 'react-router-dom';
 import { setCompanyDetails } from '../../Redux/Companyees';
 import toast, { Toaster } from 'react-hot-toast'
-
+import { setUserDetails } from '../../Redux/Users';
 
 function CompanyHome() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [userDetails, setuserDetails] = useState([])
+    const [CompanyuserDetails, setCompanyuserDetails] = useState([])
     const [companyDetail, setCompanyDetail] = useState([])
+    const [profileImage, setprofileImage] = useState(null)
+
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(!open);
 
     const userInfo = useSelector((state) => state.user.userInfo)
-    // console.log(userInfo, '=================>>>>>>>>>>>>>>>')
-
-    useEffect(()=>{
-
-    })
-
-
+    // console.log(userInfo, '<<>>+++====hgf');
 
     useEffect(() => {
+
         if (userInfo) {
-            const userData = axios.get(`${Company_Profile}${userInfo.user_id}/`).then((response) => {
+            const userData = axios.get(`${Company_Profile}${userInfo.id}/`).then((response) => {
                 const responseData = response.data[0];
-                const {user_id} = responseData
-              
-                setuserDetails(user_id)
+                const { user } = responseData
+                setCompanyuserDetails(user)
                 setCompanyDetail(responseData)
                 const setCompany = {
-                    Company_id:responseData.id,
-                    user_id:responseData.user_id,
-                    Address:responseData.Address,
-                    Company_Size:responseData.Company_Size, 
-                    Industry:responseData.Industry,
-                    Location:responseData.Location,
-                    company_name:responseData.company_name,
-                    is_available:responseData.is_available
+                    Company_id: responseData.id,
+                    user: responseData.user,
+                    Address: responseData.Address,
+                    Company_Size: responseData.Company_Size,
+                    Industry: responseData.Industry,
+                    Location: responseData.Location,
+                    company_name: responseData.company_name,
+                    is_available: responseData.is_available
                 }
                 console.log(setCompany, '<<<user setting >>>');
                 dispatch(setCompanyDetails(setCompany));
+                dispatch(setUserDetails(responseData.user));
 
             })
                 .catch((error) => {
-                    
+
+
                     navigate('/company/profileverify')
                     console.error("Error fetching user data:", error);
                 });
         }
     }, []);
-    // console.log(userDetails,'<<<<<<<<<<<<<<<<++++');
-    // console.log(companyDetail,'>>>>>>>>>>>>>>>>>+++++');
-    
+    console.log(CompanyuserDetails, '<<<<<<<<<<<<<<<<++++');
+    console.log(companyDetail, '>>>>>>>>>>>>>>>>>+++++');
 
-    const handleshare=async ()=>{
-        if (navigator.share){
+    const handleshare = async () => {
+        if (navigator.share) {
             try {
 
                 await navigator.share({
-                    title:"hloo ",
-                    text:"hlofss ",
-                    url:window.location.href
+                    title: "hloo ",
+                    text: "hlofss ",
+                    url: window.location.href
                 })
-                
+
             } catch (error) {
-                
+
             }
         }
     }
 
+    // const handle_profile_cover_image = () => {
+    //     fileInputRef.current.click();
+    //   };
+
+    // const profile_cover_Image_Add = () => {
+    //     try {
+    //         const formData = new FormData();
+    //         formData.append('profile_image', profileImage);
+    //         const updateProfileImage = axios.patch(`${CompanyDetails}${userInfo.id}/`, formData)
+    //     } catch (error) {
+    //         console.log(error);
+    //         toast.error('Somthing Wrong!');
+    //     }
+    // }
 
     return (
         <div className=' flex mt-5'>
             <div className='mt-2'>
                 <Card className="h-[310px] bg-[#ededed] max-w-[20rem]  ml-16  shadow-xl shadow-blue-gray-900/2">
-                    {(userDetails.profile_cover_image ?
-                        <Card style={{ backgroundImage: `url(${userDetails.profile_cover_image})`, backgroundSize: '100% 100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} className='  h-28 rounded-b-none   shadow-xl shadow-[#b9b7b7]'>
+                    {(CompanyuserDetails.profile_cover_image ?
+                        <Card style={{ backgroundImage: `url(${CompanyuserDetails.profile_cover_image})`, backgroundSize: '100% 100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} className='  h-28 rounded-b-none   shadow-xl shadow-[#b9b7b7]'>
                             <div >
-                                {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className=' ml-28 rounded-md shadow-2xl w-24 h-24 mt-14' /> :
-                                    <UserCircleIcon className="h-24 w-24 mt-14 ml-28 bg-[#e7e7e7] rounded-full"  />)}
+                                {(CompanyuserDetails.profile_image ? <img src={CompanyuserDetails.profile_image} alt="profile photo" className=' ml-28 rounded-md shadow-2xl w-24 h-24 mt-14' /> :
+                                    <UserCircleIcon className="h-24 w-24 mt-14 ml-28 bg-[#e7e7e7] rounded-full" />)}
                             </div>
 
                         </Card> :
                         <Card className='bg-[#c1e0b7]  h-28  shadow-xl w-full rounded-b-none  shadow-[#b9b7b7]'>
+                            <div onClick={handleOpen} className='hover:bg-white rounded-md w-8 h-8  absolute right-2 bottom-2'><FontAwesomeIcon icon={faCamera} color='#4c4e4f' className='w-6 h-6   hover:cursor-pointer hover:text-[#051339] mt-1 ml-1' /></div>
 
                             <div >
-                                {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className='ml-28 rounded-md shadow-2xl w-24 h-24 mt-14 ' /> :
-                                    <UserCircleIcon className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] rounded-full" />)}
+                                {(CompanyuserDetails.profile_image ?
+                                    <img src={CompanyuserDetails.profile_image} alt="profile photo" className='ml-28 rounded-md shadow-2xl w-24 h-24 mt-14 ' />
+
+                                    :
+                                    <div>
+                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon icon={faUser} color='#051339' className='w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
+                                        <div className='hover:bg-white rounded-md w-7 h-7   absolute right-28 -bottom-10'><FontAwesomeIcon icon={faCamera} color='#4c4e4f' className='w-5 h-5   hover:cursor-pointer hover:text-[#051339] mt-1 ml-1' /></div>
+                                    </div>
+                                )}
                             </div>
                         </Card>)}
                     <div className='mt-10 p-3 text-center'>
-                        <h1 className='font-prompt text-2xl'>{userDetails.username}</h1>
-                        <h1 className='font-prompt text-md'>{userDetails.email}</h1>
+                        <h1 className='font-prompt text-2xl'>{companyDetail.company_name}</h1>
+                        <h1 className='font-prompt text-md'>{CompanyuserDetails.email}</h1>
 
                         <div className='flex justify-between mt-2'>
                             <h1 className='font-prompt text-left text-lg'>followes</h1>
@@ -130,11 +151,11 @@ function CompanyHome() {
                 <Card className="h-[40rem] bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2">
                     <div className='flex justify-between' >
                         <div className='flex'>
-                            {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
+                            {(CompanyuserDetails.profile_image ? <img src={CompanyuserDetails.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
                                 <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
                             <div className='flex flex-col ml-2 mt-5'>
-                                <h1 className='font-prompt-normal text-sm '>{userDetails.username}</h1>
-                                <h1 className='font-prompt text-sm '>{userDetails.email}</h1>
+                                <h1 className='font-prompt-normal text-sm '>{companyDetail.company_name}</h1>
+                                <h1 className='font-prompt text-sm '>{CompanyuserDetails.email}</h1>
                                 {/* <h1 className='font-prompt text-sm '>{userDetails.id}</h1> */}
                             </div>
                         </div>
@@ -158,8 +179,8 @@ function CompanyHome() {
                         </Typography>
                         <img className="max-h-96 mt-1 w-full " src='https://t3.ftcdn.net/jpg/05/55/05/20/360_F_555052045_pR45HJOz1KhZjZPRNkSY0dkU6Pt3WsLz.jpg' alt="nature" />
                         <div className='flex justify-between' style={{ borderBottom: '1px solid #9da3a3 ' }}>
-                            <h1 className='font-prompt ml-5 mb-2 mt-4'><FontAwesomeIcon icon={faHeart} color='#051339' className=' w-5 h-5 ' /> liked <span className='font-prompt-semibold'>{userDetails.id}</span></h1>
-                            <h1 className='font-prompt mr-5 mb-2 mt-4'><span className='font-prompt-semibold'>{userDetails.id}</span> Commented <FontAwesomeIcon icon={faComment} color='#051339' className=' w-5 h-5 ' /></h1>
+                            <h1 className='font-prompt ml-5 mb-2 mt-4'><FontAwesomeIcon icon={faHeart} color='#051339' className=' w-5 h-5 ' /> liked <span className='font-prompt-semibold'>{CompanyuserDetails.id}</span></h1>
+                            <h1 className='font-prompt mr-5 mb-2 mt-4'><span className='font-prompt-semibold'>{CompanyuserDetails.id}</span> Commented <FontAwesomeIcon icon={faComment} color='#051339' className=' w-5 h-5 ' /></h1>
                         </div>
                         <div className='flex justify-around mt-7'>
                             <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} color='#051339' className=' w-7 h-7' /> like</h1>
@@ -173,9 +194,9 @@ function CompanyHome() {
             <div className='flex flex-col max-w-[24rem] w-full'>
                 <h1 className='ml-20  font-prompt-normal'>Recent Chats </h1>
                 <Card className=" flex flex-row gap-2 h-[6rem] rounded-b-none bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2" style={{ borderBottom: '1px solid #9da3a3 ' }}>
-                    {(userDetails.profile_image ? <img src={userDetails.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl  w-14 h-14  mt-4 ' /> :
+                    {(CompanyuserDetails.profile_image ? <img src={CompanyuserDetails.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl  w-14 h-14  mt-4 ' /> :
                         <UserCircleIcon className="ml-4 rounded-full w-14 h-14  mt-4 " />)}
-                    <h1 className='font-prompt-normal ml-3 mt-9 text-sm '>{userDetails.username}</h1>
+                    <h1 className='font-prompt-normal ml-3 mt-9 text-sm '>{CompanyuserDetails.username}</h1>
                     <div className='text-center w-24  mt-8 h-7 ml-12 font-prompt bg-[#051339] rounded-md text-white  hover:bg-[#1e2c51] hover:cursor-pointer'>
                         <p className='mt-[2px]'><span className='text-[#051339] ml-1'>.</span>Message<span className='text-[#051339] mr-1'>.</span></p>
 
@@ -195,6 +216,41 @@ function CompanyHome() {
                     <h1 className='font-prompt text-lg text-center text-[#051339]'>Connect In 2023</h1>
                 </Card>
             </div>
+            <div>
+                <>
+
+                    <Dialog
+                        open={open}
+                        handler={handleOpen}
+                        animate={{
+                            mount: { scale: 1, y: 0 },
+                            unmount: { scale: 1, y: -100 },
+                        }}
+                    >
+                        <DialogHeader>Its a simple dialog.</DialogHeader>
+                        <DialogBody>
+                            The key to more success is to have a lot of pillows. Put it this way,
+                            it took me twenty five years to get these plants, twenty five years of
+                            blood sweat and tears, and I&apos;m never giving up, I&apos;m just
+                            getting started. I&apos;m up to something. Fan luv.
+                        </DialogBody>
+                        <DialogFooter>
+                            <Button
+                                variant="text"
+                                color="red"
+                                onClick={handleOpen}
+                                className="mr-1"
+                            >
+                                <span>Cancel</span>
+                            </Button>
+                            <Button variant="gradient" color="green" onClick={handleOpen}>
+                                <span>Confirm</span>
+                            </Button>
+                        </DialogFooter>
+                    </Dialog>
+                </>
+            </div>
+
             <Toaster />
 
         </div>
@@ -202,3 +258,8 @@ function CompanyHome() {
 }
 
 export default CompanyHome
+
+
+
+
+

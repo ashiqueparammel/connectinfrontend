@@ -88,7 +88,7 @@ function Login() {
                         const token = jwtDecode(data.access)
                         console.log(token, '>>>>>>>>>>>>>>decoded');
                         const setUser = {
-                            "user_id": token.user_id,
+                            "id": token.user_id,
                             "email": token.email,
                             "is_superuser": token.is_superuser,
                             "is_company": token.is_company,
@@ -157,7 +157,7 @@ function Login() {
                     console.log(response, '<<<<<<<<<<token>>>>>>>>>');
                     const token = jwtDecode(response.access)
                     const setUser = {
-                        "user_id": token.user_id,
+                        "id": token.user_id,
                         "email": token.email,
                         "is_superuser": token.is_superuser,
                         "is_company": token.is_company,
@@ -222,30 +222,30 @@ function Login() {
                     />
                 </div>
 
-                <Card className="w-96  bg-[#051339]  lg:ml-10 ml-5 mt-5 lg:mt-28" >
+                <Card className="w-96  bg-[#051339]  lg:ml-10 ml-5 mt-5 lg:mt-28 rounded-sm" >
                     <Typography variant="h3" className='text-center font-roboto-mono text-3xl  mt-5' color="white">
                         LOGIN
                     </Typography>
                     <form onSubmit={(e) => loginUser(e)}>
                         <CardBody className="flex flex-col font-prompt gap-5">
-                            <Input type='email' name='email' label="Enter Your Email " size="lg" className='bg-white' />
-                            <Input type='password' name='password' label="Enter Your Password" size="lg" className='bg-white' />
+                            <input type='email' name='email' placeholder="Enter Your Email " size="lg" className='bg-white h-12 rounded-sm' style={{ paddingLeft: '20px' }} />
+                            <input type='password' name='password' placeholder="Enter Your Password" size="lg" className='bg-white h-12 rounded-sm' style={{ paddingLeft: '20px' }} />
                             <div className="-ml-2.5">
                             </div>
                         </CardBody>
                         <CardFooter className="pt-0">
-                            <Button type='submit' variant="filled" className='bg-[#0A3863] font-prompt text-xl font-prompt-normal' fullWidth >
+                            <Button type='submit' variant="filled" className='bg-[#0A3863] font-prompt text-xl font-prompt-normal rounded-sm' fullWidth >
                                 LOGIN
                             </Button>
                             <br />
                             <p className='text-white ml-2 text-center'>  or  </p>
                             <br />
-                            <Button onClick={() => LoginWithGoogleAuth()} variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal text-black text-lg' fullWidth >
+                            <Button onClick={() => LoginWithGoogleAuth()} variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal rounded-sm text-black text-lg' fullWidth >
                                 <img src={googleImage} className='w-8  h-8 ml-2' alt="" />
                                 SIGN IN WITH GOOGLE
                             </Button>
 
-                            <Button onClick={Signup} variant="filled" className='bg-[#0A3863] font-prompt text-sm font-prompt-xlight mt-5' fullWidth >
+                            <Button onClick={Signup} variant="filled" className='bg-[#0A3863] font-prompt text-sm font-prompt-xlight mt-5 rounded-sm' fullWidth >
                                 New connection?Join Now
                             </Button>
                         </CardFooter>
@@ -257,7 +257,7 @@ function Login() {
                     <img className='w-0 ml-0 lg:w-72 lg:ml-96 lg:mt-10' src={logo} alt="ConnectIn Logo " />
                 </div>
 
-                <div className="lg:flex flex-col  lg:justify-center lg:gap-3 lg:ml-18">
+                <div className="lg:flex flex-col  lg:justify-center lg:gap-3 lg:ml-18 ">
                     <h1 className=" text-white  lg:font-prompt lg:text-5xl  lg:text-zinc-400 lg:ml-40  ">
                         Welcome to your professional community
                     </h1>
