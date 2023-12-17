@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
@@ -15,18 +15,19 @@ import { setUserDetails } from '../../Redux/Users';
 function CompanyHome() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [CompanyuserDetails, setCompanyuserDetails] = useState([])
-    const [companyDetail, setCompanyDetail] = useState([])
-    const [profileImage, setprofileImage] = useState(null)
+    const fileInputRef = useRef(null);
+    const fileInputProfileRef = useRef(null);
 
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(!open);
+    const [CompanyuserDetails, setCompanyuserDetails] = useState([]);
+    const [companyDetail, setCompanyDetail] = useState([]);
+    const [ImageManage, setImageManage] = useState(false);
+  
 
-    const userInfo = useSelector((state) => state.user.userInfo)
+    const userInfo = useSelector((state) => state.user.userInfo);
     // console.log(userInfo, '<<>>+++====hgf');
 
     useEffect(() => {
-
+        setImageManage(false)
         if (userInfo) {
             const userData = axios.get(`${Company_Profile}${userInfo.id}/`).then((response) => {
                 const responseData = response.data[0];
@@ -55,64 +56,117 @@ function CompanyHome() {
                     console.error("Error fetching user data:", error);
                 });
         }
-    }, []);
+    }, [ImageManage]);
     console.log(CompanyuserDetails, '<<<<<<<<<<<<<<<<++++');
     console.log(companyDetail, '>>>>>>>>>>>>>>>>>+++++');
 
     const handleshare = async () => {
         if (navigator.share) {
             try {
-
                 await navigator.share({
                     title: "hloo ",
                     text: "hlofss ",
                     url: window.location.href
                 })
-
             } catch (error) {
 
             }
         }
     }
 
-    // const handle_profile_cover_image = () => {
-    //     fileInputRef.current.click();
-    //   };
+    //Profile Cover Image setting 
+    const handleProfileCoverImage = () => {
+        fileInputRef.current.click();
+    };
 
-    // const profile_cover_Image_Add = () => {
-    //     try {
-    //         const formData = new FormData();
-    //         formData.append('profile_image', profileImage);
-    //         const updateProfileImage = axios.patch(`${CompanyDetails}${userInfo.id}/`, formData)
-    //     } catch (error) {
-    //         console.log(error);
-    //         toast.error('Somthing Wrong!');
-    //     }
-    // }
+    const profile_cover_Image_Add = (event) => {
+        try {
+            const file = event.target.files[0];
+            const formData = new FormData();
+            formData.append('profile_cover_image', file);
+            const updateProfileImage = axios.patch(`${CompanyDetails}${userInfo.id}/`, formData)
+            setImageManage(true)
+            console.log('done profile updated redy!');
+        } catch (error) {
+            console.log(error);
+            toast.error('Somthing Wrong!');
+        }
+    }
 
+    // Profile Image setting
+    const handleProfileImage = () => {
+        fileInputProfileRef.current.click();
+    };
+
+    const profile_Image_Add = (event) => {
+        try {
+            const file = event.target.files[0];
+            const formData = new FormData();
+            formData.append('profile_image', file);
+            const updateProfileImage = axios.patch(`${CompanyDetails}${userInfo.id}/`, formData)
+            setImageManage(true)
+            console.log('done profile updated redy!');
+        } catch (error) {
+            console.log(error);
+            toast.error('Somthing Wrong!');
+        }
+    }
+
+    console.log(ImageManage, 'imagemange');
     return (
         <div className=' flex mt-5'>
             <div className='mt-2'>
                 <Card className="h-[310px] bg-[#ededed] max-w-[20rem]  ml-16  shadow-xl shadow-blue-gray-900/2">
                     {(CompanyuserDetails.profile_cover_image ?
                         <Card style={{ backgroundImage: `url(${CompanyuserDetails.profile_cover_image})`, backgroundSize: '100% 100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} className='  h-28 rounded-b-none   shadow-xl shadow-[#b9b7b7]'>
-                            <div >
-                                {(CompanyuserDetails.profile_image ? <img src={CompanyuserDetails.profile_image} alt="profile photo" className=' ml-28 rounded-md shadow-2xl w-24 h-24 mt-14' /> :
-                                    <UserCircleIcon className="h-24 w-24 mt-14 ml-28 bg-[#e7e7e7] rounded-full" />)}
+                            <div  >
+                                {(CompanyuserDetails.profile_image ? <img onClick={()=>navigate('/company/profile/')} src={CompanyuserDetails.profile_image} alt="profile photo" className='hover:cursor-pointer  ml-28 rounded-md shadow-2xl w-24 h-24 mt-14' /> :
+                                    <div>
+                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon icon={faUser} color='#051339' className='hover:cursor-pointer w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
+                                        <div>
+                                            <div onClick={handleProfileImage} className='hover:bg-white rounded-md w-7 h-7   absolute right-28 -bottom-10'>
+                                                <FontAwesomeIcon icon={faCamera} color='#4c4e4f' className='w-5 h-5   hover:cursor-pointer hover:text-[#051339] mt-1 ml-1' />
+                                            </div>
+                                        </div>
+                                        <input
+                                            type="file"
+                                            ref={fileInputProfileRef}
+                                            style={{ display: 'none' }}
+                                            onChange={profile_Image_Add}
+                                        />
+                                    </div>)}
                             </div>
 
                         </Card> :
                         <Card className='bg-[#c1e0b7]  h-28  shadow-xl w-full rounded-b-none  shadow-[#b9b7b7]'>
-                            <div onClick={handleOpen} className='hover:bg-white rounded-md w-8 h-8  absolute right-2 bottom-2'><FontAwesomeIcon icon={faCamera} color='#4c4e4f' className='w-6 h-6   hover:cursor-pointer hover:text-[#051339] mt-1 ml-1' /></div>
-
+                            <div>
+                                <div onClick={handleProfileCoverImage} className='hover:bg-white rounded-md w-8 h-8 absolute right-2 bottom-2'>
+                                    <FontAwesomeIcon icon={faCamera} color='#4c4e4f' className='w-6 h-6 hover:cursor-pointer hover:text-[#051339] mt-1 ml-1' />
+                                </div>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    style={{ display: 'none' }}
+                                    onChange={profile_cover_Image_Add}
+                                />
+                            </div>
                             <div >
                                 {(CompanyuserDetails.profile_image ?
-                                    <img src={CompanyuserDetails.profile_image} alt="profile photo" className='ml-28 rounded-md shadow-2xl w-24 h-24 mt-14 ' />
-
+                                    <img  src={CompanyuserDetails.profile_image} alt="profile photo" className='hover:cursor-pointer ml-28 rounded-md shadow-2xl w-24 h-24 mt-14 ' />
                                     :
                                     <div>
-                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon icon={faUser} color='#051339' className='w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
-                                        <div className='hover:bg-white rounded-md w-7 h-7   absolute right-28 -bottom-10'><FontAwesomeIcon icon={faCamera} color='#4c4e4f' className='w-5 h-5   hover:cursor-pointer hover:text-[#051339] mt-1 ml-1' /></div>
+                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon icon={faUser} color='#051339' className='hover:cursor-pointer w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
+                                        <div>
+                                            <div onClick={handleProfileImage} className='hover:bg-white rounded-md w-7 h-7   absolute right-28 -bottom-10'>
+                                                <FontAwesomeIcon icon={faCamera} color='#4c4e4f' className='w-5 h-5   hover:cursor-pointer hover:text-[#051339] mt-1 ml-1' />
+                                            </div>
+                                        </div>
+                                        <input
+                                            type="file"
+                                            ref={fileInputProfileRef}
+                                            style={{ display: 'none' }}
+                                            onChange={profile_Image_Add}
+                                        />
                                     </div>
                                 )}
                             </div>
@@ -216,40 +270,7 @@ function CompanyHome() {
                     <h1 className='font-prompt text-lg text-center text-[#051339]'>Connect In 2023</h1>
                 </Card>
             </div>
-            <div>
-                <>
-
-                    <Dialog
-                        open={open}
-                        handler={handleOpen}
-                        animate={{
-                            mount: { scale: 1, y: 0 },
-                            unmount: { scale: 1, y: -100 },
-                        }}
-                    >
-                        <DialogHeader>Its a simple dialog.</DialogHeader>
-                        <DialogBody>
-                            The key to more success is to have a lot of pillows. Put it this way,
-                            it took me twenty five years to get these plants, twenty five years of
-                            blood sweat and tears, and I&apos;m never giving up, I&apos;m just
-                            getting started. I&apos;m up to something. Fan luv.
-                        </DialogBody>
-                        <DialogFooter>
-                            <Button
-                                variant="text"
-                                color="red"
-                                onClick={handleOpen}
-                                className="mr-1"
-                            >
-                                <span>Cancel</span>
-                            </Button>
-                            <Button variant="gradient" color="green" onClick={handleOpen}>
-                                <span>Confirm</span>
-                            </Button>
-                        </DialogFooter>
-                    </Dialog>
-                </>
-            </div>
+           
 
             <Toaster />
 

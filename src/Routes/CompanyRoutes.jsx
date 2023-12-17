@@ -7,6 +7,7 @@ import CompanyHome from '../Pages/Home/CompanyHome'
 import CompanyMyItems from '../Pages/Company/MyItems/CompanyMyItems'
 import PostView from '../Pages/Company/PostView/PostView'
 import AddPost from '../Components/CompanyComponents/AddPost/AddPost.Jsx'
+import ProfileCompany from '../Pages/Company/Profile/Profile'
 
 
 function CompanyRoutes() {
@@ -17,6 +18,7 @@ function CompanyRoutes() {
         <Route element={<CompanyLayout />}>
           <Route element={<CompanyHome />} path='/' />
           <Route element={<CompanySignup />} path='/profileverify' />
+          <Route element={<ProfileCompany />} path='/profile' />
           <Route element={<CompanyMyItems />} path='/myitems' />
           <Route element={<PostView/>} path='/postview' />
           <Route element={<AddPost/>} path='/addpost' />
