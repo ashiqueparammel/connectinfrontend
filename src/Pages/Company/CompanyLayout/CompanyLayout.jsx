@@ -1,12 +1,13 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import NavBar from '../../../Components/Navbar/NavBar'
+
+import CompanyNavBar from '../../../Components/Navbar/CompanyNavBar'
 
 function CompanyLayout() {
     return (
         <div className=''>
             <div className=''>
-            <NavBar />
+            <CompanyNavBar />
             </div>
             
             <div className='flex flex-col w-full mt-7'>

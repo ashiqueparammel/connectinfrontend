@@ -122,7 +122,7 @@ function CompanyHome() {
                             <div  >
                                 {(CompanyuserDetails.profile_image ? <img onClick={()=>navigate('/company/profile/')} src={CompanyuserDetails.profile_image} alt="profile photo" className='hover:cursor-pointer  ml-28 rounded-md shadow-2xl w-24 h-24 mt-14' /> :
                                     <div>
-                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon icon={faUser} color='#051339' className='hover:cursor-pointer w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
+                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon onClick={()=>navigate('/company/profile/')} icon={faUser} color='#051339' className='hover:cursor-pointer w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
                                         <div>
                                             <div onClick={handleProfileImage} className='hover:bg-white rounded-md w-7 h-7   absolute right-28 -bottom-10'>
                                                 <FontAwesomeIcon icon={faCamera} color='#4c4e4f' className='w-5 h-5   hover:cursor-pointer hover:text-[#051339] mt-1 ml-1' />
@@ -152,10 +152,10 @@ function CompanyHome() {
                             </div>
                             <div >
                                 {(CompanyuserDetails.profile_image ?
-                                    <img  src={CompanyuserDetails.profile_image} alt="profile photo" className='hover:cursor-pointer ml-28 rounded-md shadow-2xl w-24 h-24 mt-14 ' />
+                                    <img onClick={()=>navigate('/company/profile/')} src={CompanyuserDetails.profile_image} alt="profile photo" className='hover:cursor-pointer ml-28 rounded-md shadow-2xl w-24 h-24 mt-14 ' />
                                     :
                                     <div>
-                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon icon={faUser} color='#051339' className='hover:cursor-pointer w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
+                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon onClick={()=>navigate('/company/profile/')} icon={faUser} color='#051339' className='hover:cursor-pointer w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
                                         <div>
                                             <div onClick={handleProfileImage} className='hover:bg-white rounded-md w-7 h-7   absolute right-28 -bottom-10'>
                                                 <FontAwesomeIcon icon={faCamera} color='#4c4e4f' className='w-5 h-5   hover:cursor-pointer hover:text-[#051339] mt-1 ml-1' />
