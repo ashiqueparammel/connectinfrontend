@@ -3,16 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Card, Menu, MenuHandler, MenuItem, MenuList, Typography } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { JobUpdate } from '../../../Constants/Constants'
+import { Company_Profile, JobUpdate } from '../../../Constants/Constants'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 
 function PostView() {
-    const CompanyDetails = useSelector((state) => state.company.companyInfo)
+    const userDetails = useSelector((state) => state.user.userInfo)
     const location = useLocation()
     const navigate = useNavigate()
     const job_id = location.state.data || ''
     const [jobViews, setJobViews] = useState([])
+    const [CompanyDetail, setCompanyDetail] = useState([])
 
     // there is want to if condition  if job id show this page or else render to back page  not now want later
 
@@ -26,7 +27,12 @@ function PostView() {
 
     console.log(job_id, 'hllllllllllllllllo');
     useEffect(() => {
-        const response = axios.get(`${JobUpdate}${job_id}/`).then((response) => {
+        axios.get(`${Company_Profile}${userDetails.id}/`).then((response)=>{
+            setCompanyDetail(response.data[0])
+          }).catch((error)=>{
+            console.error("Error fetching company details:", error);
+          })
+        axios.get(`${JobUpdate}${job_id}/`).then((response) => {
             setJobViews(response.data);
 
         }).catch((error) => {
@@ -42,7 +48,7 @@ function PostView() {
                 <div className='xl:ml-28 lg:ml-24 2xl:28 sm:ml-6 md:ml-8 ml-8 mt-6 mb-3 '>
                     <Card className='bg-[#FAFAFA] shadow-2xl mt-2  rounded-md w-[90%]'>
                         <div className='flex justify-between'>
-                            <Typography className='font-prompt text-lg ml-6 mt-1 text-black'>{jobViews.Job_title}</Typography>
+                            <Typography className='font-prompt ml-6 mt-2 text-black' variant='h4'>{jobViews.Job_title}</Typography>
                             <Menu>
                                 <MenuHandler>
                                     <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-5 h-5 mt-3  rounded-full hover:text-[#000000]   mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer ' />
@@ -53,8 +59,8 @@ function PostView() {
                                 </MenuList>
                             </Menu>
                         </div>
-                        <Typography className='font-prompt text-md ml-6 '>{CompanyDetails.company_name}</Typography>
-                        <Typography className='font-prompt text-md ml-6 '>{CompanyDetails.Location}</Typography>
+                        <Typography className='font-prompt ml-6 text-black ' variant='h5'>{CompanyDetail.company_name}</Typography>
+                        <Typography className='font-prompt text-md ml-6 '>{CompanyDetail.Location}</Typography>
 
                         <div className='flex ml-6 '>
                             <FontAwesomeIcon icon={faSuitcase} color='#051339' className=' w-5 h-5  rounded-full hover:text-[#000000] mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer ' />
@@ -78,8 +84,8 @@ function PostView() {
                     <Card className='bg-[#FAFAFA] shadow-2xl mt-2 mb-2  rounded-md w-[90%]'>
                         <div className='m-6 font-prompt'>
                             <Typography className='font-prompt text-lg  mb-1 '  >About The Job </Typography >
-                            <h1>Company name :{CompanyDetails.company_name} </h1>
-                            <h1>Location : {CompanyDetails.Location}</h1>
+                            <h1>Company name :{CompanyDetail.company_name} </h1>
+                            <h1>Location : {CompanyDetail.Location}</h1>
                             <h1>Job Title : {jobViews.Job_title}</h1>
                             <h1>Experiance : {jobViews.Experience}</h1>
                             <h1>job type : {jobViews.job_type}</h1>
@@ -90,7 +96,7 @@ function PostView() {
                     </Card>
                     <Card className='bg-[#FAFAFA] shadow-2xl mt-2 mb-2  rounded-md w-[90%]'>
                         <div className='m-6 font-prompt'>
-                        <Typography className='font-prompt text-lg mb-1'>Job Discription </Typography>
+                            <Typography className='font-prompt text-lg mb-1'>Job Discription </Typography>
 
                             <h1 >job discription : {jobViews.job_description}</h1>
 

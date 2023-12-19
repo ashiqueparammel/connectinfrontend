@@ -1,36 +1,49 @@
 import React, { useEffect, useState } from 'react'
 import { faEye, faPlus, } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Card, Typography } from '@material-tailwind/react'
+import { Button, Card, Typography, Dialog, DialogHeader, DialogBody, DialogFooter } from '@material-tailwind/react'
 import { Tabs, TabsHeader, TabsBody, Tab, } from "@material-tailwind/react";
 import axios from 'axios';
-import { JobAdd, JobList } from '../../../Constants/Constants';
+import { Company_Profile, JobAdd, JobList } from '../../../Constants/Constants';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import toast, { Toaster } from 'react-hot-toast'
 
 
 
 function CompanyMyItems() {
-  
+
   // const company_Data
-  const CompanyDetails = useSelector((state) => state.company.companyInfo)
+  const UserDetails = useSelector((state) => state.user.userInfo)
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState('');
+  const [activeTab, setActiveTab] = useState('Posts');
   const Head = [{ Heading: 'Posts' }, { Heading: 'Interviews' }, { Heading: 'Applications' }]
   const [JobDetails, setJobDetails] = useState([]);
+  const [CompanyDetail, setCompanyDetails] = useState([])
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(!open);
 
   const formatPostedDate = (postedDate) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', time:'numeric'};
+    const options = { year: 'numeric', month: 'long', day: 'numeric', time: 'numeric' };
     const formattedDate = new Date(postedDate).toLocaleDateString(undefined, options);
     return formattedDate;
   };
-  
+
   useEffect(() => {
-    const response = axios.get(`${JobList}${CompanyDetails.Company_id}/`).then((response) => {
-      setJobDetails(response.data);
+    axios.get(`${Company_Profile}${UserDetails.id}/`).then((response) => {
+      setCompanyDetails(response.data[0])
+      if (response.status === 200) {
+        axios.get(`${JobList}${response.data[0].id}/`).then((response) => {
+          setJobDetails(response.data);
+        }).catch((error) => {
+          console.error("Error fetching job details:", error);
+        });
+      }
     }).catch((error) => {
-      console.error("Error fetching job details:", error);
-    });
+      console.error("Error fetching company details:", error);
+    })
+
+
 
 
   }, [])
@@ -44,7 +57,7 @@ function CompanyMyItems() {
           <Typography className='font-prompt mt-4 ml-4' variant='h4'>
             MyItems
           </Typography>
-          <Button className='mt-4 mr-4 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faPlus} /><span>Add Post</span></Button>
+          <Button onClick={handleOpen} className='mt-4 mr-4 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faPlus} /><span>Add Post</span></Button>
         </div>
 
         <div>
@@ -68,21 +81,21 @@ function CompanyMyItems() {
             </TabsHeader>
             <TabsBody className='flex justify-center'>
               {(activeTab === 'Posts' ?
-                  <div className='flex flex-col w-full ml-24'>
-               { JobDetails.map((job, index) => (
+                <div className='flex flex-col w-full ml-24'>
+                  {JobDetails.map((job, index) => (
                     <Card className=' flex flex-row mb-3 rounded-md w-[90%] mt-5 justify-between' key={index}>
-                    <div className='ml-16'>
-                      <Typography className='mt-2 font-prompt text-xl text-black'>{job.Job_title}</Typography>
-                      <Typography className='font-prompt text-lg text-black'>{job.company_id.company_name}</Typography>
-                      <Typography className='font-prompt text-sm text-black'>{job.company_id.Location}</Typography>
-                      <Typography className='font-prompt text-sm text-black'>{formatPostedDate(job.posted_date)}</Typography>
-                    </div>
-                    <Button onClick={() => navigate('/company/postview',{ state: { data: job.id } }) } className='mt-8 mr-16 h-10 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faEye} /><span>View</span></Button>
-                  </Card>
-                  
-                ))} 
-                </div>: '')}
-                  
+                      <div className='ml-16'>
+                        <Typography className='mt-2 font-prompt text-xl text-black'>{job.Job_title}</Typography>
+                        <Typography className='font-prompt text-lg text-black'>{job.company.company_name}</Typography>
+                        <Typography className='font-prompt text-sm text-black'>{job.company.Location}</Typography>
+                        <Typography className='font-prompt text-sm text-black'>{formatPostedDate(job.posted_date)}</Typography>
+                      </div>
+                      <Button onClick={() => navigate('/company/postview', { state: { data: job.id } })} className='mt-8 mr-16 h-10 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faEye} /><span>View</span></Button>
+                    </Card>
+
+                  ))}
+                </div> : '')}
+
               {(activeTab === 'Interviews' ? 'interview' : '')}
               {(activeTab === 'Applications' ? 'Applications' : '')}
 
@@ -91,6 +104,43 @@ function CompanyMyItems() {
         </div>
 
       </Card>
+      {/* {edit modal} */}
+      <Dialog
+        open={open}
+        handler={handleOpen}
+        animate={{
+          mount: { scale: 1, y: 0 },
+          unmount: { scale: 1, y: -100 },
+        }}>
+        <DialogHeader className='font-prompt text-black'>Add Job</DialogHeader>
+        <div className='flex flex-col gap-4'>
+
+          <input type="text" placeholder='Job Title' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+                         border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+          <input type="text" placeholder='Job Experiance' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+                         border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+          <input type="text" placeholder='Job Type' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+                         border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+          <input type="text" placeholder='Salary' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+                         border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+          <input type="text" placeholder='Opengins' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+                         border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+
+          <textarea type="text" placeholder='Job Description' className='border-2 w-[90%] ml-[4%] h-28 rounded-sm
+                         border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+
+        </div>
+        <DialogFooter>
+          <Button variant="text" className='bg-[#d9dbdb] font-prompt-normal mr-1 text-black hover:bg-[#a4a4a4]' onClick={handleOpen}>
+            <span>Cancel</span>
+          </Button>
+          <Button variant="filled" className='bg-[#051339] font-prompt-normal' onClick={handleOpen}>
+            <span>Update</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
+      <Toaster />
+
     </div>
   )
 }
