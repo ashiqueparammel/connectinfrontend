@@ -8,7 +8,8 @@ import { Company_Profile, JobAdd, JobList } from '../../../Constants/Constants';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast'
-
+import { AllExperiance } from '../../../Helpers/Experiance';
+import { AllJobType } from '../../../Helpers/JobType';
 
 
 function CompanyMyItems() {
@@ -20,8 +21,12 @@ function CompanyMyItems() {
   const Head = [{ Heading: 'Posts' }, { Heading: 'Interviews' }, { Heading: 'Applications' }]
   const [JobDetails, setJobDetails] = useState([]);
   const [CompanyDetail, setCompanyDetails] = useState([])
+  const [JobExperiance, setJobExperiance] = useState('')
+  const [JobType, setJobType] = useState('')
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
+
+
 
   const formatPostedDate = (postedDate) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', time: 'numeric' };
@@ -48,6 +53,7 @@ function CompanyMyItems() {
 
   }, [])
   console.log(JobDetails, '=====================================>>>>>>>.');
+  // console.log(JobExperiance, '==============+++=======================>>>>>>>.');
 
 
   return (
@@ -105,8 +111,9 @@ function CompanyMyItems() {
 
       </Card>
       {/* {edit modal} */}
-      <Dialog
+      <Dialog className='w-full'
         open={open}
+        size={'lg'}
         handler={handleOpen}
         animate={{
           mount: { scale: 1, y: 0 },
@@ -117,14 +124,49 @@ function CompanyMyItems() {
 
           <input type="text" placeholder='Job Title' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
                          border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
-          <input type="text" placeholder='Job Experiance' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+          <div className='flex flex-row gap-4 ml-[4%]'>
+            <select
+              value={JobExperiance}
+              onChange={(e) => setJobExperiance(e.target.value)}
+              className="!border-black bg-white focus:!border-t-black border-2 w-[25%] h-12 rounded-sm"
+              style={{ paddingLeft: '20px' }}>
+              <option value="" disabled hidden>
+                {JobExperiance ? '' : 'Job Experiance'}
+              </option>
+
+              {AllExperiance.map((Experiance, index) => (
+                <option key={`${index}:${Experiance}`} value={index} className='font-prompt text-black'>
+                  {Experiance}
+                </option>
+              ))}
+            </select>
+            <select
+              value={JobType}
+              onChange={(e) => setJobType(e.target.value)}
+              className="!border-black bg-white focus:!border-t-black border-2 w-[25%] h-12 rounded-sm"
+              style={{ paddingLeft: '20px' }}>
+              <option value="" disabled hidden>
+                {JobType ? '' : 'Job Type'}
+              </option>
+
+              {AllJobType.map((Type, index) => (
+                <option key={`${index}:${Type}`} value={Type} className='font-prompt text-black'>
+                  {Type}
+                </option>
+              ))}
+            </select>
+
+
+            <input type="text" placeholder='Salary' className='border-2 w-[40%]  h-12 rounded-sm
                          border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
-          <input type="text" placeholder='Job Type' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+          </div>
+          <input type="text" placeholder='Opengins (In numbers)' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
                          border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
-          <input type="text" placeholder='Salary' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
-                         border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
-          <input type="text" placeholder='Opengins' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
-                         border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+          <div type="text" placeholder='Skills' className='border-2 w-[90%] ml-[4%] h-28 rounded-sm
+                         border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} >
+
+            <Button>Add skills</Button>
+          </div>
 
           <textarea type="text" placeholder='Job Description' className='border-2 w-[90%] ml-[4%] h-28 rounded-sm
                          border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />

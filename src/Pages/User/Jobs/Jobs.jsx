@@ -171,13 +171,13 @@ function Jobs() {
 
                             <div className=' flex gap-2'>
                                 <div>
-                                    {(job.company_id.user_id.profile_image ? <img src={job.company_id.user_id.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl  w-14 h-14  mt-4 ' /> :
+                                    {(job.company.user.profile_image ? <img src={job.company.user.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl  w-14 h-14  mt-4 ' /> :
                                         <UserCircleIcon className="ml-4 rounded-full w-14 h-14  mt-4 " />)}
                                 </div>
                                 <div >
                                     <Typography onClick={() => navigate('/jobview',{ state: { data: job.id } }) } className='mt-2 font-prompt text-xl text-black hover:cursor-pointer hover:text-[#4e576f] '>{job.Job_title}</Typography>
-                                    <Typography className='font-prompt text-lg text-black'>{job.company_id.company_name}</Typography>
-                                    <Typography className='font-prompt text-sm text-black'>{job.company_id.Location}</Typography>
+                                    <Typography className='font-prompt text-lg text-black'>{job.company.company_name}</Typography>
+                                    <Typography className='font-prompt text-sm text-black'>{job.company.Location}</Typography>
                                     <Typography className='font-prompt text-sm text-black'>Jobtype : {job.job_type}</Typography>
                                     <Typography className='font-prompt text-sm text-black'>Salary : {job.salary}</Typography>
                                     <Typography className='font-prompt text-sm text-black mb-1'>Posted Date : {formatPostedDate(job.posted_date)}</Typography>

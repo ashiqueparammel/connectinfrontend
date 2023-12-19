@@ -21,7 +21,7 @@ function UserHome() {
 
   useEffect(() => {
     if (userInfo) {
-      const userData = axios.get(`${UserDetails}${userInfo.user_id}/`).then((response) => {
+      const userData = axios.get(`${UserDetails}${userInfo.id}/`).then((response) => {
         const responseData = response.data;
         setuserDetails(responseData)
       })

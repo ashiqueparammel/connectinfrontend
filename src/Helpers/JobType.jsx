@@ -1,0 +1,1 @@
+export const AllJobType=['Onsite','Remote','Hybrid']
