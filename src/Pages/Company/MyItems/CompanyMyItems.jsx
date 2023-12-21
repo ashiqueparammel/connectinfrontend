@@ -31,8 +31,7 @@ function CompanyMyItems() {
   const [openSkill, setSkillOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
   const handleSkillOpen = () => setSkillOpen((cur) => !cur);
-
-
+  const [ManageState, setManageState] = useState(false)
 
   const formatPostedDate = (postedDate) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', time: 'numeric' };
@@ -41,7 +40,7 @@ function CompanyMyItems() {
   };
 
   useEffect(() => {
-
+    setManageState(false)
     axios.get(`${Company_Profile}${UserDetails.id}/`).then((response) => {
       setCompanyDetails(response.data[0])
       if (response.status === 200) {
@@ -56,20 +55,13 @@ function CompanyMyItems() {
     })
     axios.get(List_Skills).then((response) => {
       setAllSkills(response.data)
-      // console.log(response.data,'daaaaaaaaaaaataaaaa');
     }).catch((error) => {
       console.log(error, 'error get skills');
 
     })
 
 
-
-
-  }, [])
-  // console.log(JobDetails, '=====================================>>>>>>>.');
-  // console.log(allSkills, '==============+++=======================>>>>>>>.');
-  // console.log(addNewSkills, '==============-----=======================>>>>>>>.');
-
+  }, [ManageState])
 
   const AddNewOnskills = () => {
     const addOnskill = {
@@ -82,16 +74,13 @@ function CompanyMyItems() {
           setJobAllSkills([...jobAllSkills, res])
           setJobAllSkillsid([...jobAllSkillsid, res.id])
           toast.success('Your On skill Added');
-
         }
       }).catch((error) => {
         if (error.response.data.skills) {
           toast.error('This skill already there!');
         }
-        // console.error("Error fetching skills add details:", error);
       });
     } catch (error) {
-
       console.log('error add skills', error);
     }
     handleSkillOpen()
@@ -99,7 +88,6 @@ function CompanyMyItems() {
 
   const addOptionalskills = (value) => {
     const exist = jobAllSkills.find((obj) => obj.id === parseInt(value))
-    // console.log(exist,'exist');
     if (exist) {
       toast.error(' This skill already enterd!')
     } else {
@@ -107,26 +95,19 @@ function CompanyMyItems() {
       setJobAllSkills([...jobAllSkills, allSkills[value - 1]])
       setJobAllSkillsid([...jobAllSkillsid, value])
       toast.success('skill Added');
-
       handleSkillOpen()
     }
 
   }
 
   const removeSelectedSkills = (skills) => {
-    console.log('ashique value', skills);
-
     setJobAllSkillsid(jobAllSkillsid.filter((obj) => parseInt(obj) !== skills))
     setJobAllSkills(jobAllSkills.filter((obj2) => obj2.id !== skills))
-
   }
 
-  // console.log(jobAllSkills, 'chhhhhhhhheeeckkkk sklls');
-  // console.log(jobAllSkillsid, 'chhhhhhhhheeeckkkk id');
 
   const AddJobform = async (e) => {
     e.preventDefault();
-
     const postdata = {
       company: CompanyDetail.id,
       Job_title: e.target.Job_title.value,
@@ -172,35 +153,31 @@ function CompanyMyItems() {
       try {
         const responseData = await axios.post(JobAdd, postdata);
         const response = responseData.data
-        console.log(response, 'respose job add');
-        console.log(responseData, 'respose job adddataa');
         if (responseData.status === 201) {
           toast.success('Job Added successfully!')
           const job_id = response.id
-          console.log(job_id, 'iiiiiididididid');
           try {
             for (let skill = 0; skill < jobAllSkillsid.length; skill++) {
               let skillData = {
                 Job_post: job_id,
                 skills: jobAllSkillsid[skill]
               }
-              let res = axios.post(JobSkillsAdd, skillData);
-              console.log(res, 'addding skillsss')
-
+              axios.post(JobSkillsAdd, skillData);
             }
 
           } catch (error) {
             console.error('Error during SKill add:', error);
             toast.error(error);
           }
+          setManageState(true)
           handleOpen()
+
         }
       } catch (error) {
         console.error('Error during JOb add:', error);
         toast.error(error);
       }
     }
-
   };
 
 
@@ -341,7 +318,7 @@ function CompanyMyItems() {
             </Button>
           </DialogFooter>
         </form>
-      <Toaster/>
+        <Toaster />
 
       </Dialog>
       {/* {add skills} */}
@@ -391,10 +368,10 @@ function CompanyMyItems() {
 
           </CardFooter>
         </Card>
-      <Toaster/>
+        <Toaster />
 
       </Dialog>
-      <Toaster/>
+      <Toaster />
     </div>
   )
 }
