@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Card, Menu, MenuHandler, MenuItem, MenuList, Typography } from '@material-tailwind/react'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Company_Profile, JobUpdate } from '../../../Constants/Constants'
+import { Company_Profile, JobUpdate, ListRequiredSkills } from '../../../Constants/Constants'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 
@@ -14,6 +14,7 @@ function PostView() {
     const job_id = location.state.data || ''
     const [jobViews, setJobViews] = useState([])
     const [CompanyDetail, setCompanyDetail] = useState([])
+    const [RequiredSkills, setRequiredSkills] = useState([])
 
     // there is want to if condition  if job id show this page or else render to back page  not now want later
 
@@ -27,19 +28,27 @@ function PostView() {
 
     console.log(job_id, 'hllllllllllllllllo');
     useEffect(() => {
-        axios.get(`${Company_Profile}${userDetails.id}/`).then((response)=>{
+        axios.get(`${Company_Profile}${userDetails.id}/`).then((response) => {
             setCompanyDetail(response.data[0])
-          }).catch((error)=>{
+        }).catch((error) => {
             console.error("Error fetching company details:", error);
-          })
+        })
         axios.get(`${JobUpdate}${job_id}/`).then((response) => {
             setJobViews(response.data);
 
         }).catch((error) => {
             console.error("Error fetching job details:", error);
         });
+        axios.get(`${ListRequiredSkills}${job_id}/`).then((response) => {
+            setRequiredSkills(response.data);
+            console.log('finaljob skills get', response.data);
+
+        }).catch((error) => {
+            console.error("Error fetching job details:", error);
+        });
     }, [])
     console.log(jobViews, '==============>>>>>>>>>>>>');
+    console.log(RequiredSkills, '<<<<<<<<<<<<<8585==============>>>>>>>>>>>>');
 
     return (
         <div className='flex justify-center'>
@@ -82,12 +91,12 @@ function PostView() {
                     </Card>
 
                     <Card className='bg-[#FAFAFA] shadow-2xl mt-2 mb-2  rounded-md w-[90%]'>
-                        <div className='m-6 font-prompt'>
+                        <div className='m-6 font-prompt flex flex-col gap-2'>
                             <Typography className='font-prompt text-lg  mb-1 '  >About The Job </Typography >
                             <h1>Company name :{CompanyDetail.company_name} </h1>
                             <h1>Location : {CompanyDetail.Location}</h1>
                             <h1>Job Title : {jobViews.Job_title}</h1>
-                            <h1>Experiance : {jobViews.Experience}</h1>
+                            <h1>Experiance : {(jobViews.Experience===0?'Fresher': jobViews.Experience +' Years')}</h1>
                             <h1>job type : {jobViews.job_type}</h1>
                             <h1>salary : {jobViews.salary}</h1>
                             <h1 >posted date : {formatPostedDate(jobViews.posted_date)}</h1>
@@ -98,12 +107,19 @@ function PostView() {
                         <div className='m-6 font-prompt'>
                             <Typography className='font-prompt text-lg mb-1'>Job Discription </Typography>
 
-                            <h1 >job discription : {jobViews.job_description}</h1>
+                            <h1 >{jobViews.job_description}</h1>
 
                         </div>
                     </Card>
                     <Card className='bg-[#FAFAFA] shadow-2xl py-2 px-5 rounded-md w-[90%]'>
                         <Typography className='font-prompt text-lg '>Required Skills</Typography>
+                       <div className='flex flex-row gap-2'>
+                       {RequiredSkills.map((skills) => (
+                            < div key={skills.id}  className='font-prompt text-black flex flex-row mb-4 mt-4 '>
+                                <div className='bg-[#cacbcb] border-[1px] border-black flex gap-1 rounded-md text-black'><p className='font-prompt ml-1 mr-1'> {skills.skills.skills}</p></div>
+                            </div>
+                        ))}
+                       </div>
 
 
                     </Card>

@@ -221,19 +221,19 @@ function ProfileCompany() {
     };
 
     const removeCoverImage = () => {
-        if (userInfo.profile_image) {
+        if (userInfo.profile_cover_image) {
 
-            const removeImageProfile = {
+            const removecover_image = {
                 profile_cover_image: null
             }
-            axios.patch(`${CompanyDetails}${userInfo.id}/`, removeImageProfile).then((response) => {
+            axios.patch(`${CompanyDetails}${userInfo.id}/`, removecover_image).then((response) => {
                 if (response.status === 200) {
                     setEditManage(true)
                     toast.success('Cover Image removed !');
                 }
             }).catch((error) => {
-                if (error.response.data.profile_image[0]) {
-                    toast.error(error.response.data.profile_image[0]);
+                if (error.response.data.profile_cover_image[0]) {
+                    toast.error(error.response.data.profile_cover_image[0]);
                 }
             })
         } else {
