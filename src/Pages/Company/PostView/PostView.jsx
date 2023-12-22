@@ -240,13 +240,8 @@ function PostView() {
             }
             setManageState(true)
             handleOpen()
-
         }
-
-
     }
-
-
 
     return (
         <div className='flex justify-center'>

@@ -26,3 +26,10 @@ export const List_Skills = import.meta.env.VITE_List_Skills
 export const JobSkillsAdd = import.meta.env.VITE_JobSkillsAdd 
 export const ListRequiredSkills = import.meta.env.VITE_ListRequiredSkills 
 export const UpdateJobSkills = import.meta.env.VITE_UpdateJobSkills 
+export const UserProfileDetails = import.meta.env.VITE_UserProfileDetails 
+export const EmployeeProfileAdd = import.meta.env.VITE_EmployeeProfileAdd 
+export const EmployeeProfileUpdate = import.meta.env.VITE_EmployeeProfileUpdate 
+export const SavePostAdd = import.meta.env.VITE_SavePostAdd 
+export const SavePostDetail = import.meta.env.VITE_SavePostDetail 
+export const SavePostUpdate = import.meta.env.VITE_SavePostUpdate 
+

@@ -4,13 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Card, Menu, MenuHandler, MenuItem, MenuList, Typography, Input } from '@material-tailwind/react';
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { JobListUser, JobSearch } from '../../../Constants/Constants';
+import { JobListUser, JobSearch, SavePostAdd, SavePostDetail, UserProfileDetails } from '../../../Constants/Constants';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 
 function Jobs() {
-    
+    const userInfo = useSelector((state) => state.user.userInfo)
+
     const navigate = useNavigate()
     const [jobList, setjobList] = useState([])
     const [dateFilters, setdateFilters] = useState('')
@@ -18,6 +21,7 @@ function Jobs() {
     const [jobExperience, setJobExperience] = useState('')
     const [titleSearch, settitleSearch] = useState('')
     const [LocationSearch, setLocationSearch] = useState('')
+
     const formatPostedDate = (postedDate) => {
 
         const options = { year: 'numeric', month: 'long', day: 'numeric', time: 'numeric' };
@@ -80,18 +84,18 @@ function Jobs() {
         setJobExperience('');
     };
 
-// serach title and loactions
+    // serach title and loactions
 
 
     const handleTitleInputChange = (e) => {
-        
+
         // SearchJobs(e.target.value);
         settitleSearch(e.target.value);
-      };
-      const handleLocationInputChange = (e) => {
+    };
+    const handleLocationInputChange = (e) => {
         // SearchJobs(e.target.value);
         setLocationSearch(e.target.value);
-      };
+    };
 
     useEffect(() => {
         const response = axios.get(JobListUser).then((response) => {
@@ -101,8 +105,40 @@ function Jobs() {
         });
 
 
-    }, [titleSearch,job_types])
+    }, [titleSearch, job_types])
     console.log(jobList, '=====================================>>>>>>>.');
+
+
+
+
+    const savedPost = (event) => {
+        axios.get(`${SavePostDetail}${userInfo.id}/`).then((response)=>{
+            let check = response.data
+            let exist = check.find((obj)=>obj.job_post.id===event)
+            if (exist){
+                toast.error("already saved!")
+                // console.log(exist,'cccccccccccccccckkekekeke');
+            }
+            else{
+                const saveData = {
+                    user: userInfo.id,
+                    job_post:event
+                }
+                axios.post(SavePostAdd,saveData).then((response) => {
+                  if(response.status===201){
+                    toast.success('Job Saved')
+                   }
+                }).catch((error) => {
+                    console.error("Error saved details:", error);
+                });
+
+            }
+        }).catch((error) => {
+            console.error("Error fetching saved details:", error);
+        });
+        // console.log('event', userInfo.id, event);
+       
+    }
 
     return (
         <div>
@@ -114,7 +150,7 @@ function Jobs() {
                         <div className='flex justify-evenly'>
 
                             <input onChange={handleTitleInputChange} type="search" className='w-[30%] h-12 border-[1px] border-black rounded-sm placeholder:text-black placeholder:font-prompt  focus:border-0' placeholder="  Job title or Company" style={{ paddingLeft: '20px' }} />
-                            <input onChange={ handleLocationInputChange} type="search" className='w-[30%] h-12 border-[1px] border-black rounded-sm  placeholder:text-black placeholder:font-prompt focus:border-0 ' placeholder="   State or City" style={{ paddingLeft: '20px' }} />
+                            <input onChange={handleLocationInputChange} type="search" className='w-[30%] h-12 border-[1px] border-black rounded-sm  placeholder:text-black placeholder:font-prompt focus:border-0 ' placeholder="   State or City" style={{ paddingLeft: '20px' }} />
                             <Button onClick={SearchJobs} className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' >Filter</Button>
                         </div>
                         <div className='mb-4 mt-6 ml-28 flex gap-16'>
@@ -133,7 +169,7 @@ function Jobs() {
                             </Menu>
                             <Menu>
                                 <MenuHandler>
-                                    <Button className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' ><FontAwesomeIcon icon={faCaretDown} className='mr-2 w-4 h-4' />{(jobExperience?jobExperience:'Experience')}</Button>
+                                    <Button className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' ><FontAwesomeIcon icon={faCaretDown} className='mr-2 w-4 h-4' />{(jobExperience ? jobExperience : 'Experience')}</Button>
                                 </MenuHandler>
                                 <MenuList className="max-h-72 font-prompt text-black">
                                     <MenuItem onClick={(e) => handleFresherClick()} >Fresher</MenuItem>
@@ -145,7 +181,7 @@ function Jobs() {
                             </Menu>
                             <Menu>
                                 <MenuHandler>
-                                    <Button className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' ><FontAwesomeIcon icon={faCaretDown} className='mr-2 w-4 h-4' /> {(job_types?job_types:'Job Type')}</Button>
+                                    <Button className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' ><FontAwesomeIcon icon={faCaretDown} className='mr-2 w-4 h-4' /> {(job_types ? job_types : 'Job Type')}</Button>
                                 </MenuHandler>
                                 <MenuList className="max-h-72 font-prompt text-black">
                                     <MenuItem onClick={(e) => handleHybridClick()} >Hybrid</MenuItem>
@@ -175,7 +211,7 @@ function Jobs() {
                                         <UserCircleIcon className="ml-4 rounded-full w-14 h-14  mt-4 " />)}
                                 </div>
                                 <div >
-                                    <Typography onClick={() => navigate('/jobview',{ state: { data: job.id } }) } className='mt-2 font-prompt text-xl text-black hover:cursor-pointer hover:text-[#4e576f] '>{job.Job_title}</Typography>
+                                    <Typography onClick={() => navigate('/jobview', { state: { data: job.id } })} className='mt-2 font-prompt text-xl text-black hover:cursor-pointer hover:text-[#4e576f] '>{job.Job_title}</Typography>
                                     <Typography className='font-prompt text-lg text-black'>{job.company.company_name}</Typography>
                                     <Typography className='font-prompt text-sm text-black'>{job.company.Location}</Typography>
                                     <Typography className='font-prompt text-sm text-black'>Jobtype : {job.job_type}</Typography>
@@ -185,14 +221,15 @@ function Jobs() {
 
                             </div>
                             <div className='mr-10'>
-                                <FontAwesomeIcon className='mt-10 mr-20 h-6 text-[#051339] hover:cursor-pointer hover:text-[#4e576f] font-prompt-normal' icon={faSave} />
-                                <FontAwesomeIcon className='mt-10 h-6 text-[#051339] hover:cursor-pointer hover:text-[#4e576f] font-prompt-normal' icon={faRemove} />
+                                <FontAwesomeIcon onClick={(e) => savedPost(job.id)} className='mt-10 mr-20 h-6 text-[#051339] hover:cursor-pointer hover:text-[#4e576f] font-prompt-normal' icon={faSave} />
+                                {/* <FontAwesomeIcon className='mt-10 h-6 text-[#051339] hover:cursor-pointer hover:text-[#4e576f] font-prompt-normal' icon={faRemove} /> */}
                             </div>
                         </Card>
                     ))}
                 </Card>
 
             </div>
+            <Toaster/>
         </div>
     )
 }

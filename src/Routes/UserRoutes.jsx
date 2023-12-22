@@ -7,6 +7,7 @@ import UserHome from '../Pages/Home/UserHome'
 import UserMyItems from '../Pages/User/MyItems/UserMyItems'
 import Jobs from '../Pages/User/Jobs/Jobs'
 import JobView from '../Pages/User/JobView/JobView'
+import UserProfile from '../Pages/User/Profile/Profile'
 
 
 
@@ -20,6 +21,7 @@ function UserRoutes() {
                         <Route element={<UserMyItems />} path='/myitems' />
                         <Route element={<Jobs />} path='/jobs' />
                         <Route element={<JobView />} path='/jobview' />
+                        <Route element={< UserProfile/>} path='/profile' />
                     </Route>
                 </Route>
             </Routes>
