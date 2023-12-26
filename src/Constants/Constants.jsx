@@ -9,7 +9,8 @@ export const User_Google_Login = import.meta.env.VITE_User_Google_Login
 export const UserList = import.meta.env.VITE_UserList
 export const UserSearch = import.meta.env.VITE_UserSearch
 export const Companylist = import.meta.env.VITE_Companylist
-export const CompanySearch = import.meta.env.VITE_CompanySearch
+// export const CompanySearch = import.meta.env.VITE_CompanySearch VITE_CompanySearchs
+export const CompanySearchs = import.meta.env.VITE_CompanySearchs 
 export const UserDetails = import.meta.env.VITE_UserDetails
 export const CompanyDetails = import.meta.env.VITE_CompanyDetails
 export const CompanyAdd = import.meta.env.VITE_CompanyAdd
@@ -32,4 +33,7 @@ export const EmployeeProfileUpdate = import.meta.env.VITE_EmployeeProfileUpdate
 export const SavePostAdd = import.meta.env.VITE_SavePostAdd 
 export const SavePostDetail = import.meta.env.VITE_SavePostDetail 
 export const SavePostUpdate = import.meta.env.VITE_SavePostUpdate 
+export const CompanyLists = import.meta.env.VITE_CompanyLists 
+export const CompanyListAdmin = import.meta.env.VITE_CompanyListAdmin 
+export const LogoutBlackList = import.meta.env.VITE_LogoutBlackList 
 

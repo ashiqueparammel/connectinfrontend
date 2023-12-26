@@ -7,17 +7,31 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { resetState } from "../../Redux/Users";
 import { CompanyResetState } from "../../Redux/Companyees";
+import axios from "axios";
+import { LogoutBlackList } from "../../Constants/Constants";
 
 function CompanyNavBar() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     
-    const logout = () => {
-        localStorage.removeItem('token')
-        dispatch(resetState);
-        dispatch(CompanyResetState);
-        navigate('/login');
-    }
+    const logout = async () => {
+        try {
+            const AuthCheck = JSON.parse(localStorage.getItem('token'));
+            const { access } = AuthCheck;
+            const { refresh } = AuthCheck;
+            const config = { headers: { Authorization: `Bearer ${access}` } };
+            const token = { refresh_token: String(refresh) };
+            const LogoutUser = await axios.post(LogoutBlackList, token, config);
+            const response = LogoutUser.data;
+            localStorage.removeItem('token')
+            dispatch(resetState);
+            navigate('/login');
+            // console.log(response, 'Authentication response data');
+        } catch (error) {
+            console.log("Error: ", error);
+        }
+    };
+
     
     const [openNav, setOpenNav] = React.useState(false);
     

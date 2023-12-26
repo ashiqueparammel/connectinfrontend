@@ -7,7 +7,6 @@ import { jwtDecode } from 'jwt-decode';
 
 
 function AdminProtected() {
-    console.log('hhhhhhhhhhhhhhhhhhhhha');
     const token = localStorage.getItem('token');
 
     console.log(token, 'admin cheeekkkkkkkkk ');

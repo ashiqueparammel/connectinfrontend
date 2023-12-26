@@ -21,6 +21,12 @@ function Jobs() {
     const [jobExperience, setJobExperience] = useState('')
     const [titleSearch, settitleSearch] = useState('')
     const [LocationSearch, setLocationSearch] = useState('')
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [startDay, setStartDay] = useState(new Date());
+    const [manageState, setmanageState] = useState(false)
+
+
+
 
     const formatPostedDate = (postedDate) => {
 
@@ -32,9 +38,14 @@ function Jobs() {
     const SearchJobs = async (keyword) => {
         if (keyword) {
             try {
-                // ?search=
-                // ?job_type=Hybrid&search=broto
-                const SearchRequest = await axios.get(`${JobSearch}?search=${titleSearch}&${LocationSearch}&job_type=${job_types}&Experience=${jobExperience}`);
+                if (LocationSearch === '' && job_types === '' && jobExperience === '' && startDay.toISOString() === currentDate.toISOString() && titleSearch !== '' || LocationSearch !== '') {
+
+                    const SearchRequest = await axios.get(`${JobSearch}?search=${keyword}`);
+                    setjobList(SearchRequest.data);
+                }
+
+                const SearchRequest = await axios.get(`${JobSearch}?search=${titleSearch}&${LocationSearch}&job_type=${job_types}
+                &Experience=${jobExperience}&start=${startDay.toISOString()}&end=${currentDate.toISOString()}`);
                 setjobList(SearchRequest.data);
             }
             catch (error) {
@@ -44,60 +55,30 @@ function Jobs() {
         }
     };
 
-
+    // search title and loactions
+    const handleTitleInputChange = (e) => { settitleSearch(e.target.value); SearchJobs(titleSearch) };
+    const handleLocationInputChange = (e) => { setLocationSearch(e.target.value); SearchJobs(LocationSearch) };
     // job_types functions
-
-    const handleRemoteClick = () => {
-        // SearchJobs('?job_type=remote');
-        setJob_types('remote');
-    };
-    const handleOnsiteClick = () => {
-        // SearchJobs('?job_type=onsite');
-        setJob_types('onsite');
-    };
-    const handleHybridClick = () => {
-        // SearchJobs('?job_type=Hybrid');
-        setJob_types('Hybrid');
-    };
-
-
+    const handleRemoteClick = () => { setJob_types('Remote'); };
+    const handleOnsiteClick = () => { setJob_types('Onsite'); };
+    const handleHybridClick = () => { setJob_types('Hybrid'); };
     //  jobExperience functions
-
-    const handleFresherClick = () => {
-        // SearchJobs('?Experience=Fresher');
-        setJobExperience('Fresher');
-    };
-    const handle1_yearsClick = () => {
-        // SearchJobs('?Experience=1 years');
-        setJobExperience('1 years');
-    };
-    const handle2_yearsClick = () => {
-        // SearchJobs('?Experience=2 years');
-        setJobExperience('2 years');
-    };
-    const handle3_yearsClick = () => {
-        // SearchJobs('?Experience=2 years');
-        setJobExperience('3 years');
-    };
-    const handle_morethan3_yearsClick = () => {
-        // SearchJobs('?Experience=');
-        setJobExperience('');
-    };
-
-    // serach title and loactions
+    const handleFresherClick = () => { setJobExperience(0); };
+    const handle1_yearsClick = () => { setJobExperience(1); };
+    const handle2_yearsClick = () => { setJobExperience(2); };
+    const handle3_yearsClick = () => { setJobExperience(3); };
+    const handle_morethan3_yearsClick = () => { setJobExperience(4); };
+    // search date functions
+    const handle_1_Day = () => { const newStartDay = new Date(currentDate); newStartDay.setDate(currentDate.getDate() - 1); setStartDay(newStartDay); setdateFilters('Last 24 Hours'); };
+    const handle_3_Day = () => { const newStartDay = new Date(currentDate); newStartDay.setDate(currentDate.getDate() - 3); setStartDay(newStartDay); setdateFilters('Last 3 Days') };
+    const handle_7_Day = () => { const newStartDay = new Date(currentDate); newStartDay.setDate(currentDate.getDate() - 7); setStartDay(newStartDay); setdateFilters('Last 7 Days') };
+    const handle_14_Day = () => { const newStartDay = new Date(currentDate); newStartDay.setDate(currentDate.getDate() - 14); setStartDay(newStartDay); setdateFilters('Last 14 Days') };
+    const handle_All_Day = () => { const newStartDay = new Date(currentDate); newStartDay.setDate(currentDate.getDate() - 364); setStartDay(newStartDay); setdateFilters('All Jobs') };
 
 
-    const handleTitleInputChange = (e) => {
-
-        // SearchJobs(e.target.value);
-        settitleSearch(e.target.value);
-    };
-    const handleLocationInputChange = (e) => {
-        // SearchJobs(e.target.value);
-        setLocationSearch(e.target.value);
-    };
 
     useEffect(() => {
+        setmanageState(false)
         const response = axios.get(JobListUser).then((response) => {
             setjobList(response.data);
         }).catch((error) => {
@@ -105,29 +86,30 @@ function Jobs() {
         });
 
 
-    }, [titleSearch, job_types])
+    }, [titleSearch, LocationSearch, manageState])
     console.log(jobList, '=====================================>>>>>>>.');
 
 
-
+    console.log('Current Date:', currentDate.toISOString());
+    console.log('startDay:', startDay.toISOString());
 
     const savedPost = (event) => {
-        axios.get(`${SavePostDetail}${userInfo.id}/`).then((response)=>{
+        axios.get(`${SavePostDetail}${userInfo.id}/`).then((response) => {
             let check = response.data
-            let exist = check.find((obj)=>obj.job_post.id===event)
-            if (exist){
+            let exist = check.find((obj) => obj.job_post.id === event)
+            if (exist) {
                 toast.error("already saved!")
                 // console.log(exist,'cccccccccccccccckkekekeke');
             }
-            else{
+            else {
                 const saveData = {
                     user: userInfo.id,
-                    job_post:event
+                    job_post: event
                 }
-                axios.post(SavePostAdd,saveData).then((response) => {
-                  if(response.status===201){
-                    toast.success('Job Saved')
-                   }
+                axios.post(SavePostAdd, saveData).then((response) => {
+                    if (response.status === 201) {
+                        toast.success('Job Saved')
+                    }
                 }).catch((error) => {
                     console.error("Error saved details:", error);
                 });
@@ -137,7 +119,16 @@ function Jobs() {
             console.error("Error fetching saved details:", error);
         });
         // console.log('event', userInfo.id, event);
-       
+
+    }
+
+    const ClearAll = () => {
+        setdateFilters('')
+        setJob_types('')
+        setJobExperience('')
+        settitleSearch('')
+        setLocationSearch('')
+        setmanageState(true)
     }
 
     return (
@@ -147,29 +138,32 @@ function Jobs() {
                 <Card className=" bg-[#ededed]  rounded-md  shadow-xl shadow-blue-gray-900/2">
                     <div className='  '>
                         <Typography className='font-prompt text-black ml-10 mt-4' variant='h4'> Filter Job Searches</Typography>
-                        <div className='flex justify-evenly'>
+                        <div className='flex justify-start gap-10 ml-28'>
 
                             <input onChange={handleTitleInputChange} type="search" className='w-[30%] h-12 border-[1px] border-black rounded-sm placeholder:text-black placeholder:font-prompt  focus:border-0' placeholder="  Job title or Company" style={{ paddingLeft: '20px' }} />
                             <input onChange={handleLocationInputChange} type="search" className='w-[30%] h-12 border-[1px] border-black rounded-sm  placeholder:text-black placeholder:font-prompt focus:border-0 ' placeholder="   State or City" style={{ paddingLeft: '20px' }} />
-                            <Button onClick={SearchJobs} className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' >Filter</Button>
+                            <div className='flex flex-row gap-2 absolute right-16'> 
+                                <Button onClick={SearchJobs} className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' >Filter</Button>
+                                <Button onClick={ClearAll} className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' >Clear all</Button>
+                            </div>
                         </div>
                         <div className='mb-4 mt-6 ml-28 flex gap-16'>
                             <Menu>
                                 <MenuHandler>
-                                    <Button className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' ><FontAwesomeIcon icon={faCaretDown} className='mr-2 w-4 h-4' />Posted Date</Button>
+                                    <Button className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' ><FontAwesomeIcon icon={faCaretDown} className='mr-2 w-4 h-4' />{(dateFilters ? dateFilters : 'Posted Date')}</Button>
                                 </MenuHandler>
                                 <MenuList className="max-h-72 font-prompt text-black">
-                                    <MenuItem>All Jobs</MenuItem>
-                                    <MenuItem >Last 24 Hours</MenuItem>
-                                    <MenuItem>Last 3 Days</MenuItem>
-                                    <MenuItem>Last 7 days</MenuItem>
-                                    <MenuItem>Last 14 days</MenuItem>
+                                    <MenuItem onClick={(e) => handle_All_Day()}>All Jobs</MenuItem>
+                                    <MenuItem onClick={(e) => handle_1_Day()}>Last 24 Hours</MenuItem>
+                                    <MenuItem onClick={(e) => handle_3_Day()}>Last 3 Days</MenuItem>
+                                    <MenuItem onClick={(e) => handle_7_Day()}>Last 7 days</MenuItem>
+                                    <MenuItem onClick={(e) => handle_14_Day()}>Last 14 days</MenuItem>
 
                                 </MenuList>
                             </Menu>
                             <Menu>
                                 <MenuHandler>
-                                    <Button className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' ><FontAwesomeIcon icon={faCaretDown} className='mr-2 w-4 h-4' />{(jobExperience ? jobExperience : 'Experience')}</Button>
+                                    <Button className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' ><FontAwesomeIcon icon={faCaretDown} className='mr-2 w-4 h-4' />{(jobExperience === 0 ? 'Fresher' : jobExperience > 0 ? jobExperience + ' Years' : 'Experience')}</Button>
                                 </MenuHandler>
                                 <MenuList className="max-h-72 font-prompt text-black">
                                     <MenuItem onClick={(e) => handleFresherClick()} >Fresher</MenuItem>
@@ -229,10 +223,17 @@ function Jobs() {
                 </Card>
 
             </div>
-            <Toaster/>
+            <Toaster />
         </div>
     )
 }
 
 export default Jobs
 
+
+
+
+
+// SearchJobs('?job_type=remote');
+// ?search=
+// ?job_type=Hybrid&search=broto

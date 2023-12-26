@@ -18,6 +18,7 @@ function AdminNavbar({head}) {
     const logout = () => {
         localStorage.removeItem('token')
         dispatch(resetState);
+        
         navigate('/login');
     }
 

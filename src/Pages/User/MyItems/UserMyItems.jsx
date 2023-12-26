@@ -19,6 +19,7 @@ function UserMyItems() {
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState('Applied');
     const [savedJobs, setSavedJobs] = useState([])
+    const [Managestate, setManagestate] = useState(false)
     const Head = [{ Heading: 'Applied' }, { Heading: 'Interviews' }, { Heading: 'Saved' }]
 
     const formatPostedDate = (postedDate) => {
@@ -28,25 +29,28 @@ function UserMyItems() {
     };
 
     useEffect(() => {
+        setManagestate(false)
         axios.get(`${SavePostDetail}${userInfo.id}/`).then((response) => {
             setSavedJobs(response.data)
 
         }).catch((error) => {
             console.error("Error fetching saved details:", error);
         });
-    }, [savedJobs])
+    }, [Managestate])
 
     const removeSavedJobs = (event) => {
         console.log(event, 'remove value check');
         axios.delete(`${SavePostUpdate}${event}/`).then((response) => {
             // console.log(response.data, "delete data");
+            setManagestate(true)
             toast.success('Remove Saved job !')
         }).catch((error) => {
             console.error("Error delete saved details:", error);
 
         })
     }
-
+                                    
+console.log(savedJobs,'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa====');
     return (
         <div className='flex justify-center'>
             <Card className='w-[80rem] mt-14 bg-gray-200'>
@@ -93,7 +97,7 @@ function UserMyItems() {
                                                 <Typography className='font-prompt text-sm text-black'>{job.job_post.salary}</Typography>
                                                 <Typography className='font-prompt text-sm text-black'>{formatPostedDate(job.job_post.posted_date)}</Typography>
                                             </div>
-                                            <Button onClick={() => navigate('/jobview', { state: { data: job.id } })} className='mt-8 absolute right-40  h-10 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faEye} /><span>View</span></Button>
+                                            <Button onClick={() => navigate('/jobview', { state: { data: job.job_post.id } })} className='mt-8 absolute right-40  h-10 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faEye} /><span>View</span></Button>
                                             <FontAwesomeIcon onClick={(e) => removeSavedJobs(job.id)} className='mt-10 h-6 text-[#051339] hover:cursor-pointer hover:text-[#4e576f] absolute right-16 font-prompt-normal' icon={faRemove} />
 
                                         </Card>

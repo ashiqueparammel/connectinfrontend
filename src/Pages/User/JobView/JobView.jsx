@@ -93,7 +93,7 @@ function JobView() {
                             <h1>Company name :{CompanyDetails.company_name} </h1>
                             <h1>Location : {CompanyDetails.Location}</h1>
                             <h1>Job Title : {jobViews.Job_title}</h1>
-                            <h1>Experiance : {jobViews.Experience}</h1>
+                            <h1>Experiance : {(jobViews.Experience===0?'Fresher':jobViews.Experience+'Years')}</h1>
                             <h1>job type : {jobViews.job_type}</h1>
                             <h1>salary : {jobViews.salary}</h1>
                             <h1 >posted date : {formatPostedDate(jobViews.posted_date)}</h1>
