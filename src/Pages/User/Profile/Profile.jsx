@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogFooter, CardFooter, CardBody, } from "@material-tailwind/react";
 import { useDispatch, useSelector } from 'react-redux';
-import { faEdit, faEllipsisVertical, faEye, faFilePdf, faPen, faPlus, faRemove, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faEdit, faEllipsisVertical, faEye, faFilePdf, faPen, faPlus, faRemove, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { EmployeeProfileUpdate, ListPersonalSkills, List_Skills, UserDetails, UserProfileDetails } from '../../../Constants/Constants';
+import { EducationAdd, EducationUpdate, EmployeeProfileUpdate, ListPersonalEducation, ListPersonalSkills, List_Skills, PersonalSkillsAdd, RemovePersonalSkills, UserDetails, UserProfileDetails } from '../../../Constants/Constants';
 import toast, { Toaster } from 'react-hot-toast'
 import { pdfjs } from 'react-pdf';
 import { Document, Page } from 'react-pdf';
@@ -24,10 +24,27 @@ function UserProfile() {
     const [UserProfile, setUserProfile] = useState([])
     const [userData, setUserData] = useState([]);
     const [editManage, setEditManage] = useState(false);
+    const [removeskillsManage, setRemoveskillsManage] = useState(false);
+    const handleRemove = () => setRemoveskillsManage(!removeskillsManage);
+    const [EducationList, setEducationList] = useState([])
+    // education
+    const [addEducationopen, setaddEducationopen] = useState(false);
+    const handleOpenAddEducation = () => setaddEducationopen(!addEducationopen);
+
 
     //  view cv 
     const [Cvopen, setCvOpen] = React.useState(false);
     const CvViewOpen = () => setCvOpen((cur) => !cur);
+
+    //edit Education
+    const [editEducationopen, setEditEducationopen] = useState(false);
+    const handleOpenEditEducation = () => setEditEducationopen(!editEducationopen);
+    const [Qualifications, setQualifications] = useState('');
+    const [Institutes, setInstitutes] = useState('');
+    const [Years, setYears] = useState('');
+    const [Descriptions, setDescriptions] = useState('');
+    const [EducationId, setEducationId] = useState('')
+
 
     //edit profile states
     const [userName, setUserName] = useState('');
@@ -91,6 +108,13 @@ function UserProfile() {
                         setAllSkills(response.data)
                     }).catch((error) => {
                         console.log(error, 'error get skills');
+
+                    })
+                    axios.get(`${ListPersonalEducation}${response.data[0].id}/`).then((response) => {
+                        setEducationList(response.data)
+                        console.log('educations:', response.data);
+                    }).catch((error) => {
+                        console.log(error, 'error get Education');
 
                     })
                 }
@@ -320,6 +344,26 @@ function UserProfile() {
                     setprofileAllSkills([...profileAllSkills, res])
                     setprofileAllSkillsid([...profileAllSkillsid, res.id])
                     toast.success('Your On skill Added');
+                    const addOnskill = {
+                        skills: res.id,
+                        profile: UserProfile.id
+                    }
+                    try {
+                        axios.post(PersonalSkillsAdd, addOnskill).then((response) => {
+                            if (response.status === 201) {
+                                const res = response.data
+                                setprofileAllSkills([...profileAllSkills, res])
+                                setprofileAllSkillsid([...profileAllSkillsid, res.id])
+                                // toast.success(' Skill Added');
+                            }
+                        }).catch((error) => {
+                            if (error.response.data.skills) {
+                                toast.error('This skill already there!');
+                            }
+                        });
+                    } catch (error) {
+                        console.log('error add skills', error);
+                    }
                 }
             }).catch((error) => {
                 if (error.response.data.skills) {
@@ -329,7 +373,8 @@ function UserProfile() {
         } catch (error) {
             console.log('error add skills', error);
         }
-        // handleSkillOpen()
+        setEditManage(true)
+        handleSkillOpen()
     }
 
     const addOptionalskills = (value) => {
@@ -337,21 +382,55 @@ function UserProfile() {
         if (exist) {
             toast.error(' This skill already enterd!')
         } else {
+            console.log(value, 'check skills id true');
             setaddNewSkills(value)
             setprofileAllSkills([...profileAllSkills, allSkills[value - 1]])
             setprofileAllSkillsid([...profileAllSkillsid, value])
-            toast.success('skill Added');
-              handleSkillOpen()
+            const addOnskill = {
+                skills: parseInt(value),
+                profile: UserProfile.id
+            }
+            try {
+                axios.post(PersonalSkillsAdd, addOnskill).then((response) => {
+                    if (response.status === 201) {
+                        const res = response.data
+                        setprofileAllSkills([...profileAllSkills, res])
+                        setprofileAllSkillsid([...profileAllSkillsid, res.id])
+                        toast.success(' Skill Added');
+                    }
+                }).catch((error) => {
+                    if (error.response.data.skills) {
+                        toast.error('This skill already there!');
+                    }
+                });
+            } catch (error) {
+                console.log('error add skills', error);
+            }
+            setEditManage(true)
+            handleSkillOpen()
         }
 
     }
 
     const removeSelectedSkills = (skills) => {
-        console.log('helllllloooomanog');
+        console.log(skills, 'helllllloooomanog');
+        try {
+            axios.delete(`${RemovePersonalSkills}${parseInt(skills)}/`,).then((response) => {
+                if (response.status === 204) {
+                    setEditManage(true)
+                }
+            }).catch((error) => {
+                if (error.response.data.skills) {
+                    toast.error('error!!');
+                }
+            });
+        } catch (error) {
+            console.log('error add skills', error);
+        }
+
         setprofileAllSkillsid(profileAllSkillsid.filter((obj) => parseInt(obj) !== skills))
         setprofileAllSkills(profileAllSkills.filter((obj2) => obj2.id !== skills))
     }
-
 
     function PdfViewer({ cvFileUrl }) {
         return (
@@ -367,6 +446,135 @@ function UserProfile() {
             </Card>
         );
     }
+
+    const AddEducationform = async (e) => {
+        e.preventDefault();
+
+        const Education = {
+            profile: UserProfile.id,
+            qualification: e.target.qualification.value,
+            Institute_name: e.target.institute.value,
+            Studied_year: e.target.studyyear.value,
+            description: e.target.description.value,
+        };
+        console.log('Education data:', Education);
+        const validateForm = () => {
+            if (Education.qualification.trim() === "") {
+                toast.error('Qualification should not be empty!');
+                return false;
+            }
+            else if (Education.Institute_name.trim() === "") {
+                toast.error('Institute name should not be empty!');
+                return false;
+            }
+            else if (Education.Studied_year.trim() === "") {
+                toast.error('Studied year should not be empty!');
+                return false;
+            }
+            else if (Education.description.trim() === "") {
+                toast.error('description should not be empty!');
+                return false;
+            }
+            return true;
+        };
+        if (validateForm()) {
+            try {
+                const responseData = await axios.post(EducationAdd, Education);
+                const response = responseData.data
+                console.log(responseData);
+                if (responseData.status === 201) {
+                    toast.success('Education Added successfully!')
+                    setEditManage(true)
+                    handleOpenAddEducation()
+                }
+            } catch (error) {
+                console.error('Error during Education addd:', error);
+                toast.error(error);
+            }
+        }
+    }
+
+
+    const removeEducation = (event) => {
+        console.log(event, 'removeid');
+        try {
+            const responseData = axios.delete(`${EducationUpdate}${event}/`,).then((response) => {
+                if (response.status === 204) {
+                    toast.success('Education deleted successfully!')
+
+                    setEditManage(true)
+                }
+            })
+
+        } catch (error) {
+            console.error('Error during Education delete:', error);
+            toast.error(error);
+        }
+
+    }
+
+
+    const editEducation = (event) => {
+
+        const editData = EducationList.find((education) => education.id === event)
+        setQualifications(editData.qualification)
+        setInstitutes(editData.Institute_name)
+        setYears(editData.Studied_year)
+        setDescriptions(editData.description)
+        setEducationId(editData.id)
+        console.log(editData, 'edit education');
+        handleOpenEditEducation()
+
+    }
+
+    const updateEducation = () => {
+        const Education = {
+            profile: UserProfile.id,
+            qualification: Qualifications,
+            Institute_name: Institutes,
+            Studied_year: Years,
+            description: Descriptions,
+        };
+        const validateForm = () => {
+            if (Education.qualification.trim() === "") {
+                toast.error('Qualification should not be empty!');
+                return false;
+            }
+            else if (Education.Institute_name.trim() === "") {
+                toast.error('Institute name should not be empty!');
+                return false;
+            }
+            else if (Education.Studied_year.trim() === "") {
+                toast.error('Studied year should not be empty!');
+                return false;
+            }
+            else if (Education.description.trim() === "") {
+                toast.error('description should not be empty!');
+                return false;
+            }
+            return true;
+        };
+        if (validateForm()) {
+            try {
+                const responseData = axios.patch(`${EducationUpdate}${EducationId}/`, Education).then((response) => {
+                    if (response.status === 200) {
+                        toast.success('Education Updated successfully!')
+                        setEditManage(true)
+                        handleOpenEditEducation()
+
+                    }
+                })
+
+            } catch (error) {
+                console.error('Error during Education delete:', error);
+                toast.error(error);
+            }
+        }
+
+    }
+
+
+
     return (
         <div>
             <Card className='w-[80%] ml-[10%] mt-10 mb-8 bg-[#dfdfdf] rounded-sm' >
@@ -441,8 +649,8 @@ function UserProfile() {
                                             <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-5 h-5 mt-2  rounded-md shadow-2xl shadow-black hover:text-[#403f3f] bg-white border-4 border-white mr-4 hover:cursor-pointer ' />
                                         </MenuHandler>
                                         <MenuList className="max-h-72 font-prompt text-black">
-                                            <MenuItem onClick={removeCV}><FontAwesomeIcon icon={faTrash} color='#051339' className='mr-2' />Reomve CV</MenuItem>
-                                            <MenuItem onClick={HandleCV}><FontAwesomeIcon icon={faEdit} color='#051339' className='mr-2' />Update CV</MenuItem>
+                                            <MenuItem onClick={removeCV}><FontAwesomeIcon icon={faTrash} color='#051339' className='mr-2' />Remove CV</MenuItem>
+                                            <MenuItem onClick={HandleCV}><FontAwesomeIcon icon={faEdit} color='#051339' className='mr-2' />{(UserProfile.cv_file ? 'Update CV' : 'Upload CV')}</MenuItem>
                                         </MenuList>
                                     </Menu>
                                 </div>
@@ -455,7 +663,6 @@ function UserProfile() {
                             </Card>
 
                         </div>
-
                     </div>
                 </Card>
 
@@ -495,49 +702,64 @@ function UserProfile() {
                     <Typography className='font-prompt mt-2 ml-6' variant='h5'>
                         About Your Education
                     </Typography>
-                    <div className='absolute right-2 -top-5'>
-                        <FontAwesomeIcon onClick={handleOpen} icon={faPen} color='#FAFAFA' className=' w-5 h-5 mt-9 rounded-md shadow-2xl shadow-black 
-                        hover:text-[#ffffff] bg-[#051339] border-4 border-[#051339] mr-4 hover:cursor-pointer hover:bg-[#1e2d56] hover:border-[#1e2d56] ' />
-                    </div>
-                    <div className='flex flex-col ml-10 mb-4 mt-1 gap-2 text-black'>
-                        <Typography className='font-prompt' variant='h6'>
-                            Name : {userData.username}
-                        </Typography>
-                        <Typography className='font-prompt ' variant='h6'>
-                            Header : {UserProfile.header}
-                        </Typography>
-                        <Typography className='font-prompt ' variant='h6'>
-                            Description : {UserProfile.description}
-                        </Typography>
-                        <Typography className='font-prompt ' variant='h6'>
-                            Location : {UserProfile.Location}
-                        </Typography>
-                        <Typography className='font-prompt ' variant='h6'>
-                            Email : {userData.email}
-                        </Typography>
-                        <Typography className='font-prompt ' variant='h6'>
-                            Contacts : {userData.phone_number}
-                        </Typography>
+                    {EducationList.map((education) => (
+                        <div key={education.id} style={{ borderBottom: '1px solid #9da3a3' }}>
+                            <div className='absolute right-24 top-[35.5px]'>
+                                <FontAwesomeIcon onClick={handleOpenAddEducation} icon={faPlus} title="Add Education" color='#FAFAFA' className=' w-5 h-5 mt-3  rounded-md shadow-2xl shadow-black 
+                                hover:text-[#ffffff] bg-[#051339] border-4 border-[#051339] mr-4 hover:cursor-pointer hover:bg-[#1e2d56] hover:border-[#1e2d56] ' />
+                            </div>
+                            <div className='ml-[1120px] flex flex-row'>
+                                <div className=''>
+                                    <FontAwesomeIcon onClick={(e) => editEducation(education.id)} icon={faPen} title="Update Education" color='#FAFAFA' className=' w-5 h-5 mt-3  rounded-md shadow-2xl shadow-black 
+                                hover:text-[#ffffff] bg-[#051339] border-4 border-[#051339] mr-4 hover:cursor-pointer hover:bg-[#1e2d56] hover:border-[#1e2d56] ' />
 
 
 
-                    </div>
+                                </div>
+                                <div className=''>
+                                    <FontAwesomeIcon onClick={(e) => removeEducation(education.id)} title="Remove Education" icon={faClose} color='#FAFAFA' className=' w-5 h-5 mt-3  rounded-md shadow-2xl shadow-black 
+                                hover:text-[#ffffff] bg-[#051339] border-4 border-[#051339] mr-4 hover:cursor-pointer hover:bg-[#1e2d56] hover:border-[#1e2d56] ' />
+                                </div>
+                            </div>
+                            <div className='flex flex-col ml-10 mb-4   text-black'>
+                                <Typography className='font-prompt' variant='h6'>
+                                    Qualification : <span className='text-lg'>{education.qualification}</span>
+                                </Typography>
+                                <Typography className='font-prompt ' variant='h6'>
+                                    Institute : {education.Institute_name}
+                                </Typography>
+                                <Typography className='font-prompt ' variant='h6'>
+                                    Description : {education.description}
+                                </Typography>
+                                <Typography className='font-prompt ' variant='h6'>
+                                    Study year : {education.Studied_year}
+                                </Typography>
+                            </div>
+                        </div>
+
+
+
+
+                    ))}
+
                 </Card>
 
 
                 <Card className='bg-[#FAFAFA] shadow-2xl py-2 px-5 rounded-sm mt-1 w-full  '>
-                   <div className='flex flex-row gap-5 mb-4'>
-                   <Typography className='font-prompt text-lg'>Your Skills</Typography>
-                    <Button onClick={handleSkillOpen} className='bg-[#051339] mt-1 rounded-md  w-14 left-5     '><FontAwesomeIcon icon={faPlus} /></Button>
+                    <div className='flex flex-row gap-5 mb-4'>
+                        <Typography className='font-prompt text-lg'>Your Skills</Typography>
+                        <Button onClick={handleSkillOpen} className='bg-[#051339] mt-1 rounded-md  w-14 left-5'><FontAwesomeIcon icon={faPlus} /></Button>
+                        <Button onClick={handleRemove} className='bg-[#051339] mt-1 rounded-md  w-14 left-5 ml-2'><FontAwesomeIcon icon={faTrash} /></Button>
 
-                   </div>
+                    </div>
 
 
                     <div className='flex flex-row gap-2'>
                         {RequiredSkills.map((skills) => (
                             < div key={skills.id} className='font-prompt text-black flex flex-row mb-4 mt-4 '>
-                                <div className='bg-[#cacbcb] border-[1px] border-black flex gap-1 rounded-md text-black'><p className='font-prompt ml-1 mr-1'>{skills.skills.skills}</p></div>
-                                {/* <FontAwesomeIcon icon={faRemove} onClick={(e) => removeSelectedSkills(skills.id)} className='mr-1 mt-1 hover:opacity-50 hover:cursor-pointer' /> */}
+                                <div className='bg-[#cacbcb] border-[1px] border-black flex gap-1 rounded-md text-black'><p className='font-prompt ml-1 mr-1'>{skills.skills.skills} </p>
+                                    {(removeskillsManage ? <FontAwesomeIcon icon={faRemove} onClick={(e) => removeSelectedSkills(skills.id)} className='mr-1 mt-1 hover:opacity-50 hover:cursor-pointer' /> : '')}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -641,12 +863,94 @@ function UserProfile() {
                 <Toaster />
 
             </Dialog>
+
+            {/* {Add Education modal} */}
+            <Dialog
+                open={addEducationopen}
+                handler={handleOpenAddEducation}
+                animate={{
+                    mount: { scale: 1, y: 0 },
+                    unmount: { scale: 1, y: -100 },
+                }}>
+                <form onSubmit={(e) => AddEducationform(e)}>
+
+                    <DialogHeader className='font-prompt text-black'>Add Education</DialogHeader>
+                    <div className='flex flex-col gap-4'>
+
+                        <input type="text" placeholder=' Qualification' name="qualification" className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+                        border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+                        <input type="text" placeholder=' Institute' name='institute' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+                        border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+                        <input type="text" placeholder=' Study year' name='studyyear' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+                        border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+                        <textarea type="text" placeholder=' Description' name='description' className='border-2 w-[90%] ml-[4%] h-28 rounded-sm
+                        border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+                    </div>
+                    <DialogFooter>
+                        <Button variant="text" className='bg-[#d9dbdb] font-prompt-normal mr-1 text-black hover:bg-[#a4a4a4]' onClick={handleOpenAddEducation}>
+                            <span>Cancel</span>
+                        </Button>
+                        <Button type='submit' variant="filled" className='bg-[#051339] font-prompt-normal'>
+                            <span>Add Education</span>
+                        </Button>
+                    </DialogFooter>
+                    <Toaster />
+
+                </form>
+            </Dialog>
+
+
+            {/* {edit Education modal} */}
+            <Dialog
+                open={editEducationopen}
+                handler={handleOpenEditEducation}
+                animate={{
+                    mount: { scale: 1, y: 0 },
+                    unmount: { scale: 1, y: -100 },
+                }}>
+                <DialogHeader className='font-prompt text-black'>Edit Education</DialogHeader>
+                <div className='flex flex-col gap-4'>
+
+                    <input type="text" placeholder=' Qualification' onChange={(e) => setQualifications(e.target.value)} value={Qualifications} name="qualification" className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+                                                border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+                    <input type="text" placeholder=' Institute' onChange={(e) => setInstitutes(e.target.value)} value={Institutes} name='institute' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+                                                border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+                    <input type="text" placeholder=' Study year' onChange={(e) => setYears(e.target.value)} value={Years} name='studyyear' className='border-2 w-[90%] ml-[4%] h-12 rounded-sm
+                                                border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+                    <textarea type="text" placeholder=' Description' onChange={(e) => setDescriptions(e.target.value)} value={Descriptions} name='description' className='border-2 w-[90%] ml-[4%] h-28 rounded-sm
+                                                border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+                </div>
+                <DialogFooter>
+                    <Button variant="text" className='bg-[#d9dbdb] font-prompt-normal mr-1 text-black hover:bg-[#a4a4a4]' onClick={handleOpenEditEducation}>
+                        <span>Cancel</span>
+                    </Button>
+                    <Button variant="filled" onClick={updateEducation} className='bg-[#051339] font-prompt-normal'>
+                        <span>Update</span>
+                    </Button>
+                </DialogFooter>
+                <Toaster />
+
+            </Dialog>
+
             <Toaster />
         </div>
     )
 }
 
 export default UserProfile
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

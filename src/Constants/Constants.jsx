@@ -39,7 +39,9 @@ export const EducationAdd = import.meta.env.VITE_EducationAdd
 export const EducationUpdate = import.meta.env.VITE_EducationUpdate 
 export const JobApplicationsAdd = import.meta.env.VITE_JobApplicationsAdd 
 export const ListPersonalSkills = import.meta.env.VITE_ListPersonalSkills
-export const RemovePersonalSkills = import.meta.env.VITE_RemovePersonalSkills
+export const RemovePersonalSkills = import.meta.env.VITE_RemovePersonalSkills 
+export const PersonalSkillsAdd = import.meta.env.VITE_PersonalSkillsAdd 
+export const ListPersonalEducation = import.meta.env.VITE_ListPersonalEducation 
 
 
 
