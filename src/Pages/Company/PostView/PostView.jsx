@@ -256,7 +256,7 @@ function PostView() {
                                     <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-5 h-5 mt-3  rounded-full hover:text-[#000000]   mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer ' />
                                 </MenuHandler>
                                 <MenuList className="max-h-72">
-                                    <MenuItem onClick={(e) => deletePost(jobViews.id)} className='text-black font-prompt'><FontAwesomeIcon icon={faTrash} color='#051339' className='mr-4' />Delete</MenuItem>
+                                    <MenuItem onClick={(e) => deletePost(jobViews.id)} className='text-black font-prompt'><FontAwesomeIcon icon={faRemove} color='#051339' className='mr-4' />Closed</MenuItem>
                                     <MenuItem onClick={handleOpen} className='text-black font-prompt'><FontAwesomeIcon icon={faEdit} color='#051339' className='mr-4' />Edit</MenuItem>
                                 </MenuList>
                             </Menu>
@@ -380,7 +380,7 @@ function PostView() {
                             <div className='flex flex-row gap-2  '>
                                 {jobAllSkills.map((skills) => (
                                     < div key={skills.id} value={skills.id} className='font-prompt text-black flex flex-row '>
-                                        <div className='bg-[#cacbcb] border-[1px] border-black flex gap-1 rounded-sm text-black'>   <p className='font-prompt ml-1'> {skills.skills}</p><FontAwesomeIcon icon={faRemove} onClick={(e) => removeSelectedSkills(skills.id)} className='mr-1 mt-1 hover:opacity-50 hover:cursor-pointer' />  </div>
+                                        <div className='bg-[#cacbcb] border-[1px] border-black flex gap-1 rounded-sm text-black'>   <p className='font-prompt ml-1'> {skills.skills}</p>  </div>
                                     </div>
                                 ))}
                             </div>

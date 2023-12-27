@@ -1,13 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogFooter,} from "@material-tailwind/react";
+import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogFooter, CardFooter, CardBody, } from "@material-tailwind/react";
 import { useDispatch, useSelector } from 'react-redux';
-import { faEdit, faPen, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEllipsisVertical, faEye, faFilePdf, faPen, faPlus, faRemove, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { EmployeeProfileUpdate, UserDetails, UserProfileDetails } from '../../../Constants/Constants';
+import { EmployeeProfileUpdate, ListPersonalSkills, List_Skills, UserDetails, UserProfileDetails } from '../../../Constants/Constants';
 import toast, { Toaster } from 'react-hot-toast'
+import { pdfjs } from 'react-pdf';
+import { Document, Page } from 'react-pdf';
+import PdfHelper from '../../../Helpers/PdfHelper';
 
+
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.js', import.meta.url,).toString();
 
 function UserProfile() {
     const dispatch = useDispatch();
@@ -18,20 +24,33 @@ function UserProfile() {
     const [UserProfile, setUserProfile] = useState([])
     const [userData, setUserData] = useState([]);
     const [editManage, setEditManage] = useState(false);
-    //edit profile states
 
+    //  view cv 
+    const [Cvopen, setCvOpen] = React.useState(false);
+    const CvViewOpen = () => setCvOpen((cur) => !cur);
+
+    //edit profile states
     const [userName, setUserName] = useState('');
     const [userLocation, setUserLoacation] = useState('');
     const [userDescription, setUserDescription] = useState('');
     const [userHeader, setUserHeader] = useState('');
     const [userContact, setUserContact] = useState('');
+    const [allSkills, setAllSkills] = useState([])
 
     //Image states
     const fileInputCoverRef = useRef(null);
     const fileInputProfileRef = useRef(null);
+    const fileInputCVRef = useRef(null);
+    //  skills
+    const [addOnNewSkills, setaddOnNewSkills] = useState('')
+    const [RequiredSkills, setRequiredSkills] = useState([])
+    const [profileAllSkills, setprofileAllSkills] = useState([])
+    const [profileAllSkillsid, setprofileAllSkillsid] = useState([])
+    const [addNewSkills, setaddNewSkills] = useState('')
+    const [updateSkills, setUpdateSkills] = useState([])
+    const [openSkill, setSkillOpen] = useState(false);
 
-    // const [addProfileImage, setaddProfileImage] = useState(null)
-    // const [addProfileCoverImage, setaddProfileCoverImage] = useState(null)
+    const handleSkillOpen = () => setSkillOpen((cur) => !cur);
 
     useEffect(() => {
         setEditManage(false)
@@ -48,6 +67,32 @@ function UserProfile() {
                     setUserHeader(response.data[0].header)
                     setUserContact(user.phone_number)
                     // console.log(response.data[0], 'first daaaaaaaaaaaaattta')
+                    axios.get(`${ListPersonalSkills}${response.data[0].id}/`).then((response) => {
+                        setRequiredSkills(response.data);
+                        console.log('finaljob skills get', response.data);
+                        const oldskill = response.data
+                        let obj = {}
+                        const updateskill = []
+                        const objskill = []
+                        const objskillid = []
+                        for (let skill = 0; skill < response.data.length; skill++) {
+                            obj = oldskill[skill]
+                            updateskill.push(obj.id)
+                            objskill.push(obj.skills)
+                            objskillid.push(obj.skills.id)
+                        }
+                        setUpdateSkills(updateskill)
+                        setprofileAllSkills(objskill)
+                        setprofileAllSkillsid(objskillid)
+                    }).catch((error) => {
+                        console.error("Error fetching job details:", error);
+                    });
+                    axios.get(List_Skills).then((response) => {
+                        setAllSkills(response.data)
+                    }).catch((error) => {
+                        console.log(error, 'error get skills');
+
+                    })
                 }
             })
                 .catch((error) => {
@@ -70,11 +115,11 @@ function UserProfile() {
             if (userName === "") {
                 toast.error('User Name should not be empty!');
                 return false;
-            } 
-            else if (userLocation=== "") {
+            }
+            else if (userLocation === "") {
                 toast.error('Location should not be empty!');
                 return false;
-            } else if (userHeader=== "") {
+            } else if (userHeader === "") {
                 toast.error('Header should not be empty!');
                 return false;
             }
@@ -82,7 +127,7 @@ function UserProfile() {
                 toast.error('Description should not be empty!');
                 return false;
             }
-            else if (userContact=== "") {
+            else if (userContact === "") {
                 toast.error('Phonenumber should not be empty!');
                 return false;
             }
@@ -99,7 +144,7 @@ function UserProfile() {
                     if (response.status === 200) {
                         const userForm = {
                             phone_number: userContact,
-                            username:userName
+                            username: userName
                         }
                         axios.patch(`${UserDetails}${userInfo.id}/`, userForm).catch((error) => {
                             if (error.response.data.phone_number[0]) {
@@ -173,8 +218,10 @@ function UserProfile() {
         fileInputProfileRef.current.click();
     };
 
+
+
     const AddProfileCoverImageHandle = (event) => {
-        console.log('checkthis datachenge eork or not');
+        // console.log('checkthis datachenge eork or not');
         const file = event.target.files[0];
         const AddcoverImage = new FormData();
         AddcoverImage.append('profile_cover_image', file);
@@ -213,6 +260,112 @@ function UserProfile() {
         } else {
             toast.error('No Cover Image');
         }
+    }
+
+    const removeCV = () => {
+        if (UserProfile.cv_file) {
+            const remove_cv_file = {
+                cv_file: null
+            }
+            axios.patch(`${EmployeeProfileUpdate}${UserProfile.id}/`, remove_cv_file).then((response) => {
+                if (response.status === 200) {
+                    setEditManage(true)
+                    toast.success('Your CV removed !');
+                }
+            }).catch((error) => {
+                if (error.response.data.cv_file[0]) {
+                    toast.error(error.response.data.cv_file[0]);
+                }
+            })
+        } else {
+            toast.error('No CV');
+        }
+    }
+    const updateCV = (event) => {
+        console.log('hello', event.target.files[0]);
+        const file = event.target.files[0];
+        if (file.type === "application/pdf") {
+            // console.log(true);
+            const AddCV = new FormData();
+            AddCV.append('cv_file', file);
+            axios.patch(`${EmployeeProfileUpdate}${UserProfile.id}/`, AddCV).then((response) => {
+                if (response.status === 200) {
+                    setEditManage(true)
+                    toast.success(' Your CV Updated !');
+                }
+            }).catch((error) => {
+                if (error.response.data.cv_file[0]) {
+                    toast.error(error.response.data.cv_file[0]);
+                }
+            })
+        }
+        else {
+            // console.log(false)
+            toast.error(' CV should be Pdf file !');
+        }
+    }
+
+    const HandleCV = () => {
+        fileInputCVRef.current.click();
+    }
+
+    const AddNewOnskills = () => {
+        const addOnskill = {
+            skills: addOnNewSkills
+        }
+        try {
+            axios.post(List_Skills, addOnskill).then((response) => {
+                if (response.status === 201) {
+                    const res = response.data
+                    setprofileAllSkills([...profileAllSkills, res])
+                    setprofileAllSkillsid([...profileAllSkillsid, res.id])
+                    toast.success('Your On skill Added');
+                }
+            }).catch((error) => {
+                if (error.response.data.skills) {
+                    toast.error('This skill already there!');
+                }
+            });
+        } catch (error) {
+            console.log('error add skills', error);
+        }
+        // handleSkillOpen()
+    }
+
+    const addOptionalskills = (value) => {
+        const exist = profileAllSkills.find((obj) => obj.id === parseInt(value))
+        if (exist) {
+            toast.error(' This skill already enterd!')
+        } else {
+            setaddNewSkills(value)
+            setprofileAllSkills([...profileAllSkills, allSkills[value - 1]])
+            setprofileAllSkillsid([...profileAllSkillsid, value])
+            toast.success('skill Added');
+              handleSkillOpen()
+        }
+
+    }
+
+    const removeSelectedSkills = (skills) => {
+        console.log('helllllloooomanog');
+        setprofileAllSkillsid(profileAllSkillsid.filter((obj) => parseInt(obj) !== skills))
+        setprofileAllSkills(profileAllSkills.filter((obj2) => obj2.id !== skills))
+    }
+
+
+    function PdfViewer({ cvFileUrl }) {
+        return (
+            <Card className="mx-auto w-full max-w-[24rem]">
+                <Document file={cvFileUrl}>
+                    <Page pageNumber={1} /> {/* Render the first page of the PDF */}
+                </Document>
+                <CardFooter className="pt-0">
+                    <Button variant="filled" className='bg-black mt-2' onClick={CvViewOpen} fullWidth>
+                        Sign In
+                    </Button>
+                </CardFooter>
+            </Card>
+        );
     }
     return (
         <div>
@@ -278,6 +431,28 @@ function UserProfile() {
                             <Typography className='font-prompt' variant='h5'>
                                 74  connections
                             </Typography>
+                            <Card className='w-[40%] h-14 absolute right-12 shadow-2xl border-[1px] text-center font-prompt  text-black text-lg border-[#000000] top-80 rounded-sm'>
+                                <div className='flex flex-row justify-between mt-1 ml-4'>
+                                    <FontAwesomeIcon icon={faFilePdf} color='#051339' className='w-6 h-12' />
+                                    <h1 className='mt-2'>{(UserProfile.cv_file ? <div onClick={CvViewOpen} className='flex flex-row gap-10 bg-[#dfdbdb] hover:cursor-pointer hover:bg-[#b6b3b3] rounded-sm '><h1 className='ml-2' >view your cv </h1><FontAwesomeIcon icon={faEye} color='#051339' className=' w-6 h-8 mr-2' /></div> : 'Upload Your CV')}</h1>
+
+                                    <Menu>
+                                        <MenuHandler>
+                                            <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-5 h-5 mt-2  rounded-md shadow-2xl shadow-black hover:text-[#403f3f] bg-white border-4 border-white mr-4 hover:cursor-pointer ' />
+                                        </MenuHandler>
+                                        <MenuList className="max-h-72 font-prompt text-black">
+                                            <MenuItem onClick={removeCV}><FontAwesomeIcon icon={faTrash} color='#051339' className='mr-2' />Reomve CV</MenuItem>
+                                            <MenuItem onClick={HandleCV}><FontAwesomeIcon icon={faEdit} color='#051339' className='mr-2' />Update CV</MenuItem>
+                                        </MenuList>
+                                    </Menu>
+                                </div>
+                                <input
+                                    type="file"
+                                    ref={fileInputCVRef}
+                                    style={{ display: 'none' }}
+                                    onChange={updateCV}
+                                />
+                            </Card>
 
                         </div>
 
@@ -316,6 +491,59 @@ function UserProfile() {
 
                     </div>
                 </Card>
+                <Card className='mt-1 rounded-sm'>
+                    <Typography className='font-prompt mt-2 ml-6' variant='h5'>
+                        About Your Education
+                    </Typography>
+                    <div className='absolute right-2 -top-5'>
+                        <FontAwesomeIcon onClick={handleOpen} icon={faPen} color='#FAFAFA' className=' w-5 h-5 mt-9 rounded-md shadow-2xl shadow-black 
+                        hover:text-[#ffffff] bg-[#051339] border-4 border-[#051339] mr-4 hover:cursor-pointer hover:bg-[#1e2d56] hover:border-[#1e2d56] ' />
+                    </div>
+                    <div className='flex flex-col ml-10 mb-4 mt-1 gap-2 text-black'>
+                        <Typography className='font-prompt' variant='h6'>
+                            Name : {userData.username}
+                        </Typography>
+                        <Typography className='font-prompt ' variant='h6'>
+                            Header : {UserProfile.header}
+                        </Typography>
+                        <Typography className='font-prompt ' variant='h6'>
+                            Description : {UserProfile.description}
+                        </Typography>
+                        <Typography className='font-prompt ' variant='h6'>
+                            Location : {UserProfile.Location}
+                        </Typography>
+                        <Typography className='font-prompt ' variant='h6'>
+                            Email : {userData.email}
+                        </Typography>
+                        <Typography className='font-prompt ' variant='h6'>
+                            Contacts : {userData.phone_number}
+                        </Typography>
+
+
+
+                    </div>
+                </Card>
+
+
+                <Card className='bg-[#FAFAFA] shadow-2xl py-2 px-5 rounded-sm mt-1 w-full  '>
+                   <div className='flex flex-row gap-5 mb-4'>
+                   <Typography className='font-prompt text-lg'>Your Skills</Typography>
+                    <Button onClick={handleSkillOpen} className='bg-[#051339] mt-1 rounded-md  w-14 left-5     '><FontAwesomeIcon icon={faPlus} /></Button>
+
+                   </div>
+
+
+                    <div className='flex flex-row gap-2'>
+                        {RequiredSkills.map((skills) => (
+                            < div key={skills.id} className='font-prompt text-black flex flex-row mb-4 mt-4 '>
+                                <div className='bg-[#cacbcb] border-[1px] border-black flex gap-1 rounded-md text-black'><p className='font-prompt ml-1 mr-1'>{skills.skills.skills}</p></div>
+                                {/* <FontAwesomeIcon icon={faRemove} onClick={(e) => removeSelectedSkills(skills.id)} className='mr-1 mt-1 hover:opacity-50 hover:cursor-pointer' /> */}
+                            </div>
+                        ))}
+                    </div>
+
+
+                </Card>
 
             </Card>
 
@@ -353,12 +581,76 @@ function UserProfile() {
                     </Button>
                 </DialogFooter>
             </Dialog>
+
+            {/* cv view modal */}
+            <div>
+                <Dialog size="md" open={Cvopen} handler={CvViewOpen} className="bg-transparent border-none border-0 shadow-none  rounded-none " style={{ position: 'absolute', top: '0', }}>
+                    <Card style={{ maxHeight: '670px', overflowY: 'auto' }} className='rounded-none border-0'>
+                        <PdfHelper cvFileUrl={UserProfile.cv_file} />
+                    </Card>
+                </Dialog>
+            </div>
+
+            {/* {add skills} */}
+            <Dialog
+                size="xs"
+                open={openSkill}
+                handler={handleSkillOpen}
+                className="bg-transparent shadow-none rounded-sm">
+                <Card className="mx-auto w-full max-w-[24rem] rounded-sm">
+                    <CardBody className="flex flex-col gap-4">
+                        <Typography variant="h4" color="black" className='font-prompt'>
+                            Add Skills
+                        </Typography>
+
+                        <Typography className="-mb-2 font-prompt ml-[2%]" variant="h6" >
+                            Select skills
+                        </Typography>
+
+                        <select
+                            value={addNewSkills}
+                            onChange={(e) => addOptionalskills(e.target.value)}
+                            className="!border-black bg-white focus:!border-t-black border-2 w-[95%] ml-[2%] h-12 rounded-sm"
+                            style={{ paddingLeft: '20px' }}>
+                            <option value="" disabled hidden>
+                                {addNewSkills ? '' : 'Select skills'}
+                            </option>
+
+                            {allSkills.map((skills) => (
+                                <option key={skills.id} value={skills.id} className='font-prompt text-black'>
+                                    {skills.skills}
+                                </option>
+                            ))}
+                        </select>
+
+                        <Typography className="-mb-2 font-prompt ml-[2%]" variant="h6" >
+                            Add your on skills
+                        </Typography>
+                        <input type="text" placeholder='Add your on skills' onChange={(e) => setaddOnNewSkills(e.target.value)} className='border-2 w-[95%] ml-[2%] h-12 rounded-sm
+                      border-[#434242] font-prompt text-black' style={{ paddingLeft: '20px' }} />
+
+                    </CardBody>
+                    <CardFooter className="pt-0">
+                        <Button variant="filled" className='bg-[#051339] w-[50%] rounded-sm h-12 mt-3 ml-20' onClick={AddNewOnskills} fullWidth>
+                            Add skills
+                        </Button>
+
+
+                    </CardFooter>
+                </Card>
+                <Toaster />
+
+            </Dialog>
             <Toaster />
         </div>
     )
 }
 
 export default UserProfile
+
+
+
+
 
 
 

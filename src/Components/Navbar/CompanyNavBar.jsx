@@ -61,7 +61,7 @@ function CompanyNavBar() {
                 color="blue-gray"
                 className="p-1 font-normal"
             >
-                <Button onClick={() => navigate('/')} className='bg-[#051339] '><FontAwesomeIcon icon={faHome} className='w-12 h-6' /></Button>
+                <Button title="home" onClick={() => navigate('/')} className='bg-[#051339] '><FontAwesomeIcon icon={faHome} className='w-12 h-6' /></Button>
             </Typography>
             <Typography
                 as="li"
