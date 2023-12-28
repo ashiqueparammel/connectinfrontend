@@ -42,6 +42,8 @@ export const ListPersonalSkills = import.meta.env.VITE_ListPersonalSkills
 export const RemovePersonalSkills = import.meta.env.VITE_RemovePersonalSkills 
 export const PersonalSkillsAdd = import.meta.env.VITE_PersonalSkillsAdd 
 export const ListPersonalEducation = import.meta.env.VITE_ListPersonalEducation 
+export const TokenRefresh = import.meta.env.VITE_TokenRefresh 
+export const RefreshTokenAuto = import.meta.env.VITE_RefreshTokenAuto 
 
 
 

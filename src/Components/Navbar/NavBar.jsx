@@ -25,12 +25,13 @@ function NavBar() {
             const { refresh } = AuthCheck;
             const config = { headers: { Authorization: `Bearer ${access}` } };
             const token = { refresh_token: String(refresh) };
+            console.log(token,'shhhhhhhhhhhhhhhhhhhhhhhahahhhafi');
             const LogoutUser = await axios.post(LogoutBlackList, token, config);
             const response = LogoutUser.data;
             localStorage.removeItem('token')
             dispatch(resetState);
             navigate('/login');
-            // console.log(response, 'Authentication response data');
+            console.log(response, 'Authentication response data');
         } catch (error) {
             console.log("Error: ", error);
         }

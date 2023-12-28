@@ -432,20 +432,6 @@ function UserProfile() {
         setprofileAllSkills(profileAllSkills.filter((obj2) => obj2.id !== skills))
     }
 
-    function PdfViewer({ cvFileUrl }) {
-        return (
-            <Card className="mx-auto w-full max-w-[24rem]">
-                <Document file={cvFileUrl}>
-                    <Page pageNumber={1} /> {/* Render the first page of the PDF */}
-                </Document>
-                <CardFooter className="pt-0">
-                    <Button variant="filled" className='bg-black mt-2' onClick={CvViewOpen} fullWidth>
-                        Sign In
-                    </Button>
-                </CardFooter>
-            </Card>
-        );
-    }
 
     const AddEducationform = async (e) => {
         e.preventDefault();
