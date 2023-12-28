@@ -31,10 +31,9 @@ function UserProtected() {
                 const config = { headers: { Authorization: ` Bearer ${access}` } };
                 axios.get(RefreshTokenAuto, config)
                     .then((response) => {
-                        console.log('Response from server:', response.data);
+                        // console.log('Response from server:', response.data);
                         localStorage.setItem('token', JSON.stringify(response.data.token))
-                        console.log(localStorage.getItem('token'), 'local storage');
-
+                        // console.log(localStorage.getItem('token'), 'local storage');
                     })
                     .catch((error) => {
                         console.error('Error making request:', error.data);
@@ -49,7 +48,6 @@ function UserProtected() {
 
         const refreshToken = () => {
             if (AuthCheck.refresh) {
-
                 const { refresh } = AuthCheck
                 const refreshtoken = {
                     refresh: refresh
