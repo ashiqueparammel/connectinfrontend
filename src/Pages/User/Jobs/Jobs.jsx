@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Card, Menu, MenuHandler, MenuItem, MenuList, Typography, Input } from '@material-tailwind/react';
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { JobListUser, JobSearch, SavePostAdd, SavePostDetail, UserProfileDetails } from '../../../Constants/Constants';
+import { JobListUser, JobSearch, Job_ApplicationsListPersonal, SavePostAdd, SavePostDetail, UserProfileDetails } from '../../../Constants/Constants';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
@@ -24,7 +24,7 @@ function Jobs() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [startDay, setStartDay] = useState(new Date());
     const [manageState, setmanageState] = useState(false)
-
+    const [CheckApplyJobs, setCheckApplyJobs] = useState([])
 
 
 
@@ -84,10 +84,31 @@ function Jobs() {
         }).catch((error) => {
             console.error("Error fetching job details:", error);
         });
+        axios.get(`${UserProfileDetails}${userInfo.id}/`).then((response) => {
+            const Profiledata = response.data[0]
+            if (response.status === 200) {
+                // console.log(Profiledata.id, '=============================<<<<<<<<<<<>>>>>>>>>>');
+                axios.get(`${Job_ApplicationsListPersonal}${Profiledata.id}/`).then((response) => {
+                    // const getData = response.data
+                    // let obj = {}
+                    // let allData = []
+                    // for (let applyJobData = 0; applyJobData < response.data.length; applyJobData++) {
+                    //     obj = getData[applyJobData]
+                    //     allData.push(obj.job_post)
+                    // }
+                    setCheckApplyJobs(response.data)
+                }).catch((error) => {
+                    console.error("Error fetching Apply job details:", error);
+                });
+            }
+
+        }).catch((error) => {
+            console.error("Error fetching Apply job details:", error);
+        });
+
 
 
     }, [titleSearch, LocationSearch, manageState])
-    console.log(jobList, '=====================================>>>>>>>.');
 
 
     console.log('Current Date:', currentDate.toISOString());
@@ -99,7 +120,6 @@ function Jobs() {
             let exist = check.find((obj) => obj.job_post.id === event)
             if (exist) {
                 toast.error("already saved!")
-                // console.log(exist,'cccccccccccccccckkekekeke');
             }
             else {
                 const saveData = {
@@ -118,10 +138,8 @@ function Jobs() {
         }).catch((error) => {
             console.error("Error fetching saved details:", error);
         });
-        // console.log('event', userInfo.id, event);
 
     }
-
     const ClearAll = () => {
         setdateFilters('')
         setJob_types('')
@@ -130,7 +148,10 @@ function Jobs() {
         setLocationSearch('')
         setmanageState(true)
     }
-
+    const getApplicationStatus = (jobId) => {
+        const appliedJob = CheckApplyJobs.find((checkJob) => checkJob.job_post === jobId);
+        return appliedJob ? 'Applied' : 'Apply';
+    };
     return (
         <div>
 
@@ -142,7 +163,7 @@ function Jobs() {
 
                             <input onChange={handleTitleInputChange} type="search" className='w-[30%] h-12 border-[1px] border-black rounded-sm placeholder:text-black placeholder:font-prompt  focus:border-0' placeholder="  Job title or Company" style={{ paddingLeft: '20px' }} />
                             <input onChange={handleLocationInputChange} type="search" className='w-[30%] h-12 border-[1px] border-black rounded-sm  placeholder:text-black placeholder:font-prompt focus:border-0 ' placeholder="   State or City" style={{ paddingLeft: '20px' }} />
-                            <div className='flex flex-row gap-2 absolute right-16'> 
+                            <div className='flex flex-row gap-2 absolute right-16'>
                                 <Button onClick={SearchJobs} className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' >Filter</Button>
                                 <Button onClick={ClearAll} className='h-12 bg-[#0A3863] font-prompt text-sm rounded-sm' >Clear all</Button>
                             </div>
@@ -211,6 +232,10 @@ function Jobs() {
                                     <Typography className='font-prompt text-sm text-black'>Jobtype : {job.job_type}</Typography>
                                     <Typography className='font-prompt text-sm text-black'>Salary : {job.salary}</Typography>
                                     <Typography className='font-prompt text-sm text-black mb-1'>Posted Date : {formatPostedDate(job.posted_date)}</Typography>
+                                    <div onClick={() => navigate('/jobview', { state: { data: job.id } })} className='font-prompt-normal text-sm text-white hover:cursor-pointer w-20 mb-1 rounded-sm  bg-[#0A3863] hover:bg-[#777778]' >
+                                        <Typography style={{paddingLeft: '10px'}}>{getApplicationStatus(job.id)}</Typography>
+
+                                    </div>
                                 </div>
 
                             </div>
