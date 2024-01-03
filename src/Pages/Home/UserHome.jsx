@@ -206,11 +206,11 @@ function UserHome() {
         </Card>
       </div>
       <div className='max-w-[45rem] w-full '>
-        {/* <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
+        <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
                   <div className='flex flex-col gap-2 mb-5 '>
 
                   </div>
-              </Card> */}
+              </Card>
 
         <Card className="h-[40rem] bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2">
           <div className='flex justify-between' >

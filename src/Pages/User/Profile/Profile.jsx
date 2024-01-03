@@ -8,7 +8,6 @@ import axios from 'axios';
 import { EducationAdd, EducationUpdate, EmployeeProfileUpdate, ListPersonalEducation, ListPersonalSkills, List_Skills, PersonalSkillsAdd, RemovePersonalSkills, UserDetails, UserProfileDetails } from '../../../Constants/Constants';
 import toast, { Toaster } from 'react-hot-toast'
 import { pdfjs } from 'react-pdf';
-import { Document, Page } from 'react-pdf';
 import PdfHelper from '../../../Helpers/PdfHelper';
 
 

@@ -8,6 +8,8 @@ import CompanyMyItems from '../Pages/Company/MyItems/CompanyMyItems'
 import PostView from '../Pages/Company/PostView/PostView'
 import AddPost from '../Components/CompanyComponents/AddPost/AddPost.Jsx'
 import ProfileCompany from '../Pages/Company/Profile/Profile'
+import ApplicationViews from '../Pages/Company/ApplicationViews/ApplicationViews'
+import ApplicationProfile from '../Pages/Company/ApplicationProfileView/ApplicationProfile'
 
 
 function CompanyRoutes() {
@@ -22,6 +24,8 @@ function CompanyRoutes() {
           <Route element={<CompanyMyItems />} path='/myitems' />
           <Route element={<PostView/>} path='/postview' />
           <Route element={<AddPost/>} path='/addpost' />
+          <Route element={<ApplicationViews/>} path='/applicationviews' />
+          <Route element={<ApplicationProfile/>} path='/applicationprofile' />
         </Route>
         </Route>
       </Routes>

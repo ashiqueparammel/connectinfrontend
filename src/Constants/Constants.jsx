@@ -45,6 +45,12 @@ export const ListPersonalEducation = import.meta.env.VITE_ListPersonalEducation
 export const TokenRefresh = import.meta.env.VITE_TokenRefresh 
 export const RefreshTokenAuto = import.meta.env.VITE_RefreshTokenAuto 
 export const Job_ApplicationsListPersonal = import.meta.env.VITE_Job_ApplicationsListPersonal 
+export const Job_MyJobsList = import.meta.env.VITE_Job_MyJobsList 
+export const MySingleJobsList = import.meta.env.VITE_MySingleJobsList 
+export const MyApplicationList = import.meta.env.VITE_MyApplicationList 
+export const MySingleJobsListUnRead = import.meta.env.VITE_MySingleJobsListUnRead 
+export const MySingleJobsListRead = import.meta.env.VITE_MySingleJobsListRead 
+export const job_ApplicationsUpdate = import.meta.env.VITE_job_ApplicationsUpdate 
 
 
 

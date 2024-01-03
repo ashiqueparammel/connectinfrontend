@@ -87,15 +87,7 @@ function Jobs() {
         axios.get(`${UserProfileDetails}${userInfo.id}/`).then((response) => {
             const Profiledata = response.data[0]
             if (response.status === 200) {
-                // console.log(Profiledata.id, '=============================<<<<<<<<<<<>>>>>>>>>>');
                 axios.get(`${Job_ApplicationsListPersonal}${Profiledata.id}/`).then((response) => {
-                    // const getData = response.data
-                    // let obj = {}
-                    // let allData = []
-                    // for (let applyJobData = 0; applyJobData < response.data.length; applyJobData++) {
-                    //     obj = getData[applyJobData]
-                    //     allData.push(obj.job_post)
-                    // }
                     setCheckApplyJobs(response.data)
                 }).catch((error) => {
                     console.error("Error fetching Apply job details:", error);

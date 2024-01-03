@@ -17,7 +17,7 @@ function CompanyMyItems() {
   const UserDetails = useSelector((state) => state.user.userInfo)
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('Posts');
-  const Head = [{ Heading: 'Posts' }, { Heading: 'Interviews' }, { Heading: 'Applications' }]
+  const Head = [{ Heading: 'Posts' }, { Heading: 'Interviews' }] //{ Heading: 'Applications' }
   const [JobDetails, setJobDetails] = useState([]);
   const [CompanyDetail, setCompanyDetails] = useState([])
   const [jobAllSkills, setJobAllSkills] = useState([])
@@ -187,7 +187,7 @@ function CompanyMyItems() {
       <Card className='w-[80rem] mt-14 bg-gray-200'>
         <div className='flex justify-between border-b-[1px] border-[#a39f9f] ' >
           <Typography className='font-prompt mt-4 ml-4' variant='h4'>
-            MyItems
+            MyJobs
           </Typography>
           <Button onClick={handleOpen} className='mt-4 mr-4 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faPlus} /><span>Add Post</span></Button>
         </div>
@@ -229,7 +229,7 @@ function CompanyMyItems() {
                 </div> : '')}
 
               {(activeTab === 'Interviews' ? 'interview' : '')}
-              {(activeTab === 'Applications' ? 'Applications' : '')}
+              {/* {(activeTab === 'Applications' ? 'Applications' : '')} */}
 
             </TabsBody>
           </Tabs>
