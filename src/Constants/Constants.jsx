@@ -51,6 +51,23 @@ export const MyApplicationList = import.meta.env.VITE_MyApplicationList
 export const MySingleJobsListUnRead = import.meta.env.VITE_MySingleJobsListUnRead 
 export const MySingleJobsListRead = import.meta.env.VITE_MySingleJobsListRead 
 export const job_ApplicationsUpdate = import.meta.env.VITE_job_ApplicationsUpdate 
+export const ReportJobPostAdd = import.meta.env.VITE_ReportJobPostAdd 
+export const ReportJobPostList = import.meta.env.VITE_ReportJobPostList 
+//balance
+export const PublicPostAdd = import.meta.env.VITE_PublicPostAdd 
+export const PublicPostList = import.meta.env.VITE_PublicPostList 
+export const PublicPostUpdate = import.meta.env.VITE_PublicPostUpdate 
+export const AddLikes = import.meta.env.VITE_AddLikes 
+export const UpdateLikes = import.meta.env.VITE_UpdateLikes 
+export const AddComments = import.meta.env.VITE_AddComments 
+export const UpdateComments = import.meta.env.VITE_UpdateComments 
+export const NotInterestedPosts = import.meta.env.VITE_NotInterestedPosts 
+export const PublicPostReport = import.meta.env.VITE_PublicPostReport 
+
+export const UserSearchList = import.meta.env.VITE_UserSearchList //search
+
+
+
 
 
 

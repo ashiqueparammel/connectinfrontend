@@ -15,19 +15,21 @@ function AdminLayout() {
                 return 'USER';
             case '/admin/company':
                 return 'COMPANY';
-            case '/admin/skills':
-                return 'SKILLS';
+            case '/admin/jobreports':
+                return 'JOB REPORTS';
+            // case '/admin/skills':
+            //     return 'SKILLS';
             default:
                 return '';
         }
     };
 
-   
+
     const currentRoute = window.location.pathname;
 
-  
+
     const head = setHead(currentRoute);
-   
+
     return (
         <div className='flex'>
             <Sidebar />

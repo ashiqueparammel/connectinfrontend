@@ -1,9 +1,9 @@
-import { faEdit, faEllipsisVertical, faEye, faFilePdf, faRemove, faSave, faSuitcase, faTrash, faPlus, faAdd, faUpload, } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faEllipsisVertical, faEye, faFilePdf, faRemove, faSave, faSuitcase, faTrash, faPlus, faAdd, faUpload, faFlag, } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Card, CardBody, Dialog, DialogFooter, DialogHeader, Menu, MenuHandler, MenuItem, MenuList, Typography, CardFooter, } from '@material-tailwind/react'
+import { Button, Card, CardBody, Dialog, DialogFooter, DialogHeader, Menu, MenuHandler, MenuItem, MenuList, Typography, CardFooter, DialogBody, } from '@material-tailwind/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { EmployeeProfileUpdate, JobApplicationsAdd, JobUserView, Job_ApplicationsListPersonal, ListPersonalEducation, ListPersonalSkills, ListRequiredSkills, List_Skills, PersonalSkillsAdd, RemovePersonalSkills, UserProfileDetails } from '../../../Constants/Constants'
+import { EmployeeProfileUpdate, JobApplicationsAdd, JobUserView, Job_ApplicationsListPersonal, ListPersonalEducation, ListPersonalSkills, ListRequiredSkills, List_Skills, PersonalSkillsAdd, RemovePersonalSkills, ReportJobPostAdd, UserProfileDetails } from '../../../Constants/Constants'
 import axios from 'axios'
 import toast, { Toaster } from 'react-hot-toast'
 import { useSelector } from 'react-redux'
@@ -43,7 +43,10 @@ function JobView() {
     const [ExpetedCtc, setExpetedCtc] = useState('')
 
     // there is want to if condition  if job id show this page or else render to back page  not now want later
-
+    //report
+    const [Reportopen, setreportOpen] = useState(false);
+    const ReporthandleOpen = () => setreportOpen(!Reportopen);
+    const [ReportText, setReportText] = useState('')
     //cv
     const [Cvopen, setCvOpen] = React.useState(false);
     const CvViewOpen = () => setCvOpen((cur) => !cur);
@@ -55,6 +58,7 @@ function JobView() {
     const [currentStep, setCurrentStep] = useState(1);
     const [openSkill, setSkillOpen] = useState(false);
     const [manageApplyButton, setManageApplyButton] = useState(false)
+    const [ReportManage, setReportManage] = useState(false)
     const handleSkillOpen = () => setSkillOpen((cur) => !cur);
 
     const handleNext = () => {
@@ -70,7 +74,7 @@ function JobView() {
         const formattedDate = new Date(postedDate).toLocaleDateString(undefined, options);
         return formattedDate;
     };
- 
+
     // console.log(job_id, 'hllllllllllllllllo');
     useEffect(() => {
         const response = axios.get(`${JobUserView}${job_id}/`).then((response) => {
@@ -125,11 +129,23 @@ function JobView() {
 
                     })
                     axios.get(`${Job_ApplicationsListPersonal}${response.data[0].id}/`).then((response) => {
-                        
+
                         const CheckApplyJobs = response.data
                         const appliedJob = CheckApplyJobs.find((checkJob) => checkJob.job_post === job_id);
                         if (appliedJob) {
                             setManageApplyButton(true)
+                        }
+
+                    }).catch((error) => {
+                        console.error("Error fetching Apply job details:", error);
+                    });
+                    
+                    axios.get(ReportJobPostAdd).then((response) => {
+
+                        const CheckReportJobs = response.data
+                         const ReportingJob = CheckReportJobs.find((reportjob) => reportjob.Post === job_id);
+                        if (ReportingJob) {
+                            setReportManage(true)
                         }
 
                     }).catch((error) => {
@@ -143,7 +159,7 @@ function JobView() {
                 });
         }
     }, [editManage]);
-    
+
 
 
 
@@ -340,6 +356,32 @@ function JobView() {
         }
     }
 
+    const ReportJob = () => {
+        const postDatas = {
+            user: userInfo.id,
+            Post: job_id,
+            Reason: ReportText
+        }
+
+        try {
+            axios.post(ReportJobPostAdd, postDatas)
+                .then((response) => {
+                    if (response.status === 201) {
+                        toast.success('Your Job Reported has been Recived!')
+                    }
+                }).catch((error) => {
+                    toast.error('error!!');
+                });
+
+        } catch (error) {
+            console.error('Error during ReportJobPostAdd:', error);
+            toast.error(error);
+        }
+        setEditManage(true)
+        ReporthandleOpen()
+    }
+
+
     return (
         <div className='flex justify-center'>
             <Card className='bg-[#e7e7e7] rounded-md w-[90%] mt-10   '>
@@ -352,15 +394,15 @@ function JobView() {
                         <div className='flex justify-between'>
 
                             <Typography className='font-prompt text-lg ml-6 mt-1 text-black'>{jobViews.Job_title}</Typography>
-                            <Menu>
+                            {(manageApplyButton ?(ReportManage?'': <Menu>
                                 <MenuHandler>
                                     <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-5 h-5 mt-3  rounded-full hover:text-[#000000]   mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer ' />
                                 </MenuHandler>
                                 <MenuList className="max-h-72">
-                                    <MenuItem className='text-black font-prompt'><FontAwesomeIcon icon={faSave} color='#051339' className='mr-4' />Save</MenuItem>
+                                    <MenuItem onClick={ReporthandleOpen} className='text-black font-prompt'><FontAwesomeIcon icon={faFlag} color='#051339' className='mr-4' />Report</MenuItem>
                                     {/* <MenuItem className='text-black font-prompt'><FontAwesomeIcon icon={faRemove} color='#051339' className='mr-4' />Not Interested</MenuItem> */}
                                 </MenuList>
-                            </Menu>
+                            </Menu>) : '')}
                         </div>
                         <Typography className='font-prompt text-md ml-6 '>{CompanyDetails.company_name}</Typography>
                         <Typography className='font-prompt text-md ml-6 '>{CompanyDetails.Location}</Typography>
@@ -585,9 +627,56 @@ function JobView() {
 
                 </Dialog>
             </Dialog>
+            < div >
 
+                <Dialog open={Reportopen} size="xs" handler={ReporthandleOpen}>
+                    <div className="flex items-center justify-between">
+                        <DialogHeader className="flex flex-col items-start">
+                            {" "}
+                            <Typography className="mb-1" variant="h4">
+                                Report
+                            </Typography>
+                        </DialogHeader>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="mr-3 h-5 w-5"
+                            onClick={ReporthandleOpen}
+                        >
+                            <path
+                                fillRule="evenodd"
+                                d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+                                clipRule="evenodd"
+                            />
+                        </svg>
+                    </div>
+                    <DialogBody>
+
+                        <div className="grid gap-6">
+
+                            <textarea label="Message" className='h-28 border-[1px] border-black font-prompt text-black' value={ReportText} onChange={(e) => setReportText(e.target.value)} placeholder='Enter your Reporting Reason' style={{ paddingLeft: '10px' }} />
+                        </div>
+                    </DialogBody>
+                    <DialogFooter className="space-x-2">
+                        <Button variant="text" className="bg-[#7c7c7d] font-prompt-normal text-black" onClick={ReporthandleOpen}>
+                            cancel
+                        </Button>
+                        <Button variant="filled" className="bg-[#051339] font-prompt-normal hover:bg-[#233156]" onClick={ReportJob}>
+                            Report
+                        </Button>
+                    </DialogFooter>
+                </Dialog>
+            </div >
+
+            <Toaster />
         </div>
     )
 }
 
 export default JobView
+
+
+
+
+

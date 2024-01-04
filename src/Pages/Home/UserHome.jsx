@@ -5,7 +5,7 @@ import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
 import { EmployeeProfileAdd, UserDetails, UserProfileDetails } from '../../Constants/Constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faUser, faCamera, } from '@fortawesome/free-solid-svg-icons';
+import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faUser, faCamera, faPaperPlane, faImage, faAdd, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast'
@@ -123,6 +123,7 @@ function UserHome() {
       });
   }
 
+
   return (
     <div className=' flex mt-5'>
       <div className='mt-2'>
@@ -206,11 +207,20 @@ function UserHome() {
         </Card>
       </div>
       <div className='max-w-[45rem] w-full '>
-        <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
-                  <div className='flex flex-col gap-2 mb-5 '>
 
-                  </div>
-              </Card>
+        <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
+          <div className='flex  gap-2 mt-5 '>
+            {(userDetail.profile_image ? <img src={userDetail.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
+              <UserCircleIcon className="ml-4 rounded-full w-16 h-16  " />)}
+            <input type="text" className='w-[70%] h-14  mt-1 border-[1px] font-prompt border-black rounded-md' placeholder='Share Your Post ...' style={{ paddingLeft: '20px' }} />
+            <Button className='h-14 mt-1 bg-[#051339]'><FontAwesomeIcon icon={faPaperPlane} className='w-7 h-7 rotate-45 ' /></Button>
+          </div>
+          <div className='flex text-[#051339] hover:text-[#6f6b6b] mt-3 absolute right-32 bottom-5 hover:cursor-pointer h-6'>
+            <FontAwesomeIcon icon={faAdd} className='w-4 h-4 mt-1' />
+            <FontAwesomeIcon icon={faImage} className='w-7 h-7 mt-1' />
+          </div>
+
+        </Card>
 
         <Card className="h-[40rem] bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2">
           <div className='flex justify-between' >
@@ -288,3 +298,56 @@ function UserHome() {
 
 export default UserHome
 
+
+
+
+
+
+// import {List,ListItem, ListItemPrefix,Avatar,Card,Typography,} from "@material-tailwind/react";
+// export function ListWithAvatar() {
+//   return (
+//     <Card className="w-96">
+//       <List>
+//         <ListItem>
+//           <ListItemPrefix>
+//             <Avatar variant="circular" alt="candice" src="https://docs.material-tailwind.com/img/face-1.jpg" />
+//           </ListItemPrefix>
+//           <div>
+//             <Typography variant="h6" color="blue-gray">
+//               Tania Andrew
+//             </Typography>
+//             <Typography variant="small" color="gray" className="font-normal">
+//               Software Engineer @ Material Tailwind
+//             </Typography>
+//           </div>
+//         </ListItem>
+//         <ListItem>
+//           <ListItemPrefix>
+//             <Avatar variant="circular" alt="alexander" src="https://docs.material-tailwind.com/img/face-2.jpg" />
+//           </ListItemPrefix>
+//           <div>
+//             <Typography variant="h6" color="blue-gray">
+//               Alexander
+//             </Typography>
+//             <Typography variant="small" color="gray" className="font-normal">
+//               Backend Developer @ Material Tailwind
+//             </Typography>
+//           </div>
+//         </ListItem>
+//         <ListItem>
+//           <ListItemPrefix>
+//             <Avatar variant="circular" alt="emma" src="https://docs.material-tailwind.com/img/face-3.jpg" />
+//           </ListItemPrefix>
+//           <div>
+//             <Typography variant="h6" color="blue-gray">
+//               Emma Willever
+//             </Typography>
+//             <Typography variant="small" color="gray" className="font-normal">
+//               UI/UX Designer @ Material Tailwind
+//             </Typography>
+//           </div>
+//         </ListItem>
+//       </List>
+//     </Card>
+//   );
+// }
