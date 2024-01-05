@@ -4,3 +4,7 @@
 @import 'tailwindcss/utilities';
 
 /* Your other styles go here */
+.hidescroll::-webkit-scrollbar{
+    display: none;
+    
+}

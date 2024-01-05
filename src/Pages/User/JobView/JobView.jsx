@@ -139,11 +139,11 @@ function JobView() {
                     }).catch((error) => {
                         console.error("Error fetching Apply job details:", error);
                     });
-                    
+
                     axios.get(ReportJobPostAdd).then((response) => {
 
                         const CheckReportJobs = response.data
-                         const ReportingJob = CheckReportJobs.find((reportjob) => reportjob.Post === job_id);
+                        const ReportingJob = CheckReportJobs.find((reportjob) => reportjob.Post === job_id);
                         if (ReportingJob) {
                             setReportManage(true)
                         }
@@ -362,23 +362,28 @@ function JobView() {
             Post: job_id,
             Reason: ReportText
         }
+        if (ReportText) {
 
-        try {
-            axios.post(ReportJobPostAdd, postDatas)
-                .then((response) => {
-                    if (response.status === 201) {
-                        toast.success('Your Job Reported has been Recived!')
-                    }
-                }).catch((error) => {
-                    toast.error('error!!');
-                });
+            try {
+                axios.post(ReportJobPostAdd, postDatas)
+                    .then((response) => {
+                        if (response.status === 201) {
+                            toast.success('Your Job Reported has been Recived!')
+                        }
+                    }).catch((error) => {
+                        toast.error('error!!');
+                    });
 
-        } catch (error) {
-            console.error('Error during ReportJobPostAdd:', error);
-            toast.error(error);
+            } catch (error) {
+                console.error('Error during ReportJobPostAdd:', error);
+                toast.error(error);
+            }
+            setEditManage(true)
+            ReporthandleOpen()
+        } else {
+            toast.error('Text field canout empty!')
         }
-        setEditManage(true)
-        ReporthandleOpen()
+
     }
 
 
@@ -394,7 +399,7 @@ function JobView() {
                         <div className='flex justify-between'>
 
                             <Typography className='font-prompt text-lg ml-6 mt-1 text-black'>{jobViews.Job_title}</Typography>
-                            {(manageApplyButton ?(ReportManage?'': <Menu>
+                            {(manageApplyButton ? (ReportManage ? '' : <Menu>
                                 <MenuHandler>
                                     <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-5 h-5 mt-3  rounded-full hover:text-[#000000]   mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer ' />
                                 </MenuHandler>
@@ -666,6 +671,8 @@ function JobView() {
                             Report
                         </Button>
                     </DialogFooter>
+                    <Toaster />
+
                 </Dialog>
             </div >
 

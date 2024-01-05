@@ -624,7 +624,7 @@ function UserProfile() {
                             <Typography className='font-prompt' variant='h5'>
                                 74  connections
                             </Typography>
-                            <Card className='w-[40%] h-14 absolute right-12 shadow-2xl border-[1px] text-center font-prompt  text-black text-lg border-[#000000] top-80 rounded-sm'>
+                            <Card className='w-[40%] h-14 absolute right-12  shadow-2xl border-[1px] text-center font-prompt  text-black text-lg border-[#000000] top-64 rounded-sm'>
                                 <div className='flex flex-row justify-between mt-1 ml-4'>
                                     <FontAwesomeIcon icon={faFilePdf} color='#051339' className='w-6 h-12' />
                                     <h1 className='mt-2'>{(UserProfile.cv_file ? <div onClick={CvViewOpen} className='flex flex-row gap-10 bg-[#dfdbdb] hover:cursor-pointer hover:bg-[#b6b3b3] rounded-sm '><h1 className='ml-2' >view your cv </h1><FontAwesomeIcon icon={faEye} color='#051339' className=' w-6 h-8 mr-2' /></div> : 'Upload Your CV')}</h1>

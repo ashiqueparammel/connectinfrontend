@@ -1,5 +1,9 @@
-import React from "react";
-import { Navbar, MobileNav, Typography, Button, IconButton, Card, Input, Menu, MenuHandler, MenuList, MenuItem } from "@material-tailwind/react";
+import React, { useEffect, useState } from "react";
+import {
+    Navbar, MobileNav, Typography, Button, IconButton, Card,
+    List, ListItem, ListItemPrefix, Avatar,
+    Menu, MenuHandler, MenuList, MenuItem, Dialog, DialogHeader
+} from "@material-tailwind/react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faUsers, faBriefcase, faMessage, faBell, faUser, faSearch, faArrowRightToBracket, faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import Logo from '../../Assets/Frame 20.png'
@@ -7,9 +11,9 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { resetState } from "../../Redux/Users";
 import { CompanyResetState } from "../../Redux/Companyees";
-import { LogoutBlackList } from "../../Constants/Constants";
+import { LogoutBlackList, UserSearchList } from "../../Constants/Constants";
 import axios from "axios";
-
+import blankImage from '../../Assets/blankprofile.png'
 
 
 
@@ -18,6 +22,12 @@ function NavBar() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
+    const [openNav, setOpenNav] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
+    const [searchValues, setsearchValues] = useState('')
+    const [searchUsersData, setsearchUsersData] = useState([])
+    // const SearchhandleOpen = () => searchSetOpen(!searchOpen);/
+
     const logout = async () => {
         try {
             const AuthCheck = JSON.parse(localStorage.getItem('token'));
@@ -25,13 +35,13 @@ function NavBar() {
             const { refresh } = AuthCheck;
             const config = { headers: { Authorization: `Bearer ${access}` } };
             const token = { refresh_token: String(refresh) };
-            console.log(token,'shhhhhhhhhhhhhhhhhhhhhhhahahhhafi');
+            // console.log(token, 'shhhhhhhhhhhhhhhhhhhhhhhahahhhafi');
             const LogoutUser = await axios.post(LogoutBlackList, token, config);
             const response = LogoutUser.data;
             localStorage.removeItem('token')
             dispatch(resetState);
             navigate('/login');
-            console.log(response, 'Authentication response data');
+            // console.log(response, 'Authentication response data');
         } catch (error) {
             console.log("Error: ", error);
         }
@@ -41,13 +51,28 @@ function NavBar() {
 
 
 
+    useEffect(() => {
+        if (searchValues !== '') {
+            axios.get(UserSearchList + searchValues).then((response) => {
+                setsearchUsersData(response.data)
+                // console.log(response.data,'checkdataSearch working or not');
+            }).catch((error) => {
+                console.error("Error fetching Searching user :", error);
+            });
+            setSearchOpen(true)
+        }
+        else {
+            setSearchOpen(false)
+        }
+
+
+    }, [searchValues])
 
 
 
 
-    const [openNav, setOpenNav] = React.useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         window.addEventListener(
             "resize",
             () => window.innerWidth >= 960 && setOpenNav(false),
@@ -55,77 +80,107 @@ function NavBar() {
     }, []);
 
     const navList = (
-        <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-            <Input
-                type="search"
-                placeholder="Search"
-                containerProps={{
-                    className: "min-w-[288px]",
-                }}
-                className=" !border-black placeholder:text-black focus:!border-black placeholder:font-prompt bg-white "
-                labelProps={{
-                    className: "before:content-none after:content-none",
-                }}
-            />
-            <Typography
-                as="li"
-                variant="small"
-                color="blue-gray"
-                className="p-1 font-normal"
-            >
-                <Button onClick={() => navigate('/')} className='bg-[#051339] '><FontAwesomeIcon icon={faHome} className='w-12 h-6' /></Button>
-            </Typography>
-            <Typography
-                as="li"
-                variant="small"
-                color="blue-gray"
-                className="p-1 font-normal"
-            >
-                <Button className='bg-[#051339] '><FontAwesomeIcon icon={faUsers} className='w-12 h-6' /></Button>
-            </Typography>
-            <Typography
-                as="li"
-                variant="small"
-                color="blue-gray"
-                className="p-1 font-normal"
-            >
-                <Button onClick={() => navigate('/jobs')} className='bg-[#051339] '><FontAwesomeIcon icon={faBriefcase} className='w-12 h-6' /></Button>
-            </Typography>
-            <Typography
-                as="li"
-                variant="small"
-                color="blue-gray"
-                className="p-1 font-normal"
-            >
-                <Button className='bg-[#051339] '><FontAwesomeIcon icon={faMessage} className='w-12 h-6' /></Button>
-            </Typography>
-            <Typography
-                as="li"
-                variant="small"
-                color="blue-gray"
-                className="p-1 font-normal"
-            >
-                <Button className='bg-[#051339] '><FontAwesomeIcon icon={faBell} className='w-12 h-6' /></Button>
-            </Typography>
-            <Typography
-                as="li"
-                variant="small"
-                color="blue-gray"
-                className="p-1 font-normal"
-            >
-                <Button className='bg-[#051339] '>
-                    <Menu>
-                        <MenuHandler>
-                            <FontAwesomeIcon icon={faUser} className='text-white w-12 h-6' />
-                        </MenuHandler>
-                        <MenuList className="max-h-72">
-                            <MenuItem onClick={() => navigate('/profile')} className="font-prompt text-black" ><FontAwesomeIcon icon={faCircleUser} className='text-[#051339] w-6 h-4' />Profile</MenuItem>
-                            <MenuItem onClick={logout} className="font-prompt text-black"><FontAwesomeIcon icon={faArrowRightToBracket} className='text-[#051339] w-6 h-4' />Logout</MenuItem>
-                        </MenuList>
-                    </Menu>
-                </Button>
-            </Typography>
-        </ul>
+        <div>
+            <div className="flex flex-col gap-2 absolute left-80 top-5">
+
+                <input
+                    type="search"
+                    value={searchValues}
+                    onChange={(e) => setsearchValues(e.target.value)}
+                    placeholder="Search..."
+                    style={{ paddingLeft: '14px' }}
+                    className="text-black w-72 h-11 border-[1px] border-black rounded-md ml-2 focus:!border-black placeholder:font-prompt  "
+                />
+                {(searchOpen ?
+                    <Card className="w-96 max-h-60">
+                        <List className="min-h-20 max-h-60 overflow-y-auto z-50 hidescroll">
+                            {(searchUsersData.length===0?<h1 className="text-center text-lg font-prompt-normal" style={{paddingTop:'15px'}} >User not found</h1>:(searchUsersData.map((user, index) => (
+                                <ListItem key={index}>
+                                    <ListItemPrefix>
+                                        {user.profile_image ? (
+                                            <Avatar variant="circular" alt="candice" src={user.profile_image} />
+                                        ) : (
+                                            <Avatar variant="circular" alt="candice" src={blankImage} />
+                                        )}
+                                    </ListItemPrefix>
+                                    <div>
+                                        <Typography variant="h6" color="blue-gray">
+                                            {user.username}
+                                        </Typography>
+                                        <Typography variant="small" color="gray" className="font-normal">
+                                            {user.email}
+                                        </Typography>
+                                    </div>
+                                </ListItem>
+                            ))))}
+                        </List>
+                    </Card>
+
+                    : '')}
+
+            </div>
+
+            <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+                <Typography
+                    as="li"
+                    variant="small"
+                    color="blue-gray"
+                    className="p-1 font-normal"
+                >
+                    <Button onClick={() => navigate('/')} className='bg-[#051339] '><FontAwesomeIcon icon={faHome} className='w-12 h-6' /></Button>
+                </Typography>
+                <Typography
+                    as="li"
+                    variant="small"
+                    color="blue-gray"
+                    className="p-1 font-normal"
+                >
+                    <Button className='bg-[#051339] '><FontAwesomeIcon icon={faUsers} className='w-12 h-6' /></Button>
+                </Typography>
+                <Typography
+                    as="li"
+                    variant="small"
+                    color="blue-gray"
+                    className="p-1 font-normal"
+                >
+                    <Button onClick={() => navigate('/jobs')} className='bg-[#051339] '><FontAwesomeIcon icon={faBriefcase} className='w-12 h-6' /></Button>
+                </Typography>
+                <Typography
+                    as="li"
+                    variant="small"
+                    color="blue-gray"
+                    className="p-1 font-normal"
+                >
+                    <Button className='bg-[#051339] '><FontAwesomeIcon icon={faMessage} className='w-12 h-6' /></Button>
+                </Typography>
+                <Typography
+                    as="li"
+                    variant="small"
+                    color="blue-gray"
+                    className="p-1 font-normal"
+                >
+                    <Button className='bg-[#051339] '><FontAwesomeIcon icon={faBell} className='w-12 h-6' /></Button>
+                </Typography>
+                <Typography
+                    as="li"
+                    variant="small"
+                    color="blue-gray"
+                    className="p-1 font-normal"
+                >
+                    <Button className='bg-[#051339] '>
+                        <Menu>
+                            <MenuHandler>
+                                <FontAwesomeIcon icon={faUser} className='text-white w-12 h-6' />
+                            </MenuHandler>
+                            <MenuList className="max-h-72">
+                                <MenuItem onClick={() => navigate('/profile')} className="font-prompt text-black" ><FontAwesomeIcon icon={faCircleUser} className='text-[#051339] w-6 h-4' />Profile</MenuItem>
+                                <MenuItem onClick={logout} className="font-prompt text-black"><FontAwesomeIcon icon={faArrowRightToBracket} className='text-[#051339] w-6 h-4' />Logout</MenuItem>
+                            </MenuList>
+                        </Menu>
+                    </Button>
+                </Typography>
+            </ul>
+        </div>
     );
 
 
@@ -200,6 +255,9 @@ function NavBar() {
                 </MobileNav>
             </Navbar>
 
+
+
+
         </div>
 
     )
@@ -208,6 +266,11 @@ function NavBar() {
 }
 
 export default NavBar
+
+
+
+
+
 
 
 
