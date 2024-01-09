@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, } from "@material-tailwind/react";
+import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { EmployeeProfileAdd, UserDetails, UserProfileDetails } from '../../Constants/Constants';
+import { EmployeeProfileAdd, NotInterestedPosts, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, UserDetails, UserProfileDetails } from '../../Constants/Constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faUser, faCamera, faPaperPlane, faImage, faAdd, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
@@ -17,13 +17,30 @@ function UserHome() {
   const userInfo = useSelector((state) => state.user.userInfo)
   const fileInputRef = useRef(null);
   const fileInputProfileRef = useRef(null);
+  const fileInputImageRef = useRef(null);
 
   const [CompanyuserDetails, setCompanyuserDetails] = useState([]);
   const [companyDetail, setCompanyDetail] = useState([]);
   const [ImageManage, setImageManage] = useState(false);
   // console.log(userInfo, '=================>>>>>>>>>>>>>>>')
 
+const [checkState, setcheckState] = useState(true)
 
+  //add post 
+  const [postDetails, setPostDetails] = useState([])
+  const [userNotIntrustedPost, setUserNotIntrustedPost] = useState([])
+  let PostImagefile = null
+  const [postText, setPostText] = useState('')
+  // report post
+  const [reprotText, setReprotText] = useState('')
+  const [reportPostId, setReportPostId] = useState('')
+  const [Reportopen, setreportOpen] = useState(false);
+  const ReporthandleOpen = (e) => {
+    setreportOpen(!Reportopen); if (Reportopen === false) { setReportPostId(e); } {
+
+    }
+  };
+  const [reportedPosts, setReportedPosts] = useState([])
 
   useEffect(() => {
     setImageManage(false)
@@ -35,6 +52,18 @@ function UserHome() {
         .catch((error) => {
           console.error("Error fetching user data:", error);
         });
+      axios.get(`${PublicPostList}${userInfo.id}/`).then((response) => {
+        setPostDetails(response.data)
+      }).catch((error) => {
+        console.log('error fetching public post', error);
+      })
+      axios.get(`${PublicPostReportUser}${userInfo.id}/`).then((response) => {
+        setReportedPosts(response.data)
+      }).catch((error => {
+        console.log('error fetching public post', error);
+
+      }))
+
     }
   }, [ImageManage]);
 
@@ -110,12 +139,12 @@ function UserHome() {
           user: userInfo.id,
           Job_titile: null,
           cv_file: null,
-          
+
         }
         // console.log('3333333333333333333333333333333333333333333');
         axios.post(EmployeeProfileAdd, profileData).then((response) => {
           console.log(response.data, 'created profile');
-        // console.log('444444444444444444444444444444444444444444');
+          // console.log('444444444444444444444444444444444444444444');
 
           navigate('/profile/')
 
@@ -131,11 +160,100 @@ function UserHome() {
       });
   }
 
+  const notIntrested = (event) => {
+    const Data = {
+      user: userInfo.id,
+      Post: event,
+    }
+    try {
+      axios.post(NotInterestedPosts, Data).then((response) => {
+        if (response.status === 201) {
+          setImageManage(true)
+        }
+      })
+    } catch (error) {
+      console.log('error not Intrusted ', error);
+    }
+  }
 
+  const addPublicPost = () => {
+    if (postText === '') {
+      toast.error('Field cannot be empty!')
+    }
+    else if (PostImagefile === null) {
+      toast.error('Image cannot be empty!')
+    } else {
+      const formData = new FormData();
+      formData.append('user', userInfo.id);
+      formData.append('description', postText);
+      formData.append('Post_Image', PostImagefile);
+      formData.append('is_available', true);
+      axios.post(PublicPostAdd, formData)
+        .then((response) => {
+          if (response.status === 201) {
+            setImageManage(true)
+            toast.success('Public Post Added Successfully!');
+          }
+        }).catch((err) => {
+          toast.error(err);
+        })
+
+    }
+  }
+
+  const Post_Image_Add = (event) => {
+    PostImagefile = event.target.files[0];
+    toast.success('Image Added')
+
+  }
+  const handlePostImage = () => {
+    fileInputImageRef.current.click();
+  };
+
+
+  const ReportPublicPost = (event) => {
+    const postDatas = {
+      user: userInfo.id,
+      Post: reportPostId,
+      Reason: reprotText
+    }
+    if (reprotText) {
+
+      try {
+        axios.post(PublicPostReport,postDatas)
+          .then((response) => {
+            if (response.status === 201) {
+              toast.success('Your Job Reported has been Recived!')
+            }
+          }).catch((error) => {
+            toast.error('error!!');
+          });
+
+      } catch (error) {
+        console.error('Error during ReportJobPostAdd:', error);
+        toast.error(error);
+      }
+      setImageManage(true)
+      ReporthandleOpen()
+    } else {
+      toast.error('Text field canout empty!')
+    }
+
+  }
+
+  const getReportStatus = (postId) => {
+    const ReportedJob= reportedPosts.find((checkPost) => checkPost.Post === postId);
+    return ReportedJob ? 'Reported':'Report'
+};
+
+const likeAddPost =()=>{
+  setcheckState(!checkState)
+  toast.success('working')
+}
   return (
-    <div className=' flex mt-5'>
-      <div className='mt-2'>
-        <Card className="h-[310px] bg-[#ededed] max-w-[20rem]  ml-16  shadow-xl shadow-blue-gray-900/2">
+    <div className=' flex flex-row mt-5   '>
+      <div className='mt-2 '>
+        <Card className=" bg-[#ededed] max-w-[20rem]   ml-16  shadow-xl shadow-blue-gray-900/2">
           {(userDetail.profile_cover_image ?
             <Card style={{ backgroundImage: `url(${userDetail.profile_cover_image})`, backgroundSize: '100% 100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} className='  h-28 rounded-b-none   shadow-xl shadow-[#b9b7b7]'>
               <div  >
@@ -190,7 +308,7 @@ function UserHome() {
                 )}
               </div>
             </Card>)}
-          <div className='mt-10 p-3 text-center'>
+          <div className='mt-8 p-3 text-center'>
             <h1 className='font-prompt text-2xl'>{userDetail.username}</h1>
             <h1 className='font-prompt text-md'>{userDetail.email}</h1>
 
@@ -205,7 +323,7 @@ function UserHome() {
           </div>
         </Card>
 
-        <Card className="h-[247px]  bg-[#ededed] w-full max-w-[20rem] mt-10 ml-16  shadow-2xl shadow-blue-gray-900/2">
+        <Card className="  bg-[#ededed] w-full max-w-[20rem] mt-10 ml-16  shadow-2xl shadow-blue-gray-900/2">
           <div className='flex  flex-col gap-2    '>
             <Button onClick={() => navigate('/myitems')} className='bg-[#051339]  rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faBookBookmark} className='w-7 h-7 mt-1' /> <span className='mt-1 '>My Jobs</span></Button>
             <Button className='bg-[#051339] rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faUsers} className='w-7 h-7 mt-1' /><span className='mt-1 '>Following & Followers</span></Button>
@@ -214,64 +332,78 @@ function UserHome() {
           </div>
         </Card>
       </div>
-      <div className='max-w-[45rem] w-full '>
+      <div className='max-w-[45rem] w-full overflow-hidden'>
 
         <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
           <div className='flex  gap-2 mt-5 '>
             {(userDetail.profile_image ? <img src={userDetail.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
               <UserCircleIcon className="ml-4 rounded-full w-16 h-16  " />)}
-            <input type="text" className='w-[70%] h-14  mt-1 border-[1px] font-prompt border-black rounded-md' placeholder='Share Your Post ...' style={{ paddingLeft: '20px' }} />
-            <Button className='h-14 mt-1 bg-[#051339]'><FontAwesomeIcon icon={faPaperPlane} className='w-7 h-7 rotate-45 ' /></Button>
+            <input type="text" className='w-[70%] h-14  mt-1 border-[1px] font-prompt border-black rounded-md' value={postText} onChange={(e) => setPostText(e.target.value)} placeholder='Share Your Post ...' style={{ paddingLeft: '20px' }} />
+            <Button title='Add New Public Post' onClick={addPublicPost} className='h-14 mt-1 bg-[#051339]'><FontAwesomeIcon icon={faPaperPlane} className='w-7 h-7 rotate-45 ' /></Button>
           </div>
-          <div className='flex text-[#051339] hover:text-[#6f6b6b] mt-3 absolute right-32 bottom-5 hover:cursor-pointer h-6'>
+          <div title='Add Image' onClick={handlePostImage} className='flex  text-[#051339] hover:text-[#6f6b6b] mt-3 absolute right-32 bottom-5 hover:cursor-pointer h-6'>
             <FontAwesomeIcon icon={faAdd} className='w-4 h-4 mt-1' />
             <FontAwesomeIcon icon={faImage} className='w-7 h-7 mt-1' />
           </div>
-
+          <input
+            type="file"
+            ref={fileInputImageRef}
+            style={{ display: 'none' }}
+            onChange={Post_Image_Add}
+          />
         </Card>
 
-        <Card className="h-[40rem] bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2">
-          <div className='flex justify-between' >
-            <div className='flex'>
-              {(userDetail.profile_image ? <img src={userDetail.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
-                <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
-              <div className='flex flex-col ml-2 mt-5'>
-                <h1 className='font-prompt-normal text-sm '>{userDetail.username}</h1>
-                <h1 className='font-prompt text-sm '>{userDetail.email}</h1>
-                {/* <h1 className='font-prompt text-sm '>{userDetails.id}</h1> */}
+        <div className=' mt-2 max-h-[28.4rem] overflow-y-auto z-50 hidescroll'>
+          {postDetails.map((post, index) => (
+            <Card key={index} className="bg-[#ededed] mb-2  ml-16 border-[1px] border-[#cbcaca]   shadow-blue-gray-900/2">
+              <div className='flex justify-between' >
+                <div className='flex'>
+                  {(post.user.profile_image ? <img src={post.user.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
+                    <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
+                  <div className='flex flex-col ml-2 mt-5'>
+                    <h1 className='font-prompt-normal text-sm '>{post.user.username}</h1>
+                    <h1 className='font-prompt text-sm '>{post.user.email}</h1>
+                    {/* <h1 className='font-prompt text-sm '>{userDetails.id}</h1> */}
+                  </div>
+                </div>
+                <div title='Options'>
+                  <Menu>
+                    <MenuHandler>
+                      <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className='rounded-full hover:text-[#000000]  w-7 h-7 mt-5 mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer' />
+                    </MenuHandler>
+                    <MenuList className="max-h-72">
+                      {(getReportStatus(post.id)==='Report'?<MenuItem onClick={(e) => ReporthandleOpen(post.id)}>Report</MenuItem>:<MenuItem className='bg-[#dbdbdb] text-black'>Reported</MenuItem>)}
+                      <MenuItem onClick={(e) => notIntrested(post.id)} >Not intrested</MenuItem>
+                      <MenuItem>Share</MenuItem>
+                    </MenuList>
+                  </Menu>
+                </div>
               </div>
-            </div>
-            <div>
-              <Menu>
-                <MenuHandler>
-                  <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className='rounded-full hover:text-[#000000]  w-7 h-7 mt-5 mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer' />
-                </MenuHandler>
-                <MenuList className="max-h-72">
-                  <MenuItem>Report</MenuItem>
-                  <MenuItem>Not intrested</MenuItem>
-                  <MenuItem>Share</MenuItem>
-                </MenuList>
-              </Menu>
-            </div>
-          </div>
-          <div className="mt-2">
-            <Typography color="gray" className="font-normal">
-              {/* {userDetails.email} */}
-              space post text showing this side
-            </Typography>
-            <img className="max-h-96 mt-1 w-full " src='https://t3.ftcdn.net/jpg/05/55/05/20/360_F_555052045_pR45HJOz1KhZjZPRNkSY0dkU6Pt3WsLz.jpg' alt="nature" />
-            <div className='flex justify-between' style={{ borderBottom: '1px solid #9da3a3 ' }}>
-              <h1 className='font-prompt ml-5 mb-2 mt-4'><FontAwesomeIcon icon={faHeart} color='#051339' className=' w-5 h-5 ' /> liked <span className='font-prompt-semibold'>{userDetail.id}</span></h1>
-              <h1 className='font-prompt mr-5 mb-2 mt-4'><span className='font-prompt-semibold'>{userDetail.id}</span> Commented <FontAwesomeIcon icon={faComment} color='#051339' className=' w-5 h-5 ' /></h1>
-            </div>
-            <div className='flex justify-around mt-7'>
-              <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} color='#051339' className=' w-7 h-7' /> like</h1>
-              <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} color='#051339' className=' w-7 h-7 ' />Comment</h1>
-              <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faSave} color='#051339' className=' w-7 h-7 ' /> Save</h1>
-              <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon onClick={handleshare} icon={faShareAlt} color='#051339' className=' w-7 h-7 ' /> Share</h1>
-            </div>
-          </div>
-        </Card>
+              <div className="mt-2">
+                {(post.description ? <Typography color="black" className="font-prompt ml-2">
+                  {post.description}
+                </Typography> : '')}
+                {(post.Post_Image ? <img className="max-h-96 mt-1 w-full " src={post.Post_Image} alt="nature" /> : '')}
+                <div className='flex justify-between' style={{ borderBottom: '1px solid #9da3a3 ' }}>
+                  <h1 className='font-prompt ml-5 mb-2 mt-4'><FontAwesomeIcon icon={faHeart} color='#051339' className=' w-5 h-5 ' /> liked <span className='font-prompt-semibold'>{post.likes}</span></h1>
+                  <h1 className='font-prompt mr-5 mb-2 mt-4'><span className='font-prompt-semibold'>{userDetail.id}</span> Commented <FontAwesomeIcon icon={faComment} color='#051339' className=' w-5 h-5 ' /></h1>
+                </div>
+                <div className='flex justify-around mt-7'>
+                  {(checkState?<h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} onClick={likeAddPost} color='#294b8d' className=' w-7 h-7 hover:cursor-pointer' /> like</h1>:
+                  <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} onClick={likeAddPost} color='#051339' className=' w-7 h-7 hover:cursor-pointer' /> like</h1>)}
+                  <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} color='#051339' className=' w-7 h-7 ' />Comment</h1>
+                  <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faSave} color='#051339' className=' w-7 h-7 ' /> Save</h1>
+                  <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon onClick={handleshare} icon={faShareAlt} color='#051339' className=' w-7 h-7 ' /> Share</h1>
+                </div>
+              </div>
+            </Card>
+          ))}
+
+        </div>
+
+
+
+
       </div>
       <div className='flex flex-col max-w-[24rem] w-full'>
         <h1 className='ml-20  font-prompt-normal'>Recent Chats </h1>
@@ -279,7 +411,7 @@ function UserHome() {
           {(userDetail.profile_image ? <img src={userDetail.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl  w-14 h-14  mt-4 ' /> :
             <UserCircleIcon className="ml-4 rounded-full w-14 h-14  mt-4 " />)}
           <h1 className='font-prompt-normal ml-3 mt-9 text-sm '>{userDetail.username}</h1>
-          <div className='text-center w-24  mt-8 h-7 ml-12 font-prompt bg-[#051339] rounded-md text-white  hover:bg-[#1e2c51] hover:cursor-pointer'>
+          <div className='text-center w-24  mt-8 h-7 ml-8 font-prompt bg-[#051339] rounded-md text-white  hover:bg-[#1e2c51] hover:cursor-pointer'>
             <p className='mt-[2px]'><span className='text-[#051339] ml-1'>.</span>Message<span className='text-[#051339] mr-1'>.</span></p>
 
           </div>
@@ -298,6 +430,49 @@ function UserHome() {
           <h1 className='font-prompt text-lg text-center text-[#051339]'>Connect In 2023</h1>
         </Card>
       </div>
+      < div >
+
+        <Dialog open={Reportopen} size="xs" handler={ReporthandleOpen}>
+          <div className="flex items-center justify-between">
+            <DialogHeader className="flex flex-col items-start">
+              {" "}
+              <Typography className="mb-1" variant="h4">
+                Report
+              </Typography>
+            </DialogHeader>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="mr-3 h-5 w-5"
+              onClick={ReporthandleOpen}
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+          <DialogBody>
+
+            <div className="grid gap-6">
+
+              <textarea label="Message" className='h-28 border-[1px] border-black font-prompt text-black' value={reprotText} onChange={(e) => setReprotText(e.target.value)} placeholder='Enter your Reporting Reason' style={{ paddingLeft: '10px' }} />
+            </div>
+          </DialogBody>
+          <DialogFooter className="space-x-2">
+            <Button variant="text" className="bg-[#7c7c7d] font-prompt-normal text-black" onClick={ReporthandleOpen}>
+              cancel
+            </Button>
+            <Button variant="filled" className="bg-[#051339] font-prompt-normal hover:bg-[#233156]" onClick={ReportPublicPost}>
+              Report
+            </Button>
+          </DialogFooter>
+          <Toaster />
+
+        </Dialog>
+      </div >
       <Toaster />
 
     </div>

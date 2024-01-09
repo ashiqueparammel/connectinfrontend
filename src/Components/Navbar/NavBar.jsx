@@ -94,7 +94,8 @@ function NavBar() {
                 {(searchOpen ?
                     <Card className="w-96 max-h-60">
                         <List className="min-h-20 max-h-60 overflow-y-auto z-50 hidescroll">
-                            {(searchUsersData.length===0?<h1 className="text-center text-lg font-prompt-normal" style={{paddingTop:'15px'}} >User not found</h1>:(searchUsersData.map((user, index) => (
+                            {(searchUsersData.length===0?<h1 className="text-center text-lg font-prompt-normal" style={{paddingTop:'15px'}} >User not found</h1>:
+                            (searchUsersData.map((user, index) => (
                                 <ListItem key={index}>
                                     <ListItemPrefix>
                                         {user.profile_image ? (
