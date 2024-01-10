@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { EmployeeProfileAdd, NotInterestedPosts, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, UserDetails, UserProfileDetails } from '../../Constants/Constants';
+import { AddComments, AddLikes, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, UpdateLikes, UserDetails, UserProfileDetails } from '../../Constants/Constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faUser, faCamera, faPaperPlane, faImage, faAdd, } from '@fortawesome/free-solid-svg-icons';
+import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faUser, faCamera, faPaperPlane, faImage, faAdd, faPlus, faArrowRight, faTrash, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast'
@@ -24,7 +24,12 @@ function UserHome() {
   const [ImageManage, setImageManage] = useState(false);
   // console.log(userInfo, '=================>>>>>>>>>>>>>>>')
 
-const [checkState, setcheckState] = useState(true)
+  // const [checkState, setcheckState] = useState(true)
+  //Comments
+  const [CommentsManage, setCommentsManage] = useState(false)
+  const [Commentid, setCommentid] = useState('')
+  const [commentAddText, setCommentAddText] = useState('')
+  const [commentsData, setCommentsData] = useState([])
 
   //add post 
   const [postDetails, setPostDetails] = useState([])
@@ -35,12 +40,21 @@ const [checkState, setcheckState] = useState(true)
   const [reprotText, setReprotText] = useState('')
   const [reportPostId, setReportPostId] = useState('')
   const [Reportopen, setreportOpen] = useState(false);
+  const [checkIsLiked, setCheckIsLiked] = useState([])
   const ReporthandleOpen = (e) => {
     setreportOpen(!Reportopen); if (Reportopen === false) { setReportPostId(e); } {
 
     }
   };
   const [reportedPosts, setReportedPosts] = useState([])
+
+
+  const formatPostedDate = (postedDate) => {
+
+    const options = { year: 'numeric', month: 'long', day: 'numeric', time: 'numeric' };
+    const formattedDate = new Date(postedDate).toLocaleDateString(undefined, options);
+    return formattedDate;
+  };
 
   useEffect(() => {
     setImageManage(false)
@@ -59,23 +73,29 @@ const [checkState, setcheckState] = useState(true)
       })
       axios.get(`${PublicPostReportUser}${userInfo.id}/`).then((response) => {
         setReportedPosts(response.data)
-      }).catch((error => {
+      }).catch((error) => {
         console.log('error fetching public post', error);
 
-      }))
+      })
+      axios.get(`${ListUserLikes}${userInfo.id}/`).then((response) => {
+        setCheckIsLiked(response.data)
+      }).catch((error) => {
+        console.log('error fetching  CheckIs liked', error);
+
+      })
 
     }
   }, [ImageManage]);
 
 
-  const handleshare = async () => {
+  const handleshare = async (event) => {
     if (navigator.share) {
       try {
 
         await navigator.share({
-          title: "hloo ",
-          text: "hlofss ",
-          url: window.location.href
+          title: "Connectin ",
+          text: "Post Share ",
+          url: `${window.location.href}${event}/`
         })
 
       } catch (error) {
@@ -220,7 +240,7 @@ const [checkState, setcheckState] = useState(true)
     if (reprotText) {
 
       try {
-        axios.post(PublicPostReport,postDatas)
+        axios.post(PublicPostReport, postDatas)
           .then((response) => {
             if (response.status === 201) {
               toast.success('Your Job Reported has been Recived!')
@@ -242,14 +262,91 @@ const [checkState, setcheckState] = useState(true)
   }
 
   const getReportStatus = (postId) => {
-    const ReportedJob= reportedPosts.find((checkPost) => checkPost.Post === postId);
-    return ReportedJob ? 'Reported':'Report'
-};
+    const ReportedPost = reportedPosts.find((checkPost) => checkPost.Post === postId);
+    return ReportedPost ? 'Reported' : 'Report'
+  };
 
-const likeAddPost =()=>{
-  setcheckState(!checkState)
-  toast.success('working')
-}
+  const getLikedStatus = (postId) => {
+    const PostLiked = checkIsLiked.find((checklike) => checklike.Post === postId);
+    return PostLiked ? 'Liked' : 'notLiked'
+  }
+
+  // ListUserLikes
+  const RemovePostLike = (event) => {
+    const data = {
+      user: userInfo.id,
+      Post: event
+    }
+    axios.post(UpdateLikes, data).then((response) => {
+      if (response.status === 200) {
+        toast.success('Liked Removed');
+        setImageManage(true)
+      }
+    }).catch((error) => {
+      toast.error(error);
+    })
+  }
+
+  const likeAddPost = (event) => {
+    const data = {
+      user: userInfo.id,
+      Post: event
+    }
+    axios.post(AddLikes, data).then((response) => {
+      if (response.status === 200) {
+        toast.success('Liked');
+        setImageManage(true)
+      }
+    }).catch((error) => {
+      toast.error(error);
+
+    })
+  }
+
+  const CommentsSection = (event) => {
+    axios.get(`${PostListComments}${event}/`).then((response) => {
+      setCommentsData(response.data)
+      // console.log(response.data,'=====================aaaaaaaaaaaaaaaaaaaa=a=a==a=a');
+    }).catch((error) => {
+      toast.error(error);
+
+    })
+    setCommentsManage(!CommentsManage)
+    setCommentid(event)
+  }
+
+  const addCommethandle = () => {
+    const CommentData = {
+      user: userInfo.id,
+      Post: Commentid,
+      content: commentAddText,
+    }
+    if (commentAddText === '') {
+      toast.error('Comment Field Cannout Empty!')
+    }
+    else {
+      axios.post(AddComments, CommentData).then((response) => {
+        if (response.status === 200) {
+          toast.success('Comment Added Successfully')
+          axios.get(`${PostListComments}${Commentid}/`).then((response) => {
+            setCommentsData(response.data)
+          }).catch((error) => {
+            toast.error(error);
+
+          })
+          setImageManage(true)
+          setCommentAddText('')
+
+
+        }
+      }).catch((error) => {
+        toast.error(error);
+
+      })
+
+    }
+
+  }
   return (
     <div className=' flex flex-row mt-5   '>
       <div className='mt-2 '>
@@ -372,9 +469,9 @@ const likeAddPost =()=>{
                       <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className='rounded-full hover:text-[#000000]  w-7 h-7 mt-5 mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer' />
                     </MenuHandler>
                     <MenuList className="max-h-72">
-                      {(getReportStatus(post.id)==='Report'?<MenuItem onClick={(e) => ReporthandleOpen(post.id)}>Report</MenuItem>:<MenuItem className='bg-[#dbdbdb] text-black'>Reported</MenuItem>)}
+                      {(getReportStatus(post.id) === 'Report' ? <MenuItem onClick={(e) => ReporthandleOpen(post.id)}>Report</MenuItem> : <MenuItem className='bg-[#dbdbdb] text-black'>Reported</MenuItem>)}
                       <MenuItem onClick={(e) => notIntrested(post.id)} >Not intrested</MenuItem>
-                      <MenuItem>Share</MenuItem>
+                      {/* <MenuItem>Share</MenuItem> */}
                     </MenuList>
                   </Menu>
                 </div>
@@ -386,16 +483,64 @@ const likeAddPost =()=>{
                 {(post.Post_Image ? <img className="max-h-96 mt-1 w-full " src={post.Post_Image} alt="nature" /> : '')}
                 <div className='flex justify-between' style={{ borderBottom: '1px solid #9da3a3 ' }}>
                   <h1 className='font-prompt ml-5 mb-2 mt-4'><FontAwesomeIcon icon={faHeart} color='#051339' className=' w-5 h-5 ' /> liked <span className='font-prompt-semibold'>{post.likes}</span></h1>
-                  <h1 className='font-prompt mr-5 mb-2 mt-4'><span className='font-prompt-semibold'>{userDetail.id}</span> Commented <FontAwesomeIcon icon={faComment} color='#051339' className=' w-5 h-5 ' /></h1>
+                  <h1 className='font-prompt mr-5 mb-2 mt-4'><span className='font-prompt-semibold'>{post.Comments}</span> Commented <FontAwesomeIcon icon={faComment} color='#051339' className=' w-5 h-5 ' /></h1>
                 </div>
                 <div className='flex justify-around mt-7'>
-                  {(checkState?<h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} onClick={likeAddPost} color='#294b8d' className=' w-7 h-7 hover:cursor-pointer' /> like</h1>:
-                  <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} onClick={likeAddPost} color='#051339' className=' w-7 h-7 hover:cursor-pointer' /> like</h1>)}
-                  <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} color='#051339' className=' w-7 h-7 ' />Comment</h1>
-                  <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faSave} color='#051339' className=' w-7 h-7 ' /> Save</h1>
-                  <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon onClick={handleshare} icon={faShareAlt} color='#051339' className=' w-7 h-7 ' /> Share</h1>
+                  <div className='hover:cursor-pointer '>
+                    {(getLikedStatus(post.id) === 'Liked' ? <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} onClick={(e) => RemovePostLike(post.id)} className=' text-[#294b8d] w-7 h-7 hover:text-[#7e7b7b]' title='Remove Like' /> like</h1> :
+                      <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} onClick={(e) => likeAddPost(post.id)} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b] ' title='Like' /> like</h1>)}
+                  </div>
+
+                  <div className='hover:cursor-pointer '>
+                    {(CommentsManage && post.id === Commentid ? <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} onClick={(e) => CommentsSection(post.id)} className=' w-7 h-7 text-[#294b8d] hover:text-[#7e7b7b]  ' />Comment</h1> :
+                      <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} onClick={(e) => CommentsSection(post.id)} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b]  ' />Comment</h1>
+                    )}</div>
+                  <div className='hover:cursor-pointer '>
+                    <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faSave} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b] ' /> Save</h1>
+                  </div>
+                  <div className='hover:cursor-pointer '>
+                    <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon onClick={(e) => handleshare(post.id)} icon={faShareAlt} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b] ' /> Share</h1>
+                  </div>
+
                 </div>
               </div>
+              {(CommentsManage && post.id === Commentid ?
+                <div className='mt-2 max-h-[15rem] overflow-y-auto z-50 hidescroll'>
+                  <Card className='rounded-md'>
+                    <h1 className='text-lg font-prompt ml-5 mb-5'>Comments</h1>
+                    {commentsData.map((comment, index) => (
+
+                      <div key={index}>
+                        <div className='flex flex-col ml-5 mb-2 border-[1px] w-[94%]'>
+                          <div className='flex '>
+                            {(comment.user.profile_image ? <img src={comment.user.profile_image} alt="profile photo" className=' rounded-md shadow-2xl  w-14 h-14  mt-4  ml-2 mb-2' /> :
+                              <UserCircleIcon className=" rounded-full w-14  mt-4 h-14 ml-2 mb-2  " />)}
+                            <h1 className='font-prompt-normal text-black ml-3 mt-5 text-sm '>{comment.user.username}</h1>
+                            <h1 className='font-prompt text-black  ml-3 mt-5 text-sm'>{formatPostedDate(comment.updated_at)}</h1>
+                            
+                            {(comment.user.id===userInfo.id?<h1 className='font-prompt mt-4 ml-64 '><FontAwesomeIcon icon={faTrash} className=' w-5 h-5 text-[#051339] hover:text-[#7e7b7b] ' /></h1>:'')}
+                          </div>
+                          <h1 className='ml-[12.5%] font-prompt  -mt-10 text-lg mb-2 h-full text-black'>{comment.content}</h1>
+
+                        </div>
+                      </div>
+                    ))}
+
+                    <div className='flex'>
+                      <input
+                        type="text"
+                        value={commentAddText}
+                        onChange={(e) => setCommentAddText(e.target.value)}
+                        placeholder="Add your comment..."
+                        style={{ paddingLeft: '14px' }}
+                        className="text-black w-[80%] h-10 border-[1px] border-black rounded-sm mb-5 ml-5 focus:border-none placeholder:font-prompt  "
+                      />
+                      <Button title='Add Comment' onClick={addCommethandle} className='h-10 rounded-sm ml-2 bg-[#051339]'><FontAwesomeIcon icon={faArrowRight} className='w-5 h-5 ' /></Button>
+
+                    </div>
+                  </Card>
+
+                </div> : '')}
             </Card>
           ))}
 

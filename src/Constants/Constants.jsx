@@ -65,6 +65,9 @@ export const UpdateLikes = import.meta.env.VITE_UpdateLikes
 export const AddComments = import.meta.env.VITE_AddComments 
 export const UpdateComments = import.meta.env.VITE_UpdateComments 
 export const PublicPostReportUser = import.meta.env.VITE_PublicPostReportUser 
+export const ListUserLikes = import.meta.env.VITE_ListUserLikes 
+export const PostListComments = import.meta.env.VITE_PostListComments 
+export const RemoveComments = import.meta.env.VITE_RemoveComments 
 
 
 
