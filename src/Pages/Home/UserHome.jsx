@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { AddComments, AddLikes, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, UpdateLikes, UserDetails, UserProfileDetails } from '../../Constants/Constants';
+import { AddComments, AddLikes, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, RemoveComments, UpdateLikes, UserDetails, UserProfileDetails } from '../../Constants/Constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faUser, faCamera, faPaperPlane, faImage, faAdd, faPlus, faArrowRight, faTrash, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
@@ -19,8 +19,6 @@ function UserHome() {
   const fileInputProfileRef = useRef(null);
   const fileInputImageRef = useRef(null);
 
-  const [CompanyuserDetails, setCompanyuserDetails] = useState([]);
-  const [companyDetail, setCompanyDetail] = useState([]);
   const [ImageManage, setImageManage] = useState(false);
   // console.log(userInfo, '=================>>>>>>>>>>>>>>>')
 
@@ -31,9 +29,13 @@ function UserHome() {
   const [commentAddText, setCommentAddText] = useState('')
   const [commentsData, setCommentsData] = useState([])
 
+  // RemovePost
+  const [RemoveId, setRemoveId] = useState('')
+  const [removeOpen, setRemoveOpen] = useState(false);
+  const handleRemovePostOpen = (event) => { setRemoveOpen(!removeOpen), setRemoveId(event) };
+
   //add post 
   const [postDetails, setPostDetails] = useState([])
-  const [userNotIntrustedPost, setUserNotIntrustedPost] = useState([])
   let PostImagefile = null
   const [postText, setPostText] = useState('')
   // report post
@@ -243,14 +245,14 @@ function UserHome() {
         axios.post(PublicPostReport, postDatas)
           .then((response) => {
             if (response.status === 201) {
-              toast.success('Your Job Reported has been Recived!')
+              toast.success('Your Post Reported has been Recived!')
             }
           }).catch((error) => {
             toast.error('error!!');
           });
 
       } catch (error) {
-        console.error('Error during ReportJobPostAdd:', error);
+        console.error('Error during ReportPostAdd:', error);
         toast.error(error);
       }
       setImageManage(true)
@@ -347,6 +349,54 @@ function UserHome() {
     }
 
   }
+
+
+  const RemoveCommethandle = (event) => {
+    const CommentData = {
+      user: userInfo.id,
+      Post: Commentid,
+      comment_id: event,
+    }
+
+    axios.post(RemoveComments, CommentData).then((response) => {
+      if (response.status === 200) {
+        toast.success('Comment Removed ')
+        axios.get(`${PostListComments}${Commentid}/`).then((response) => {
+          setCommentsData(response.data)
+        }).catch((error) => {
+          toast.error(error);
+
+        })
+        setImageManage(true)
+
+
+      }
+    }).catch((error) => {
+      toast.error(error);
+
+    })
+
+
+
+  }
+
+
+  const RemovePost = () => {
+    const data = {
+      is_available: false
+    }
+    axios.patch(`${PublicPostUpdate}${RemoveId}/`, data).then((response) => {
+      if (response.status === 200) {
+        handleRemovePostOpen()
+        setImageManage(true)
+        toast.success('Post deleted')
+      }
+    })
+
+  }
+
+
+
   return (
     <div className=' flex flex-row mt-5   '>
       <div className='mt-2 '>
@@ -471,7 +521,8 @@ function UserHome() {
                     <MenuList className="max-h-72">
                       {(getReportStatus(post.id) === 'Report' ? <MenuItem onClick={(e) => ReporthandleOpen(post.id)}>Report</MenuItem> : <MenuItem className='bg-[#dbdbdb] text-black'>Reported</MenuItem>)}
                       <MenuItem onClick={(e) => notIntrested(post.id)} >Not intrested</MenuItem>
-                      {/* <MenuItem>Share</MenuItem> */}
+                      {(userInfo.id === post.user.id ? <MenuItem onClick={(e) => handleRemovePostOpen(post.id)}>Delete</MenuItem> : '')}
+
                     </MenuList>
                   </Menu>
                 </div>
@@ -495,9 +546,9 @@ function UserHome() {
                     {(CommentsManage && post.id === Commentid ? <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} onClick={(e) => CommentsSection(post.id)} className=' w-7 h-7 text-[#294b8d] hover:text-[#7e7b7b]  ' />Comment</h1> :
                       <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} onClick={(e) => CommentsSection(post.id)} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b]  ' />Comment</h1>
                     )}</div>
-                  <div className='hover:cursor-pointer '>
+                  {/* <div className='hover:cursor-pointer '>
                     <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faSave} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b] ' /> Save</h1>
-                  </div>
+                  </div> */}
                   <div className='hover:cursor-pointer '>
                     <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon onClick={(e) => handleshare(post.id)} icon={faShareAlt} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b] ' /> Share</h1>
                   </div>
@@ -517,8 +568,8 @@ function UserHome() {
                               <UserCircleIcon className=" rounded-full w-14  mt-4 h-14 ml-2 mb-2  " />)}
                             <h1 className='font-prompt-normal text-black ml-3 mt-5 text-sm '>{comment.user.username}</h1>
                             <h1 className='font-prompt text-black  ml-3 mt-5 text-sm'>{formatPostedDate(comment.updated_at)}</h1>
-                            
-                            {(comment.user.id===userInfo.id?<h1 className='font-prompt mt-4 ml-64 '><FontAwesomeIcon icon={faTrash} className=' w-5 h-5 text-[#051339] hover:text-[#7e7b7b] ' /></h1>:'')}
+
+                            {(comment.user.id === userInfo.id ? <h1 title='Delete' className='font-prompt mt-4 ml-64 '><FontAwesomeIcon icon={faTrash} onClick={(e) => RemoveCommethandle(comment.id)} className=' w-5 h-5 text-[#051339] hover:text-[#7e7b7b] ' /></h1> : '')}
                           </div>
                           <h1 className='ml-[12.5%] font-prompt  -mt-10 text-lg mb-2 h-full text-black'>{comment.content}</h1>
 
@@ -618,7 +669,30 @@ function UserHome() {
 
         </Dialog>
       </div >
+      <>
+
+        <Dialog open={removeOpen} handler={handleRemovePostOpen}>
+          <DialogHeader>Delete</DialogHeader>
+          <DialogBody className='text-black font-prompt-normal'>
+            Delete Your Post. Are you sure This?
+          </DialogBody>
+          <DialogFooter>
+            <Button
+              variant="text"
+
+              onClick={handleRemovePostOpen}
+              className="mr-1 bg-[#eeeeee] font-prompt-normal text-black"
+            >
+              <span>Cancel</span>
+            </Button>
+            <Button className='bg-[#051339] font-prompt-normal ' onClick={RemovePost}>
+              <span>Delete</span>
+            </Button>
+          </DialogFooter>
+        </Dialog>
+      </>
       <Toaster />
+
 
     </div>
   )

@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { CompanyDetails, Company_Profile } from '../../Constants/Constants';
+import { CompanyDetails, Company_Profile, AddComments, AddLikes, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, RemoveComments, UpdateLikes, } from '../../Constants/Constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faCamera, faUser, } from '@fortawesome/free-solid-svg-icons';
+import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faCamera, faUser, faTrash, faPaperPlane, faAdd, faImage, faArrowRight, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
 import { useNavigate } from 'react-router-dom';
 import { setCompanyDetails } from '../../Redux/Companyees';
@@ -15,16 +15,48 @@ import { setUserDetails } from '../../Redux/Users';
 function CompanyHome() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const userInfo = useSelector((state) => state.user.userInfo);
     const fileInputRef = useRef(null);
     const fileInputProfileRef = useRef(null);
+    const fileInputImageRef = useRef(null);
 
     const [CompanyuserDetails, setCompanyuserDetails] = useState([]);
     const [companyDetail, setCompanyDetail] = useState([]);
     const [ImageManage, setImageManage] = useState(false);
-  
 
-    const userInfo = useSelector((state) => state.user.userInfo);
-    // console.log(userInfo, '<<>>+++====hgf');
+    // RemovePost
+    const [RemoveId, setRemoveId] = useState('')
+    const [removeOpen, setRemoveOpen] = useState(false);
+    const handleRemovePostOpen = (event) => { setRemoveOpen(!removeOpen),setRemoveId(event) };
+
+    //Comments
+    const [CommentsManage, setCommentsManage] = useState(false)
+    const [Commentid, setCommentid] = useState('')
+    const [commentAddText, setCommentAddText] = useState('')
+    const [commentsData, setCommentsData] = useState([])
+
+    //add post 
+    const [postDetails, setPostDetails] = useState([])
+    let PostImagefile = null
+    const [postText, setPostText] = useState('')
+    // report post
+    const [reprotText, setReprotText] = useState('')
+    const [reportPostId, setReportPostId] = useState('')
+    const [Reportopen, setreportOpen] = useState(false);
+    const [checkIsLiked, setCheckIsLiked] = useState([])
+    const ReporthandleOpen = (e) => {
+        setreportOpen(!Reportopen); if (Reportopen === false) { setReportPostId(e); } {
+
+        }
+    };
+    const [reportedPosts, setReportedPosts] = useState([])
+
+    const formatPostedDate = (postedDate) => {
+
+        const options = { year: 'numeric', month: 'long', day: 'numeric', time: 'numeric' };
+        const formattedDate = new Date(postedDate).toLocaleDateString(undefined, options);
+        return formattedDate;
+    };
 
     useEffect(() => {
         setImageManage(false)
@@ -48,17 +80,30 @@ function CompanyHome() {
                 dispatch(setCompanyDetails(setCompany));
                 dispatch(setUserDetails(responseData.user));
 
+            }).catch((error) => {
+                navigate('/company/profileverify')
+                console.error("Error fetching user data:", error);
+            });
+            axios.get(`${PublicPostList}${userInfo.id}/`).then((response) => {
+                setPostDetails(response.data)
+            }).catch((error) => {
+                console.log('error fetching public post', error);
             })
-                .catch((error) => {
+            axios.get(`${PublicPostReportUser}${userInfo.id}/`).then((response) => {
+                setReportedPosts(response.data)
+            }).catch((error) => {
+                console.log('error fetching public post', error);
 
+            })
+            axios.get(`${ListUserLikes}${userInfo.id}/`).then((response) => {
+                setCheckIsLiked(response.data)
+            }).catch((error) => {
+                console.log('error fetching  CheckIs liked', error);
 
-                    navigate('/company/profileverify')
-                    console.error("Error fetching user data:", error);
-                });
+            })
         }
     }, [ImageManage]);
-    console.log(CompanyuserDetails, '<<<<<<<<<<<<<<<<++++');
-    console.log(companyDetail, '>>>>>>>>>>>>>>>>>+++++');
+
 
     const handleshare = async () => {
         if (navigator.share) {
@@ -112,7 +157,223 @@ function CompanyHome() {
         }
     }
 
-    console.log(ImageManage, 'imagemange');
+
+
+
+    //new
+    const notIntrested = (event) => {
+        const Data = {
+            user: userInfo.id,
+            Post: event,
+        }
+        try {
+            axios.post(NotInterestedPosts, Data).then((response) => {
+                if (response.status === 201) {
+                    setImageManage(true)
+                }
+            })
+        } catch (error) {
+            console.log('error not Intrusted ', error);
+        }
+    }
+
+    const addPublicPost = () => {
+        if (postText === '') {
+            toast.error('Field cannot be empty!')
+        }
+        else if (PostImagefile === null) {
+            toast.error('Image cannot be empty!')
+        } else {
+            const formData = new FormData();
+            formData.append('user', userInfo.id);
+            formData.append('description', postText);
+            formData.append('Post_Image', PostImagefile);
+            formData.append('is_available', true);
+            axios.post(PublicPostAdd, formData)
+                .then((response) => {
+                    if (response.status === 201) {
+                        setImageManage(true)
+                        setPostText('')
+                        toast.success('Public Post Added Successfully!');
+                    }
+                }).catch((err) => {
+                    toast.error(err);
+                })
+
+        }
+    }
+
+    const Post_Image_Add = (event) => {
+        PostImagefile = event.target.files[0];
+        toast.success('Image Added')
+
+    }
+    const handlePostImage = () => {
+        fileInputImageRef.current.click();
+    };
+
+
+    const ReportPublicPost = (event) => {
+        const postDatas = {
+            user: userInfo.id,
+            Post: reportPostId,
+            Reason: reprotText
+        }
+        if (reprotText) {
+
+            try {
+                axios.post(PublicPostReport, postDatas)
+                    .then((response) => {
+                        if (response.status === 201) {
+                            toast.success('Your Post Reported has been Recived!')
+                        }
+                    }).catch((error) => {
+                        toast.error('error!!');
+                    });
+
+            } catch (error) {
+                console.error('Error during ReportPostAdd:', error);
+                toast.error(error);
+            }
+            setImageManage(true)
+            ReporthandleOpen()
+        } else {
+            toast.error('Text field canout empty!')
+        }
+
+    }
+
+    const getReportStatus = (postId) => {
+        const ReportedPost = reportedPosts.find((checkPost) => checkPost.Post === postId);
+        return ReportedPost ? 'Reported' : 'Report'
+    };
+
+    const getLikedStatus = (postId) => {
+        const PostLiked = checkIsLiked.find((checklike) => checklike.Post === postId);
+        return PostLiked ? 'Liked' : 'notLiked'
+    }
+
+    // ListUserLikes
+    const RemovePostLike = (event) => {
+        const data = {
+            user: userInfo.id,
+            Post: event
+        }
+        axios.post(UpdateLikes, data).then((response) => {
+            if (response.status === 200) {
+                toast.success('Liked Removed');
+                setImageManage(true)
+            }
+        }).catch((error) => {
+            toast.error(error);
+        })
+    }
+
+    const likeAddPost = (event) => {
+        const data = {
+            user: userInfo.id,
+            Post: event
+        }
+        axios.post(AddLikes, data).then((response) => {
+            if (response.status === 200) {
+                toast.success('Liked');
+                setImageManage(true)
+            }
+        }).catch((error) => {
+            toast.error(error);
+
+        })
+    }
+
+    const CommentsSection = (event) => {
+        axios.get(`${PostListComments}${event}/`).then((response) => {
+            setCommentsData(response.data)
+            // console.log(response.data,'=====================aaaaaaaaaaaaaaaaaaaa=a=a==a=a');
+        }).catch((error) => {
+            toast.error(error);
+
+        })
+        setCommentsManage(!CommentsManage)
+        setCommentid(event)
+    }
+
+    const addCommethandle = () => {
+        const CommentData = {
+            user: userInfo.id,
+            Post: Commentid,
+            content: commentAddText,
+        }
+        if (commentAddText === '') {
+            toast.error('Comment Field Cannout Empty!')
+        }
+        else {
+            axios.post(AddComments, CommentData).then((response) => {
+                if (response.status === 200) {
+                    toast.success('Comment Added Successfully')
+                    axios.get(`${PostListComments}${Commentid}/`).then((response) => {
+                        setCommentsData(response.data)
+                    }).catch((error) => {
+                        toast.error(error);
+
+                    })
+                    setImageManage(true)
+                    setCommentAddText('')
+
+
+                }
+            }).catch((error) => {
+                toast.error(error);
+
+            })
+
+        }
+
+    }
+
+
+    const RemoveCommethandle = (event) => {
+        const CommentData = {
+            user: userInfo.id,
+            Post: Commentid,
+            comment_id: event,
+        }
+
+        axios.post(RemoveComments, CommentData).then((response) => {
+            if (response.status === 200) {
+                toast.success('Comment Removed ')
+                axios.get(`${PostListComments}${Commentid}/`).then((response) => {
+                    setCommentsData(response.data)
+                }).catch((error) => {
+                    toast.error(error);
+
+                })
+                setImageManage(true)
+
+
+            }
+        }).catch((error) => {
+            toast.error(error);
+
+        })
+
+
+
+    }
+    const RemovePost = () => {
+        const data = {
+            is_available: false
+        }
+        axios.patch(`${PublicPostUpdate}${RemoveId}/`, data).then((response) => {
+            if (response.status === 200) {
+                handleRemovePostOpen()
+                setImageManage(true)
+                toast.success('Post deleted')
+            }
+        })
+
+    }
+
+
     return (
         <div className=' flex mt-5'>
             <div className='mt-2'>
@@ -120,9 +381,9 @@ function CompanyHome() {
                     {(CompanyuserDetails.profile_cover_image ?
                         <Card style={{ backgroundImage: `url(${CompanyuserDetails.profile_cover_image})`, backgroundSize: '100% 100%', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }} className='  h-28 rounded-b-none   shadow-xl shadow-[#b9b7b7]'>
                             <div  >
-                                {(CompanyuserDetails.profile_image ? <img onClick={()=>navigate('/company/profile/')} src={CompanyuserDetails.profile_image} alt="profile photo" className='hover:cursor-pointer  ml-28 rounded-md shadow-2xl w-24 h-24 mt-14' /> :
+                                {(CompanyuserDetails.profile_image ? <img onClick={() => navigate('/company/profile/')} src={CompanyuserDetails.profile_image} alt="profile photo" className='hover:cursor-pointer  ml-28 rounded-md shadow-2xl w-24 h-24 mt-14' /> :
                                     <div>
-                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon onClick={()=>navigate('/company/profile/')} icon={faUser} color='#051339' className='hover:cursor-pointer w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
+                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon onClick={() => navigate('/company/profile/')} icon={faUser} color='#051339' className='hover:cursor-pointer w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
                                         <div>
                                             <div onClick={handleProfileImage} className='hover:bg-white rounded-md w-7 h-7   absolute right-28 -bottom-10'>
                                                 <FontAwesomeIcon icon={faCamera} color='#4c4e4f' className='w-5 h-5   hover:cursor-pointer hover:text-[#051339] mt-1 ml-1' />
@@ -152,10 +413,10 @@ function CompanyHome() {
                             </div>
                             <div >
                                 {(CompanyuserDetails.profile_image ?
-                                    <img onClick={()=>navigate('/company/profile/')} src={CompanyuserDetails.profile_image} alt="profile photo" className='hover:cursor-pointer ml-28 rounded-md shadow-2xl w-24 h-24 mt-14 ' />
+                                    <img onClick={() => navigate('/company/profile/')} src={CompanyuserDetails.profile_image} alt="profile photo" className='hover:cursor-pointer ml-28 rounded-md shadow-2xl w-24 h-24 mt-14 ' />
                                     :
                                     <div>
-                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon onClick={()=>navigate('/company/profile/')} icon={faUser} color='#051339' className='hover:cursor-pointer w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
+                                        <div className="h-24 w-24 mt-14 ml-28  bg-[#e7e7e7] shadow-2xl rounded-md" ><FontAwesomeIcon onClick={() => navigate('/company/profile/')} icon={faUser} color='#051339' className='hover:cursor-pointer w-10 h-10 mt-1 ml-1 absolute left-[43%] -bottom-[8%]' /></div>
                                         <div>
                                             <div onClick={handleProfileImage} className='hover:bg-white rounded-md w-7 h-7   absolute right-28 -bottom-10'>
                                                 <FontAwesomeIcon icon={faCamera} color='#4c4e4f' className='w-5 h-5   hover:cursor-pointer hover:text-[#051339] mt-1 ml-1' />
@@ -195,55 +456,123 @@ function CompanyHome() {
                     </div>
                 </Card>
             </div>
-            <div className='max-w-[45rem] w-full '>
-                {/* <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
-                    <div className='flex flex-col gap-2 mb-5 '>
 
-                    </div>
-                </Card> */}
+            <div className='max-w-[45rem] w-full overflow-hidden'>
 
-                <Card className="h-[40rem] bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2">
-                    <div className='flex justify-between' >
-                        <div className='flex'>
-                            {(CompanyuserDetails.profile_image ? <img src={CompanyuserDetails.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
-                                <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
-                            <div className='flex flex-col ml-2 mt-5'>
-                                <h1 className='font-prompt-normal text-sm '>{companyDetail.company_name}</h1>
-                                <h1 className='font-prompt text-sm '>{CompanyuserDetails.email}</h1>
-                                {/* <h1 className='font-prompt text-sm '>{userDetails.id}</h1> */}
-                            </div>
-                        </div>
-                        <div>
-                            <Menu>
-                                <MenuHandler>
-                                    <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className='rounded-full hover:text-[#000000]  w-7 h-7 mt-5 mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer' />
-                                </MenuHandler>
-                                <MenuList className="max-h-72">
-                                    <MenuItem>Report</MenuItem>
-                                    <MenuItem>Not intrested</MenuItem>
-                                    <MenuItem>Share</MenuItem>
-                                </MenuList>
-                            </Menu>
-                        </div>
+                <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
+                    <div className='flex  gap-2 mt-5 '>
+                        {(CompanyuserDetails.profile_image ? <img src={CompanyuserDetails.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
+                            <UserCircleIcon className="ml-4 rounded-full w-16 h-16  " />)}
+                        <input type="text" className='w-[70%] h-14  mt-1 border-[1px] font-prompt border-black rounded-md' value={postText} onChange={(e) => setPostText(e.target.value)} placeholder='Share Your Post ...' style={{ paddingLeft: '20px' }} />
+                        <Button title='Add New Public Post' onClick={addPublicPost} className='h-14 mt-1 bg-[#051339]'><FontAwesomeIcon icon={faPaperPlane} className='w-7 h-7 rotate-45 ' /></Button>
                     </div>
-                    <div className="mt-2">
-                        <Typography color="gray" className="font-normal">
-                            {/* {userDetails.email} */}
-                            space post text showing this side
-                        </Typography>
-                        <img className="max-h-96 mt-1 w-full " src='https://t3.ftcdn.net/jpg/05/55/05/20/360_F_555052045_pR45HJOz1KhZjZPRNkSY0dkU6Pt3WsLz.jpg' alt="nature" />
-                        <div className='flex justify-between' style={{ borderBottom: '1px solid #9da3a3 ' }}>
-                            <h1 className='font-prompt ml-5 mb-2 mt-4'><FontAwesomeIcon icon={faHeart} color='#051339' className=' w-5 h-5 ' /> liked <span className='font-prompt-semibold'>{CompanyuserDetails.id}</span></h1>
-                            <h1 className='font-prompt mr-5 mb-2 mt-4'><span className='font-prompt-semibold'>{CompanyuserDetails.id}</span> Commented <FontAwesomeIcon icon={faComment} color='#051339' className=' w-5 h-5 ' /></h1>
-                        </div>
-                        <div className='flex justify-around mt-7'>
-                            <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} color='#051339' className=' w-7 h-7' /> like</h1>
-                            <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} color='#051339' className=' w-7 h-7 ' />Comment</h1>
-                            <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faSave} color='#051339' className=' w-7 h-7 ' /> Save</h1>
-                            <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon onClick={handleshare} icon={faShareAlt} color='#051339' className=' w-7 h-7 ' /> Share</h1>
-                        </div>
+                    <div title='Add Image' onClick={handlePostImage} className='flex  text-[#051339] hover:text-[#6f6b6b] mt-3 absolute right-32 bottom-5 hover:cursor-pointer h-6'>
+                        <FontAwesomeIcon icon={faAdd} className='w-4 h-4 mt-1' />
+                        <FontAwesomeIcon icon={faImage} className='w-7 h-7 mt-1' />
                     </div>
+                    <input
+                        type="file"
+                        ref={fileInputImageRef}
+                        style={{ display: 'none' }}
+                        onChange={Post_Image_Add}
+                    />
                 </Card>
+
+                <div className=' mt-2 max-h-[28.4rem] overflow-y-auto z-50 hidescroll'>
+                    {postDetails.map((post, index) => (
+                        <Card key={index} className="bg-[#ededed] mb-2  ml-16 border-[1px] border-[#cbcaca]   shadow-blue-gray-900/2">
+                            <div className='flex justify-between' >
+                                <div className='flex'>
+                                    {(post.user.profile_image ? <img src={post.user.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
+                                        <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
+                                    <div className='flex flex-col ml-2 mt-5'>
+                                        <h1 className='font-prompt-normal text-sm '>{post.user.username}</h1>
+                                        <h1 className='font-prompt text-sm '>{post.user.email}</h1>
+                                        {/* <h1 className='font-prompt text-sm '>{userDetails.id}</h1> */}
+                                    </div>
+                                </div>
+                                <div title='Options'>
+                                    <Menu>
+                                        <MenuHandler>
+                                            <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className='rounded-full hover:text-[#000000]  w-7 h-7 mt-5 mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer' />
+                                        </MenuHandler>
+                                        <MenuList className="max-h-72">
+                                            {(getReportStatus(post.id) === 'Report' ? <MenuItem onClick={(e) => ReporthandleOpen(post.id)}>Report</MenuItem> : <MenuItem className='bg-[#dbdbdb] text-black'>Reported</MenuItem>)}
+                                            <MenuItem onClick={(e) => notIntrested(post.id)} >Not intrested</MenuItem>
+                                            {(userInfo.id === post.user.id ? <MenuItem onClick={(e) => handleRemovePostOpen(post.id)}>Delete</MenuItem> : '')}
+                                        </MenuList>
+                                    </Menu>
+                                </div>
+                            </div>
+                            <div className="mt-2">
+                                {(post.description ? <Typography color="black" className="font-prompt ml-2">
+                                    {post.description}
+                                </Typography> : '')}
+                                {(post.Post_Image ? <img className="max-h-96 mt-1 w-full " src={post.Post_Image} alt="nature" /> : '')}
+                                <div className='flex justify-between' style={{ borderBottom: '1px solid #9da3a3 ' }}>
+                                    <h1 className='font-prompt ml-5 mb-2 mt-4'><FontAwesomeIcon icon={faHeart} color='#051339' className=' w-5 h-5 ' /> liked <span className='font-prompt-semibold'>{post.likes}</span></h1>
+                                    <h1 className='font-prompt mr-5 mb-2 mt-4'><span className='font-prompt-semibold'>{post.Comments}</span> Commented <FontAwesomeIcon icon={faComment} color='#051339' className=' w-5 h-5 ' /></h1>
+                                </div>
+                                <div className='flex justify-around mt-7'>
+                                    <div className='hover:cursor-pointer '>
+                                        {(getLikedStatus(post.id) === 'Liked' ? <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} onClick={(e) => RemovePostLike(post.id)} className=' text-[#294b8d] w-7 h-7 hover:text-[#7e7b7b]' title='Remove Like' /> like</h1> :
+                                            <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} onClick={(e) => likeAddPost(post.id)} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b] ' title='Like' /> like</h1>)}
+                                    </div>
+
+                                    <div className='hover:cursor-pointer '>
+                                        {(CommentsManage && post.id === Commentid ? <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} onClick={(e) => CommentsSection(post.id)} className=' w-7 h-7 text-[#294b8d] hover:text-[#7e7b7b]  ' />Comment</h1> :
+                                            <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} onClick={(e) => CommentsSection(post.id)} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b]  ' />Comment</h1>
+                                        )}</div>
+                                    {/* <div className='hover:cursor-pointer '>
+                    <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faSave} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b] ' /> Save</h1>
+                  </div> */}
+                                    <div className='hover:cursor-pointer '>
+                                        <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon onClick={(e) => handleshare(post.id)} icon={faShareAlt} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b] ' /> Share</h1>
+                                    </div>
+
+                                </div>
+                            </div>
+                            {(CommentsManage && post.id === Commentid ?
+                                <div className='mt-2 max-h-[15rem] overflow-y-auto z-50 hidescroll'>
+                                    <Card className='rounded-md'>
+                                        <h1 className='text-lg font-prompt ml-5 mb-5'>Comments</h1>
+                                        {commentsData.map((comment, index) => (
+
+                                            <div key={index}>
+                                                <div className='flex flex-col ml-5 mb-2 border-[1px] w-[94%]'>
+                                                    <div className='flex '>
+                                                        {(comment.user.profile_image ? <img src={comment.user.profile_image} alt="profile photo" className=' rounded-md shadow-2xl  w-14 h-14  mt-4  ml-2 mb-2' /> :
+                                                            <UserCircleIcon className=" rounded-full w-14  mt-4 h-14 ml-2 mb-2  " />)}
+                                                        <h1 className='font-prompt-normal text-black ml-3 mt-5 text-sm '>{comment.user.username}</h1>
+                                                        <h1 className='font-prompt text-black  ml-3 mt-5 text-sm'>{formatPostedDate(comment.updated_at)}</h1>
+
+                                                        {(comment.user.id === userInfo.id ? <h1 title='Delete' className='font-prompt mt-4 ml-64 '><FontAwesomeIcon icon={faTrash} onClick={(e) => RemoveCommethandle(comment.id)} className=' w-5 h-5 text-[#051339] hover:text-[#7e7b7b] ' /></h1> : '')}
+                                                    </div>
+                                                    <h1 className='ml-[12.5%] font-prompt  -mt-10 text-lg mb-2 h-full text-black'>{comment.content}</h1>
+
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        <div className='flex'>
+                                            <input
+                                                type="text"
+                                                value={commentAddText}
+                                                onChange={(e) => setCommentAddText(e.target.value)}
+                                                placeholder="Add your comment..."
+                                                style={{ paddingLeft: '14px' }}
+                                                className="text-black w-[80%] h-10 border-[1px] border-black rounded-sm mb-5 ml-5 focus:border-none placeholder:font-prompt  "
+                                            />
+                                            <Button title='Add Comment' onClick={addCommethandle} className='h-10 rounded-sm ml-2 bg-[#051339]'><FontAwesomeIcon icon={faArrowRight} className='w-5 h-5 ' /></Button>
+
+                                        </div>
+                                    </Card>
+
+                                </div> : '')}
+                        </Card>
+                    ))}
+
+                </div>
             </div>
             <div className='flex flex-col max-w-[24rem] w-full'>
                 <h1 className='ml-20  font-prompt-normal'>Recent Chats </h1>
@@ -270,8 +599,68 @@ function CompanyHome() {
                     <h1 className='font-prompt text-lg text-center text-[#051339]'>Connect In 2023</h1>
                 </Card>
             </div>
-           
+            < div >
 
+                <Dialog open={Reportopen} size="xs" handler={ReporthandleOpen}>
+                    <div className="flex items-center justify-between">
+                        <DialogHeader className="flex flex-col items-start">
+                            {" "}
+                            <Typography className="mb-1" variant="h4">
+                                Report
+                            </Typography>
+                        </DialogHeader>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="mr-3 h-5 w-5"
+                            onClick={ReporthandleOpen}
+                        >
+                            <path
+                                fillRule="evenodd"
+                                d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+                                clipRule="evenodd"
+                            />
+                        </svg>
+                    </div>
+                    <DialogBody>
+                        <div className="grid gap-6">
+                            <textarea label="Message" className='h-28 border-[1px] border-black font-prompt text-black' value={reprotText} onChange={(e) => setReprotText(e.target.value)} placeholder='Enter your Reporting Reason' style={{ paddingLeft: '10px' }} />
+                        </div>
+                    </DialogBody>
+                    <DialogFooter className="space-x-2">
+                        <Button variant="text" className="bg-[#7c7c7d] font-prompt-normal text-black" onClick={ReporthandleOpen}>
+                            cancel
+                        </Button>
+                        <Button variant="filled" className="bg-[#051339] font-prompt-normal hover:bg-[#233156]" onClick={ReportPublicPost}>
+                            Report
+                        </Button>
+                    </DialogFooter>
+                    <Toaster />
+                </Dialog>
+            </div >
+            <>
+
+                <Dialog open={removeOpen} handler={handleRemovePostOpen}>
+                    <DialogHeader>Delete</DialogHeader>
+                    <DialogBody className='text-black font-prompt-normal'>
+                        Delete Your Post. Are you sure This?
+                    </DialogBody>
+                    <DialogFooter>
+                        <Button
+                            variant="text"
+
+                            onClick={handleRemovePostOpen}
+                            className="mr-1 bg-[#eeeeee] font-prompt-normal text-black"
+                        >
+                            <span>Cancel</span>
+                        </Button>
+                        <Button className='bg-[#051339] font-prompt-normal ' onClick={RemovePost}>
+                            <span>Delete</span>
+                        </Button>
+                    </DialogFooter>
+                </Dialog>
+            </>
             <Toaster />
 
         </div>
@@ -279,6 +668,15 @@ function CompanyHome() {
 }
 
 export default CompanyHome
+
+
+
+
+
+
+
+
+
 
 
 
