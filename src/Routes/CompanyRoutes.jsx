@@ -10,6 +10,7 @@ import AddPost from '../Components/CompanyComponents/AddPost/AddPost.Jsx'
 import ProfileCompany from '../Pages/Company/Profile/Profile'
 import ApplicationViews from '../Pages/Company/ApplicationViews/ApplicationViews'
 import ApplicationProfile from '../Pages/Company/ApplicationProfileView/ApplicationProfile'
+import Chat from '../Pages/Chat/Chat'
 
 
 function CompanyRoutes() {
@@ -26,6 +27,7 @@ function CompanyRoutes() {
           <Route element={<AddPost/>} path='/addpost' />
           <Route element={<ApplicationViews/>} path='/applicationviews' />
           <Route element={<ApplicationProfile/>} path='/applicationprofile' />
+          <Route element={<Chat/>} path='/chat' />
         </Route>
         </Route>
       </Routes>

@@ -9,7 +9,7 @@ import UserRoutes from './Routes/UserRoutes';
 import CompanyRoutes from './Routes/CompanyRoutes';
 import AdminRout from './Routes/AdminRout';
 
-// import Check from './Pages/Check/Check';
+
 
 function App() {
 
@@ -21,7 +21,6 @@ function App() {
         <Routes>
           <Route element={<FirstPage />} path='/choose' />
 
-          {/* <Route element={<Check/>} path='/check' /> */}
           <Route element={<Signup />} path='/signup' />
           <Route element={<ConfirmEmail />} path='/verification' />
           <Route element={<ProtectedRoutes />}>

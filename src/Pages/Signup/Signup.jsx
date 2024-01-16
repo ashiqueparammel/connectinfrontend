@@ -19,7 +19,7 @@ function Signup() {
     const checkData = location.state || ''
     const [company_data, setCompany_data] = useState('')
     const dispatch = useDispatch()
-
+ 
     useEffect(() => {
         if (checkData) {
             if (checkData.data) {

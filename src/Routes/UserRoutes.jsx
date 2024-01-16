@@ -10,6 +10,7 @@ import JobView from '../Pages/User/JobView/JobView'
 import UserProfile from '../Pages/User/Profile/Profile'
 import Applied from '../Pages/User/Applied/Applied'
 import AppliedView from '../Pages/User/AppliedView/AppliedView'
+import Chat from '../Pages/Chat/Chat'
 
 
 
@@ -23,9 +24,11 @@ function UserRoutes() {
                         <Route element={<UserMyItems />} path='/myitems' />
                         <Route element={<Jobs />} path='/jobs' />
                         <Route element={<JobView />} path='/jobview' />
-                        <Route element={< UserProfile/>} path='/profile' />
-                        <Route element={< Applied/>} path='/applyjob' />
-                        <Route element={< AppliedView/>} path='/applyjobview' />
+                        <Route element={< UserProfile />} path='/profile' />
+                        <Route element={< Applied />} path='/applyjob' />
+                        <Route element={< AppliedView />} path='/applyjobview' />
+                        <Route element={<Chat />} path='/chat' />
+
                     </Route>
                 </Route>
             </Routes>
