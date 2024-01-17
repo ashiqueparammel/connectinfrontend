@@ -139,7 +139,7 @@ function CompanyNavBar() {
                     color="blue-gray"
                     className="p-1 font-normal"
                 >
-                    <Button className='bg-[#051339] '><FontAwesomeIcon icon={faMessage} className='w-12 h-6' /></Button>
+                    <Button className='bg-[#051339] ' onClick={() => navigate('/chat')}><FontAwesomeIcon icon={faMessage} className='w-12 h-6' /></Button>
                 </Typography>
                 <Typography
                     as="li"

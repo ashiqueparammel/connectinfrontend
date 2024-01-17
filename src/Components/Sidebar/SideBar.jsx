@@ -32,6 +32,9 @@ function Sidebar() {
                     <Button onClick={() => navigate('/admin/jobreports')}  variant="filled" className='bg-[#0A3863] font-roboto-mono text-xl font-prompt-normal ml-2 w-[260px]'  >
                         JOB REPORTS
                     </Button>
+                    <Button onClick={() => navigate('/admin/postreports')}  variant="filled" className='bg-[#0A3863] font-roboto-mono text-xl font-prompt-normal ml-2 w-[260px]'  >
+                        POST REPORTS
+                    </Button>
 
                     
 

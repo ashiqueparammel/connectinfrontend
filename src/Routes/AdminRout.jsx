@@ -7,6 +7,7 @@ import UserManagement from '../Pages/Admin/UserManagement'
 import CompanyManagement from '../Pages/Admin/CompanyManagement'
 import SkillsManagement from '../Pages/Admin/SkillsManagement'
 import JobReports from '../Pages/Admin/JobReports'
+import PostReports from '../Pages/Admin/PostReports'
 
 function AdminRout() {
     return (
@@ -19,6 +20,7 @@ function AdminRout() {
                         <Route element={<CompanyManagement  />} path='/company' />
                         <Route element={<SkillsManagement  />} path='/skills' />
                         <Route element={<JobReports  />} path='/jobreports' />
+                        <Route element={<PostReports  />} path='/postreports' />
                     </Route>
                 </Route>
             </Routes>

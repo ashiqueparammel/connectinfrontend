@@ -17,6 +17,8 @@ function AdminLayout() {
                 return 'COMPANY';
             case '/admin/jobreports':
                 return 'JOB REPORTS';
+            case '/admin/postreports':
+                return 'POST REPORTS';
             // case '/admin/skills':
             //     return 'SKILLS';
             default:

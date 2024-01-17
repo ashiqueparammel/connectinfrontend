@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Typography, Button, Dialog, DialogHeader, DialogBody, DialogFooter } from "@material-tailwind/react";
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast'
-import { JobUpdate, ReportJobPostList, } from '../../Constants/Constants';
-const TABLE_HEAD = ["ID", "REPORTER NAME", "REPORTED COMPANY", "VIEW", "ACTION"];
+import { PublicPostUpdate, publicReportListAll, } from '../../Constants/Constants';
+const TABLE_HEAD = ["ID", "REPORTER NAME", "REPORTED TO", "VIEW", "ACTION"];
 
-// ReportJobPostList
+function PostReports() {
 
-function JobReports() {
-    const [ListReportJob, setListReportJob] = useState([]);
+    const [ListReportPost, setListReportPost] = useState([]);
     const [open, setOpen] = React.useState(false);
     const [selectedId, setSelectedId] = useState(null)
     const [selectedState, setSelectedState] = useState(null)
@@ -33,15 +32,15 @@ function JobReports() {
             is_available: !selectedState
         };
         try {
-            const response = await axios.patch(`${JobUpdate}${selectedId}/`, blockData);
+            const response = await axios.patch(`${PublicPostUpdate}${selectedId}/`, blockData);
             if (response.status === 200) {
                 setcheckState(true);
                 if (selectedState) {
 
-                    toast.success('Job Blocked Successfully!');
+                    toast.success('Post Blocked Successfully!');
                 }
                 else {
-                    toast.success('Job UnBlocked Successfully!');
+                    toast.success('Post UnBlocked Successfully!');
 
                 }
             }
@@ -54,16 +53,15 @@ function JobReports() {
 
     useEffect(() => {
         setcheckState(null)
-        const ListData = axios.get(ReportJobPostList)
+        const ListData = axios.get(publicReportListAll)
             .then((response) => {
                 const responseData = response.data;
-                setListReportJob(responseData);
+                setListReportPost(responseData);
             })
             .catch((error) => {
                 console.error("Error fetching setListReportJob data:", error);
             });
     }, [checkState]);
-
 
     return (
         <div className='w-full'>
@@ -86,7 +84,7 @@ function JobReports() {
                 </thead>
 
                 <tbody>
-                    {ListReportJob.map((Reports, index) => {
+                    {ListReportPost.map((Reports, index) => {
                         const classes = "p-4 border-b border-blue-gray-50";
                         return (
                             <tr key={index}>
@@ -103,7 +101,7 @@ function JobReports() {
                                 </td>
                                 <td className={classes}>
                                     <Typography variant="small" color="blue-gray" className="font-roboto-mono text-lg">
-                                        {Reports.Post.company.company_name}
+                                        {Reports.Post.user.email}
                                     </Typography>
                                 </td>
                                 <td className={classes}>
@@ -117,61 +115,40 @@ function JobReports() {
                                                 <DialogBody className="h-[34rem] overflow-scroll hidescroll">
                                                     <div className='font-prompt'>
                                                         <Typography className="font-prompt text-black text-lg">
-                                                            About Job
+                                                            About Post
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            company name:{Reports.Post.company.company_name}
+                                                            Posted : {Reports.Post.user.username}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Jobtitle:{Reports.Post.Job_title}
+                                                            Post text : {Reports.Post.description}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Openings: {Reports.Post.Openings}
+                                                            Post like : {Reports.Post.likes}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Job discription:{Reports.Post.job_description}
+                                                            Post comments : {Reports.Post.Comments}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Post date:{Reports.Post.posted_date}
+                                                            Posted Date : {Reports.Post.created_at}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            salary:{Reports.Post.salary}
+                                                            Post Image : <img src={Reports.Post.Post_Image} className='w-96 h-52 ml-16' alt="Image" />
                                                         </Typography>
+
                                                     </div>
-                                                    <div className='font-prompt mt-2'>
-                                                        <Typography className="font-prompt text-black text-lg">
-                                                            About Company
-                                                        </Typography>
-                                                        <Typography className="font-prompt text-black">
-                                                            company name:{Reports.Post.company.company_name}
-                                                        </Typography>
-                                                        <Typography className="font-prompt text-black">
-                                                            Address:{Reports.Post.company.Address}
-                                                        </Typography>
-                                                        <Typography className="font-prompt text-black">
-                                                            Company Size: {Reports.Post.company.Company_Size}
-                                                        </Typography>
-                                                        <Typography className="font-prompt text-black">
-                                                            Description:{Reports.Post.company.Description}
-                                                        </Typography>
-                                                        <Typography className="font-prompt text-black">
-                                                            Location:{Reports.Post.company.Location}
-                                                        </Typography>
-                                                        <Typography className="font-prompt text-black">
-                                                            Industry:{Reports.Post.company.Industry}
-                                                        </Typography>
-                                                    </div>
+                                                   
                                                     <div className='font-prompt mt-2'>
                                                         <Typography className="font-prompt text-black text-lg">
                                                             About Report
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Reason:{Reports.Reason}
+                                                            Reason : {Reports.Reason}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Reported By:{Reports.user.username}
+                                                            Reported By : {Reports.user.username}
                                                         </Typography>
-                                                    </div>
+                                                    </div> 
                                                 </DialogBody>
                                             </Dialog>
                                         </>
@@ -190,9 +167,9 @@ function JobReports() {
                     })}
                     <>
                         <Dialog open={open} handler={handleOpen}>
-                            <DialogHeader className='font-prompt-normal'>Job {(selectedState ? 'Block' : 'UnBlock')}</DialogHeader>
+                            <DialogHeader className='font-prompt-normal'>Post {(selectedState ? 'Block' : 'UnBlock')}</DialogHeader>
                             <DialogBody className='font-prompt text-black text-lg'>
-                                Are You Sure Do You Want to Confirm This Job {(selectedState ? 'Block' : 'UnBlock')}?
+                                Are You Sure Do You Want to Confirm This Post {(selectedState ? 'Block' : 'UnBlock')}?
 
                             </DialogBody>
                             <DialogFooter className='gap-2'>
@@ -214,37 +191,8 @@ function JobReports() {
             </table>
 
             <Toaster />
-        </div>
-        // <div> </div>
+        </div >
     )
 }
 
-export default JobReports
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export default PostReports

@@ -24,6 +24,8 @@
     "@reduxjs/toolkit": "^1.9.7",
     "autoprefixer": "^10.4.16",
     "axios": "^1.6.2",
+    "emoji-mart": "^5.5.2",
+    "emoji-picker-react": "^4.6.11",
     "formik": "^2.4.5",
     "jwt-decode": "^4.0.0",
     "postcss": "^8.4.31",

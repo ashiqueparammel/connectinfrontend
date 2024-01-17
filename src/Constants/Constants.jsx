@@ -71,6 +71,7 @@ export const RemoveComments = import.meta.env.VITE_RemoveComments
 export const WebSocket = import.meta.env.VITE_WEB_SOCKET 
 export const Previos_Chat = import.meta.env.VITE_Previos_Chat 
 export const UserListChat = import.meta.env.VITE_UserListChat 
+export const publicReportListAll = import.meta.env.VITE_publicReportListAll 
 
 
 
