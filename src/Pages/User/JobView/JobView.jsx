@@ -425,7 +425,7 @@ function JobView() {
                             |
                             <h1>Openings : {jobViews.Openings}</h1>
                             |
-                            <h1>Applications : 19</h1>
+                            <h1>Applications : {jobViews.ApplicationCount}</h1>
 
                             {(manageApplyButton ? <Button disabled className='bg-[#6b6b6c] w-28 h-10 ml-[33%] hover:bg-[#46484e] font-prompt'>Applied</Button> : <Button onClick={handleOpenAddEducation} className='bg-[#051339] w-28 h-10 ml-[33%] hover:bg-[#1c284a] font-prompt'>Apply Job</Button>)}
                         </div>

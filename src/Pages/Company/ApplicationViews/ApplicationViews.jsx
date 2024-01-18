@@ -32,17 +32,29 @@ function ApplicationViews() {
   useEffect(() => {
     if (job_id) {
       axios.get(`${MyApplicationList}${job_id}/`).then((response) => {
-        const ApplicationAllData = response.data[0]
-        setJobDetail([ApplicationAllData])
+        if (response.data.length === 0) {
+          setJobDetail([])
+        } else {
+          const ApplicationAllData = response.data[0]
+          setJobDetail([ApplicationAllData])
+        }
       }).catch((error) => {
         console.error("Error fetching MyApplicationList:", error);
       })
       axios.get(`${MySingleJobsListRead}${job_id}/`).then((response) => {
-        const ApplicationAllData = response.data[0]
-        setReadApplication([ApplicationAllData])
-        if (ApplicationAllData) {
-          setReadManage(true)
+        if (response.data.length === 0) {
+          setReadApplication([])
+
+        } else {
+
+          const ApplicationAllData = response.data
+          setReadApplication(ApplicationAllData)
+          if (ApplicationAllData) {
+            setReadManage(true)
+          }
         }
+
+
       }).catch((error) => {
         console.error("Error fetching MyApplicationList:", error);
       })
@@ -76,8 +88,9 @@ function ApplicationViews() {
         console.error("Error fetching job_ApplicationsUpdate:", error);
       });
   };
-
+  console.log(JobDetail, '==================>>>>>');
   return (
+
     <div className='flex justify-center'>
       <Card className='w-[80rem] mt-14 bg-gray-200'>
         <div className='flex justify-between border-b-[1px] border-[#a39f9f] ' >
@@ -108,7 +121,7 @@ function ApplicationViews() {
             <TabsBody className='flex justify-center'>
               {(activeTab === 'All' ?
                 <div className='flex flex-col w-full ml-24'>
-                  {JobDetail.map((job, index) => (
+                  {JobDetail.length !== 0 ? JobDetail.map((job, index) => (
 
                     <Card className=' flex flex-row mb-3 rounded-md w-[90%] mt-5 justify-between' key={index}>
                       <div className='flex gap-5'>
@@ -126,7 +139,7 @@ function ApplicationViews() {
                       <Button onClick={() => navigate('/company/applicationprofile', { state: { data: job.id } })} className='mt-8 mr-16 h-10 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faEye} /><span>View</span></Button>
                     </Card>
 
-                  ))}
+                  )) : ''}
                 </div>
 
                 : '')}

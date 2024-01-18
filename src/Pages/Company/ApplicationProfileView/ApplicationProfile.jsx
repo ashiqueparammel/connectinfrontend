@@ -3,7 +3,7 @@ import { Button, Card, Dialog, Typography } from '@material-tailwind/react';
 import { faFilePdf, faSuitcase } from '@fortawesome/free-solid-svg-icons'
 import toast, { Toaster } from 'react-hot-toast'
 import axios from 'axios';
-import { ListPersonalSkills, MySingleJobsList } from '../../../Constants/Constants';
+import { ListPersonalSkills, MySingleJobsList, job_ApplicationsUpdate } from '../../../Constants/Constants';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
@@ -19,7 +19,7 @@ function ApplicationProfile() {
     const job_id = location.state.data || ''
     const navigate = useNavigate()
 
-    console.log(job_id, 'check this datattttttt');
+    // console.log(job_id, 'check this datattttttt');
     const formatPostedDate = (postedDate) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric', time: 'numeric' };
         const formattedDate = new Date(postedDate).toLocaleDateString(undefined, options);
@@ -36,8 +36,10 @@ function ApplicationProfile() {
     const [UserData, setUserData] = useState([])
     const [ApplicationData, setApplicationData] = useState([])
     const [RequiredSkills, setRequiredSkills] = useState([])
+    const [ManagePage, setManagePage] = useState(false)
 
     useEffect(() => {
+        setManagePage(false)
         if (job_id) {
             axios.get(`${MySingleJobsList}${job_id}/`).then((response) => {
                 const ApplicationAllData = response.data
@@ -63,9 +65,25 @@ function ApplicationProfile() {
         }
 
 
-    }, [])
+    }, [ManagePage])
 
-    console.log(RequiredSkills, 'lotttattatataat');
+    const UpdateApplication = (event) => {
+        const data = {
+            ApplicationStatus: event,
+            Updated: true
+        }
+        axios.patch(`${job_ApplicationsUpdate}${ApplicationData.id}/`, data).then((response) => {
+            if (response.status === 200) {
+                setManagePage(true)
+                toast.success('updated Status')
+
+            }
+        }).catch((error) => {
+            console.error("Error Updating status:", error);
+        })
+
+    }
+
     return (
         <div>
             <div className='flex justify-center'>
@@ -123,6 +141,25 @@ function ApplicationProfile() {
                                 ))}
                             </div>
                         </Card>
+                        <Card className='bg-[#FAFAFA] shadow-2xl mt-2  rounded-md w-[90%]'>
+                            <div style={{ borderBottom: '1px solid #9da3a3' }} className='h-16'>
+                                <Typography className='font-prompt text-2xl text-center ml-6 mt-1 text-black'>Application Status</Typography>
+
+                            </div>
+                            {(ApplicationData.Updated ? <div className='flex flex-row justify-end gap-2 mt-6 mb-6 mr-6'>
+                                <h1 className='absolute left-6 font-prompt text-lg'>This Application status updated </h1>
+                                {(ApplicationData.ApplicationStatus === 'Accept' ? <Button disabled className='bg-[#1b681c] font-prompt-normal'>Accepted</Button> : '')}
+                                {(ApplicationData.ApplicationStatus === 'Reject' ? <Button disabled className='bg-[#7e2222] font-prompt-normal'>Rejected</Button> : '')}
+
+                            </div> : <div className='flex flex-row justify-end gap-2 mt-6 mb-6 mr-6'>
+                                <h1 className='absolute left-6 font-prompt text-lg'>Please Update the Application Status</h1>
+                                <Button onClick={(e) => UpdateApplication('Accept')} className='bg-[#1b681c] font-prompt-normal'>Accept</Button>
+                                <Button onClick={(e) => UpdateApplication('Reject')} className='bg-[#7e2222] font-prompt-normal'>Reject</Button>
+                            </div>)}
+
+
+
+                        </Card>
 
 
                     </div>
@@ -135,6 +172,8 @@ function ApplicationProfile() {
                     </Card>
                 </Dialog>
             </div>
+            <Toaster />
+
         </div>
     )
 }

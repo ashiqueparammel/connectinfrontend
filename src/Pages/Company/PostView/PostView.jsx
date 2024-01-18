@@ -277,7 +277,7 @@ function PostView() {
                             |
                             <h1>Openings : {jobViews.Openings}</h1>
                             |
-                            <h1 onClick={(e)=>navigate('/company/applicationviews',{ state:{data:job_id} })} className='hover:bg-[#9a9999] hover:cursor-pointer rounded-sm hover:text-black ' style={{ paddingLeft: '5px',paddingRight: '5px' }}>Applications : 19</h1>
+                            <h1 onClick={(e)=>navigate('/company/applicationviews',{ state:{data:job_id} })} className='hover:bg-[#9a9999] hover:cursor-pointer rounded-sm hover:text-black ' style={{ paddingLeft: '5px',paddingRight: '5px' }}>Applications : {jobViews.ApplicationCount}</h1>
 
                         </div>
 

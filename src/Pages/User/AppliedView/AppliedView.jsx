@@ -14,8 +14,7 @@ function AppliedView() {
     const location = useLocation()
     const navigate = useNavigate()
     const apply_Id = location.state.data || ''
-    // const [UserDetail, setUserDetail] = useState([])
-    // const [ProfileUserdata, setProfileUserdata] = useState([])
+    const [ApplyDetails, setApplyDetails] = useState([])
     const [ProfileDetail, setProfileDetail] = useState([])
     const [CompanyDetail, setCompanyDetail] = useState([])
     const [JobDetail, setJobDetail] = useState([])
@@ -34,6 +33,7 @@ function AppliedView() {
         if (apply_Id) {
             axios.get(`${MySingleJobsList}${apply_Id}/`)
                 .then((response) => {
+                    setApplyDetails(response.data)
                     console.log(response.data, '=====================<<<<<<<<<<<<<<<<<printed>>>>>>>>>>>>>');
                     const { job_post } = response.data
                     const { profile } = response.data
@@ -85,7 +85,7 @@ function AppliedView() {
                             |
                             <h1>Openings : {JobDetail.Openings}</h1>
                             |
-                            <h1>Applications : 2</h1>
+                            <h1>Applications : {JobDetail.ApplicationCount}</h1>
                             |
                             <h1>Applied : {formatPostedDate(AppliedDetail.posted_date)}</h1>
 
@@ -141,6 +141,26 @@ function AppliedView() {
 
                             <Typography className='font-prompt text-lg  mb-1 '  >About The Company </Typography >
                             <h1> {CompanyDetail.Description}</h1>
+
+                        </div>
+                    </Card>
+                    <Card className='bg-[#FAFAFA] shadow-2xl mt-2 mb-2  rounded-md w-[90%]'>
+                        <div className='m-6 font-prompt'>
+                        <div style={{ borderBottom: '1px solid #9da3a3' }} className='h-16'>
+                                <Typography className='font-prompt text-2xl text-center ml-6 mt-1 text-black'>Application Status</Typography>
+
+                            </div>
+                            
+                            <div className='flex flex-row justify-end gap-2 mt-6 mb-6 mr-6'>
+                                <h1 className='absolute left-6 font-prompt text-lg'> Your Application status  </h1>
+                               
+                                {(ApplyDetails.ApplicationStatus==='Pending'?<Button disabled className='bg-[#a3a0a0] font-prompt-normal text-black'>Pending</Button>:'')}
+                                {(ApplyDetails.ApplicationStatus==='Accept'?<Button disabled className='bg-[#1b681c] font-prompt-normal'>Accepted</Button>:'')}
+                                {(ApplyDetails.ApplicationStatus==='Reject'?<Button disabled className='bg-[#7e2222] font-prompt-normal'>Rejected</Button>:'')}
+                                {(ApplyDetails.ApplicationStatus==='Accept'?<Button  className='bg-[#051339] font-prompt-normal'>Contact</Button>:'')}
+                               
+                               
+                            </div>
 
                         </div>
                     </Card>
