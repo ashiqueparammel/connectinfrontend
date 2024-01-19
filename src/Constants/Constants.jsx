@@ -57,7 +57,11 @@ export const UserSearchList = import.meta.env.VITE_UserSearchList
 export const PublicPostAdd = import.meta.env.VITE_PublicPostAdd 
 export const PublicPostList = import.meta.env.VITE_PublicPostList 
 export const NotInterestedPosts = import.meta.env.VITE_NotInterestedPosts 
-//balance
+export const UserProfileView = import.meta.env.VITE_UserProfileView 
+export const UserFollow = import.meta.env.VITE_UserFollow 
+export const UserFollowing = import.meta.env.VITE_UserFollowing 
+export const UserFollowers = import.meta.env.VITE_UserFollowers   
+export const UserUnFollow = import.meta.env.VITE_UserUnFollow   
 export const PublicPostReport = import.meta.env.VITE_PublicPostReport 
 export const PublicPostUpdate = import.meta.env.VITE_PublicPostUpdate 
 export const AddLikes = import.meta.env.VITE_AddLikes 
@@ -72,6 +76,9 @@ export const WebSocket = import.meta.env.VITE_WEB_SOCKET
 export const Previos_Chat = import.meta.env.VITE_Previos_Chat 
 export const UserListChat = import.meta.env.VITE_UserListChat 
 export const publicReportListAll = import.meta.env.VITE_publicReportListAll 
+export const ConnectionChatList = import.meta.env.VITE_ConnectionChatList 
+export const ServerSecret = import.meta.env.VITE_ServerSecret 
+export const AppKey = import.meta.env.VITE_AppKey 
 
 
 

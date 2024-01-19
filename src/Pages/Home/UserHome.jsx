@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { AddComments, AddLikes, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, RemoveComments, UpdateLikes, UserDetails, UserProfileDetails } from '../../Constants/Constants';
+import { AddComments, AddLikes, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, RemoveComments, UpdateLikes, UserDetails, UserFollowers, UserFollowing, UserProfileDetails } from '../../Constants/Constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faUser, faCamera, faPaperPlane, faImage, faAdd, faPlus, faArrowRight, faTrash, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
@@ -21,8 +21,8 @@ function UserHome() {
 
   const [ImageManage, setImageManage] = useState(false);
   // console.log(userInfo, '=================>>>>>>>>>>>>>>>')
-
-  // const [checkState, setcheckState] = useState(true)
+  const [followingCount, setfollowingCount] = useState('')
+  const [followersCount, setfollowersCount] = useState('')
   //Comments
   const [CommentsManage, setCommentsManage] = useState(false)
   const [Commentid, setCommentid] = useState('')
@@ -84,6 +84,18 @@ function UserHome() {
       }).catch((error) => {
         console.log('error fetching  CheckIs liked', error);
 
+      })
+      axios.get(`${UserFollowing}${userInfo.id}/`).then((response) => {
+        let count = response.data.length
+        setfollowingCount(count)
+      }).catch((error) => {
+        console.log(err);
+      })
+      axios.get(`${UserFollowers}${userInfo.id}/`).then((response) => {
+        let count = response.data.length
+        setfollowersCount(count)
+      }).catch((error) => {
+        console.log(error);
       })
 
     }
@@ -460,12 +472,12 @@ function UserHome() {
             <h1 className='font-prompt text-md'>{userDetail.email}</h1>
 
             <div className='flex justify-between mt-2'>
-              <h1 className='font-prompt text-left text-lg'>followes</h1>
-              <h1 className='font-prompt text-left text-lg text-[#5871c8]'>9</h1>
+              <h1 className='font-prompt text-left text-lg'>followers</h1>
+              <h1 className='font-prompt text-left text-lg text-[#5871c8]'>{followersCount}</h1>
             </div>
             <div className='flex justify-between'>
               <h1 className='font-prompt text-left text-lg'>following</h1>
-              <h1 className='font-prompt text-left text-lg text-[#5871c8]'>10</h1>
+              <h1 className='font-prompt text-left text-lg text-[#5871c8]'>{followingCount}</h1>
             </div>
           </div>
         </Card>
@@ -505,8 +517,8 @@ function UserHome() {
             <Card key={index} className="bg-[#ededed] mb-2  ml-16 border-[1px] border-[#cbcaca]   shadow-blue-gray-900/2">
               <div className='flex justify-between' >
                 <div className='flex'>
-                  {(post.user.profile_image ? <img src={post.user.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
-                    <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
+                  {(post.user.profile_image ? <img  src={post.user.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
+                    <UserCircleIcon  className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
                   <div className='flex flex-col ml-2 mt-5'>
                     <h1 className='font-prompt-normal text-sm '>{post.user.username}</h1>
                     <h1 className='font-prompt text-sm '>{post.user.email}</h1>

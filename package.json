@@ -22,6 +22,7 @@
     "@mui/system": "^5.14.19",
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^1.9.7",
+    "@zegocloud/zego-uikit-prebuilt": "^1.10.0",
     "autoprefixer": "^10.4.16",
     "axios": "^1.6.2",
     "emoji-mart": "^5.5.2",

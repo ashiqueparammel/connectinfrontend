@@ -686,13 +686,14 @@ function UserProfile() {
                 <Card className='mt-1 rounded-sm'>
                     <Typography className='font-prompt mt-2 ml-6' variant='h5'>
                         About Your Education
+                        <div className=' right-24 top-[35.5px]'>
+                            <FontAwesomeIcon onClick={handleOpenAddEducation} icon={faPlus} title="Add Education" color='#FAFAFA' className=' w-5 h-5 mt-3  rounded-md shadow-2xl shadow-black 
+                                hover:text-[#ffffff] bg-[#051339] border-4 border-[#051339] mr-4 hover:cursor-pointer hover:bg-[#1e2d56] hover:border-[#1e2d56] ' />
+                        </div>
                     </Typography>
                     {EducationList.map((education) => (
                         <div key={education.id} style={{ borderBottom: '1px solid #9da3a3' }}>
-                            <div className='absolute right-24 top-[35.5px]'>
-                                <FontAwesomeIcon onClick={handleOpenAddEducation} icon={faPlus} title="Add Education" color='#FAFAFA' className=' w-5 h-5 mt-3  rounded-md shadow-2xl shadow-black 
-                                hover:text-[#ffffff] bg-[#051339] border-4 border-[#051339] mr-4 hover:cursor-pointer hover:bg-[#1e2d56] hover:border-[#1e2d56] ' />
-                            </div>
+
                             <div className='ml-[1120px] flex flex-row'>
                                 <div className=''>
                                     <FontAwesomeIcon onClick={(e) => editEducation(education.id)} icon={faPen} title="Update Education" color='#FAFAFA' className=' w-5 h-5 mt-3  rounded-md shadow-2xl shadow-black 

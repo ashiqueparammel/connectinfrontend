@@ -79,7 +79,7 @@ function CompanySignup() {
     e.preventDefault();
 
     const CompanyData = {
-      user: userInfo.user_id,
+      user: userInfo.id,
       company_name: e.target.company_name.value,
       Industry: selectedIndustry,
       Company_Size: selectedSize,

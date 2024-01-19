@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { CompanyDetails, Company_Profile, AddComments, AddLikes, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, RemoveComments, UpdateLikes, } from '../../Constants/Constants';
+import { CompanyDetails, Company_Profile, AddComments, AddLikes, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, RemoveComments, UpdateLikes, UserFollowers, UserFollowing, } from '../../Constants/Constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faCamera, faUser, faTrash, faPaperPlane, faAdd, faImage, faArrowRight, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
@@ -23,6 +23,10 @@ function CompanyHome() {
     const [CompanyuserDetails, setCompanyuserDetails] = useState([]);
     const [companyDetail, setCompanyDetail] = useState([]);
     const [ImageManage, setImageManage] = useState(false);
+
+    //followings and followers
+    const [followingCount, setfollowingCount] = useState('')
+    const [followersCount, setfollowersCount] = useState('')
 
     // RemovePost
     const [RemoveId, setRemoveId] = useState('')
@@ -100,6 +104,18 @@ function CompanyHome() {
             }).catch((error) => {
                 console.log('error fetching  CheckIs liked', error);
 
+            })
+            axios.get(`${UserFollowing}${userInfo.id}/`).then((response) => {
+                let count = response.data.length
+                setfollowingCount(count)
+            }).catch((error) => {
+                console.log(err);
+            })
+            axios.get(`${UserFollowers}${userInfo.id}/`).then((response) => {
+                let count = response.data.length
+                setfollowersCount(count)
+            }).catch((error) => {
+                console.log(error);
             })
         }
     }, [ImageManage]);
@@ -288,7 +304,6 @@ function CompanyHome() {
     const CommentsSection = (event) => {
         axios.get(`${PostListComments}${event}/`).then((response) => {
             setCommentsData(response.data)
-            // console.log(response.data,'=====================aaaaaaaaaaaaaaaaaaaa=a=a==a=a');
         }).catch((error) => {
             toast.error(error);
 
@@ -437,17 +452,17 @@ function CompanyHome() {
                         <h1 className='font-prompt text-md'>{CompanyuserDetails.email}</h1>
 
                         <div className='flex justify-between mt-2'>
-                            <h1 className='font-prompt text-left text-lg'>followes</h1>
-                            <h1 className='font-prompt text-left text-lg text-[#5871c8]'>9</h1>
+                            <h1 className='font-prompt text-left text-lg'>followers</h1>
+                            <h1 className='font-prompt text-left text-lg text-[#5871c8]'>{followersCount}</h1>
                         </div>
                         <div className='flex justify-between'>
                             <h1 className='font-prompt text-left text-lg'>following</h1>
-                            <h1 className='font-prompt text-left text-lg text-[#5871c8]'>10</h1>
+                            <h1 className='font-prompt text-left text-lg text-[#5871c8]'>{followingCount}</h1>
                         </div>
                     </div>
                 </Card>
 
-                <Card className="h-[247px]  bg-[#ededed] w-full max-w-[20rem] mt-10 ml-16  shadow-2xl shadow-blue-gray-900/2">
+                <Card className="h-[247px]  bg-[#ededed] w-full max-w-[20rem] mt-5 ml-16  shadow-2xl shadow-blue-gray-900/2">
                     <div className='flex  flex-col gap-2    '>
                         <Button onClick={() => navigate('/company/myitems')} className='bg-[#051339]  rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faBookBookmark} className='w-7 h-7 mt-1' /> <span className='mt-1 '>My Jobs</span></Button>
                         <Button className='bg-[#051339] rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faUsers} className='w-7 h-7 mt-1' /><span className='mt-1 '>Following & Followers</span></Button>

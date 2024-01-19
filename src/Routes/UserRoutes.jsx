@@ -11,6 +11,8 @@ import UserProfile from '../Pages/User/Profile/Profile'
 import Applied from '../Pages/User/Applied/Applied'
 import AppliedView from '../Pages/User/AppliedView/AppliedView'
 import Chat from '../Pages/Chat/Chat'
+import ProfileView from '../Pages/Profileview/ProfileView'
+import VideoCall from '../Pages/VideoCall/VideoCall'
 
 
 
@@ -28,6 +30,10 @@ function UserRoutes() {
                         <Route element={< Applied />} path='/applyjob' />
                         <Route element={< AppliedView />} path='/applyjobview' />
                         <Route element={<Chat />} path='/chat' />
+                        <Route element={<VideoCall />} path='/videocall' />
+                        <Route element={<ProfileView />} path='/profileview' />
+
+
 
                     </Route>
                 </Route>

@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faUsers, faBriefcase, faMessage, faBell, faUser, faSearch, faArrowRightToBracket, faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import Logo from '../../Assets/Frame 20.png'
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { resetState } from "../../Redux/Users";
 import { CompanyResetState } from "../../Redux/Companyees";
 import { LogoutBlackList, UserSearchList } from "../../Constants/Constants";
@@ -21,7 +21,7 @@ import blankImage from '../../Assets/blankprofile.png'
 function NavBar() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-
+    const userInfo = useSelector((state) => state.user.userInfo);
     const [openNav, setOpenNav] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchValues, setsearchValues] = useState('')
@@ -55,7 +55,6 @@ function NavBar() {
         if (searchValues !== '') {
             axios.get(UserSearchList + searchValues).then((response) => {
                 setsearchUsersData(response.data)
-                // console.log(response.data,'checkdataSearch working or not');
             }).catch((error) => {
                 console.error("Error fetching Searching user :", error);
             });
@@ -79,6 +78,11 @@ function NavBar() {
         );
     }, []);
 
+    const Profileview = (event) => {
+        setSearchOpen(false)
+        navigate('/profileview', { state: { data: event } })
+    }
+
     const navList = (
         <div>
             <div className="flex flex-col gap-2 absolute left-80 top-5">
@@ -94,26 +98,26 @@ function NavBar() {
                 {(searchOpen ?
                     <Card className="w-96 max-h-60">
                         <List className="min-h-20 max-h-60 overflow-y-auto z-50 hidescroll">
-                            {(searchUsersData.length===0?<h1 className="text-center text-lg font-prompt-normal" style={{paddingTop:'15px'}} >User not found</h1>:
-                            (searchUsersData.map((user, index) => (
-                                <ListItem key={index}>
-                                    <ListItemPrefix>
-                                        {user.profile_image ? (
-                                            <Avatar variant="circular" alt="candice" src={user.profile_image} />
-                                        ) : (
-                                            <Avatar variant="circular" alt="candice" src={blankImage} />
-                                        )}
-                                    </ListItemPrefix>
-                                    <div>
-                                        <Typography variant="h6" color="blue-gray">
-                                            {user.username}
-                                        </Typography>
-                                        <Typography variant="small" color="gray" className="font-normal">
-                                            {user.email}
-                                        </Typography>
-                                    </div>
-                                </ListItem>
-                            ))))}
+                            {(searchUsersData.length === 0 ? <h1 className="text-center text-lg font-prompt-normal" style={{ paddingTop: '15px' }} >User not found</h1> :
+                                (searchUsersData.map((user, index) => (
+                                    (userInfo.id !== user.id ? <ListItem key={index} className="min-h-16" onClick={(e) => Profileview(user.id)} >
+                                        <ListItemPrefix>
+                                            {user.profile_image ? (
+                                                <Avatar variant="circular" alt="candice" src={user.profile_image} />
+                                            ) : (
+                                                <Avatar variant="circular" alt="candice" src={blankImage} />
+                                            )}
+                                        </ListItemPrefix>
+                                        <div>
+                                            <Typography variant="h6" color="blue-gray">
+                                                {user.username}
+                                            </Typography>
+                                            <Typography variant="small" color="gray" className="font-normal">
+                                                {user.email}
+                                            </Typography>
+                                        </div>
+                                    </ListItem> : '')
+                                ))))}
                         </List>
                     </Card>
 
@@ -152,7 +156,7 @@ function NavBar() {
                     color="blue-gray"
                     className="p-1 font-normal"
                 >
-                    <Button className='bg-[#051339] 'onClick={() => navigate('/chat')}><FontAwesomeIcon icon={faMessage} className='w-12 h-6' /></Button>
+                    <Button className='bg-[#051339] ' onClick={() => navigate('/chat')}><FontAwesomeIcon icon={faMessage} className='w-12 h-6' /></Button>
                 </Typography>
                 <Typography
                     as="li"

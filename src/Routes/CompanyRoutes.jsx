@@ -11,6 +11,8 @@ import ProfileCompany from '../Pages/Company/Profile/Profile'
 import ApplicationViews from '../Pages/Company/ApplicationViews/ApplicationViews'
 import ApplicationProfile from '../Pages/Company/ApplicationProfileView/ApplicationProfile'
 import Chat from '../Pages/Chat/Chat'
+import ProfileView from '../Pages/Profileview/ProfileView'
+import VideoCall from '../Pages/VideoCall/VideoCall'
 
 
 function CompanyRoutes() {
@@ -28,6 +30,10 @@ function CompanyRoutes() {
           <Route element={<ApplicationViews/>} path='/applicationviews' />
           <Route element={<ApplicationProfile/>} path='/applicationprofile' />
           <Route element={<Chat/>} path='/chat' />
+          <Route element={<VideoCall />} path='/videocall' />
+
+          <Route element={<ProfileView />} path='/profileview' />
+
         </Route>
         </Route>
       </Routes>

@@ -66,6 +66,11 @@ function CompanyNavBar() {
         );
     }, []);
 
+    const Profileview = (event) => {
+        setSearchOpen(false)
+        navigate('/profileview', { state: { data: event } })
+    }
+
     const navList = (
         <div>
             <div className="flex flex-col gap-2 absolute left-80 top-5">
@@ -83,7 +88,7 @@ function CompanyNavBar() {
                         <List className="min-h-20 max-h-60 overflow-y-auto z-50 hidescroll">
                             {(searchUsersData.length === 0 ? <h1 className="text-center text-lg font-prompt-normal" style={{ paddingTop: '15px' }} >User not found</h1> :
                                 (searchUsersData.map((user, index) => (
-                                    <ListItem key={index}>
+                                    <ListItem key={index} className="min-h-16" onClick={(e) => Profileview(user.id)}>
                                         <ListItemPrefix>
                                             {user.profile_image ? (
                                                 <Avatar variant="circular" alt="candice" src={user.profile_image} />
