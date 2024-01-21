@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faUsers, faBriefcase, faMessage, faBell, faUser, faSearch, faArrowRightToBracket, faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import Logo from '../../Assets/Frame 20.png'
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { resetState } from "../../Redux/Users";
 import { CompanyResetState } from "../../Redux/Companyees";
 import axios from "axios";
@@ -15,10 +15,12 @@ function CompanyNavBar() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
+    const userInfo = useSelector((state) => state.user.userInfo);
 
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchValues, setsearchValues] = useState('')
     const [searchUsersData, setsearchUsersData] = useState([])
+
 
     const logout = async () => {
         try {
@@ -68,6 +70,8 @@ function CompanyNavBar() {
 
     const Profileview = (event) => {
         setSearchOpen(false)
+        setsearchValues('')
+
         navigate('/profileview', { state: { data: event } })
     }
 
@@ -88,7 +92,7 @@ function CompanyNavBar() {
                         <List className="min-h-20 max-h-60 overflow-y-auto z-50 hidescroll">
                             {(searchUsersData.length === 0 ? <h1 className="text-center text-lg font-prompt-normal" style={{ paddingTop: '15px' }} >User not found</h1> :
                                 (searchUsersData.map((user, index) => (
-                                    <ListItem key={index} className="min-h-16" onClick={(e) => Profileview(user.id)}>
+                                    (userInfo.id !== user.id ? <ListItem key={index} className="min-h-16" onClick={(e) => Profileview(user.id)}>
                                         <ListItemPrefix>
                                             {user.profile_image ? (
                                                 <Avatar variant="circular" alt="candice" src={user.profile_image} />
@@ -104,7 +108,7 @@ function CompanyNavBar() {
                                                 {user.email}
                                             </Typography>
                                         </div>
-                                    </ListItem>
+                                    </ListItem> : '')
                                 ))))}
                         </List>
                     </Card>

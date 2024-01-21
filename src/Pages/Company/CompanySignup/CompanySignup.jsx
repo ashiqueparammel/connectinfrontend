@@ -75,9 +75,10 @@ function CompanySignup() {
     }, 500);
   };
   //company signup
+  let companyname = null
   const Signupcompany = async (e) => {
     e.preventDefault();
-
+    companyname = e.target.company_name.value
     const CompanyData = {
       user: userInfo.id,
       company_name: e.target.company_name.value,
@@ -130,7 +131,6 @@ function CompanySignup() {
       console.log('chcek data');
       try {
         const responseData = await axios.post(CompanyAdd, CompanyData);
-        // console.log(responseData.status, responseData.statusText, '[[[[[[[[[[[]]]]]]]]]]]]]');
 
         if (responseData.status === 201 && responseData.statusText === 'Created') {
           toast.success('Company profile updated successfully!')
@@ -138,6 +138,7 @@ function CompanySignup() {
             try {
               const formData = new FormData();
               formData.append('profile_image', profileImage);
+              formData.append('username', companyname);
               const updateProfileImage = await axios.patch(`${CompanyDetails}${CompanyData.user}/`, formData)
             } catch (error) {
               console.log(error);

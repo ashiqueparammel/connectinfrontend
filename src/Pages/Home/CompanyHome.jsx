@@ -31,7 +31,7 @@ function CompanyHome() {
     // RemovePost
     const [RemoveId, setRemoveId] = useState('')
     const [removeOpen, setRemoveOpen] = useState(false);
-    const handleRemovePostOpen = (event) => { setRemoveOpen(!removeOpen),setRemoveId(event) };
+    const handleRemovePostOpen = (event) => { setRemoveOpen(!removeOpen), setRemoveId(event) };
 
     //Comments
     const [CommentsManage, setCommentsManage] = useState(false)
@@ -388,7 +388,9 @@ function CompanyHome() {
 
     }
 
-
+    const profileviewhandle = (event) => {
+        navigate('/profileview', { state: { data: event } })
+    }
     return (
         <div className=' flex mt-5'>
             <div className='mt-2'>
@@ -476,7 +478,7 @@ function CompanyHome() {
 
                 <Card className="h-32 bg-[#ededed]  ml-16  shadow-xl shadow-blue-gray-900/2">
                     <div className='flex  gap-2 mt-5 '>
-                        {(CompanyuserDetails.profile_image ? <img src={CompanyuserDetails.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
+                        {(CompanyuserDetails.profile_image ? <img src={CompanyuserDetails.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16   ' /> :
                             <UserCircleIcon className="ml-4 rounded-full w-16 h-16  " />)}
                         <input type="text" className='w-[70%] h-14  mt-1 border-[1px] font-prompt border-black rounded-md' value={postText} onChange={(e) => setPostText(e.target.value)} placeholder='Share Your Post ...' style={{ paddingLeft: '20px' }} />
                         <Button title='Add New Public Post' onClick={addPublicPost} className='h-14 mt-1 bg-[#051339]'><FontAwesomeIcon icon={faPaperPlane} className='w-7 h-7 rotate-45 ' /></Button>
@@ -498,8 +500,16 @@ function CompanyHome() {
                         <Card key={index} className="bg-[#ededed] mb-2  ml-16 border-[1px] border-[#cbcaca]   shadow-blue-gray-900/2">
                             <div className='flex justify-between' >
                                 <div className='flex'>
-                                    {(post.user.profile_image ? <img src={post.user.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
-                                        <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
+                                    {(userInfo.id !== post.user.id ?
+                                        <div onClick={(e) => profileviewhandle(post.user.id)} className='hover:cursor-pointer'>
+                                            {(post.user.profile_image ? <img src={post.user.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16 mt-4 ' /> :
+                                                <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
+                                        </div> :
+                                        <div onClick={() => navigate('/company/profile/')} className='hover:cursor-pointer'>
+                                            {(post.user.profile_image ? <img src={post.user.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16 mt-4 ' /> :
+                                                <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
+                                        </div>)}
+
                                     <div className='flex flex-col ml-2 mt-5'>
                                         <h1 className='font-prompt-normal text-sm '>{post.user.username}</h1>
                                         <h1 className='font-prompt text-sm '>{post.user.email}</h1>
@@ -512,8 +522,8 @@ function CompanyHome() {
                                             <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className='rounded-full hover:text-[#000000]  w-7 h-7 mt-5 mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer' />
                                         </MenuHandler>
                                         <MenuList className="max-h-72">
-                                            {(getReportStatus(post.id) === 'Report' ? <MenuItem onClick={(e) => ReporthandleOpen(post.id)}>Report</MenuItem> : <MenuItem className='bg-[#dbdbdb] text-black'>Reported</MenuItem>)}
-                                            <MenuItem onClick={(e) => notIntrested(post.id)} >Not intrested</MenuItem>
+                                            {userInfo.id !== post.user.id ? (getReportStatus(post.id) === 'Report' ? <MenuItem onClick={(e) => ReporthandleOpen(post.id)}>Report</MenuItem> : <MenuItem className='bg-[#dbdbdb] text-black'>Reported</MenuItem>) : ''}
+                                            {(userInfo.id !== post.user.id ? <MenuItem onClick={(e) => notIntrested(post.id)} >Not intrested</MenuItem> : '')}
                                             {(userInfo.id === post.user.id ? <MenuItem onClick={(e) => handleRemovePostOpen(post.id)}>Delete</MenuItem> : '')}
                                         </MenuList>
                                     </Menu>

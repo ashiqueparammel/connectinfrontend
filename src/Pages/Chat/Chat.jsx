@@ -12,10 +12,10 @@ import { useSelector } from 'react-redux';
 import EmojiPicker from 'emoji-picker-react';
 import blankImage from '../../Assets/blankprofile.png'
 
-import { jwtDecode } from 'jwt-decode'
-const token = localStorage.getItem("token");
-const decode = jwtDecode(token);
-console.log(decode,'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+// import { jwtDecode } from 'jwt-decode'
+// const token = localStorage.getItem("token");
+// const decode = jwtDecode(token);
+// console.log(decode,'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
 
 
 function Chat() {

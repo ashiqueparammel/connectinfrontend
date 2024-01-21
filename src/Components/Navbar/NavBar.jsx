@@ -80,6 +80,7 @@ function NavBar() {
 
     const Profileview = (event) => {
         setSearchOpen(false)
+        setsearchValues('')
         navigate('/profileview', { state: { data: event } })
     }
 
