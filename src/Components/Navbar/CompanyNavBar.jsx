@@ -40,7 +40,6 @@ function CompanyNavBar() {
         }
     };
 
-
     const [openNav, setOpenNav] = useState(false);
 
     useEffect(() => {
