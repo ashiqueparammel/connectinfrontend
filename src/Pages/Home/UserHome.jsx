@@ -412,7 +412,7 @@ function UserHome() {
   }
 
   return (
-    <div className=' flex flex-row mt-5   '>
+    <div className=' flex flex-row mt-5  '>
       <div className='mt-2 '>
         <Card className=" bg-[#ededed] max-w-[20rem]   ml-16  shadow-xl shadow-blue-gray-900/2">
           {(userDetail.profile_cover_image ?

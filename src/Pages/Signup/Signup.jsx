@@ -218,7 +218,7 @@ function Signup() {
             <div>
                 <div>
                     <img
-                        className='sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 sm:ml-28 sm:mt-10 md:hidden lg:hidden w-44 ml-32'
+                        className='sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 sm:ml-28  md:hidden lg:hidden w-44 ml-32'
                         src={logo}
                         alt="ConnectIn Logo"
                     />
@@ -226,8 +226,8 @@ function Signup() {
 
 
 
-                <Card className="w-96  bg-[#051339] lg:mt-8 lg:ml-10 ml-5 mt-5 rounded-sm" >
-                    <Typography variant="h3" className='text-center font-roboto-mono text-3xl  mt-5' color="white">
+                <Card className="w-96  bg-[#051339]  lg:ml-10 ml-5  rounded-sm mt-2" >
+                    <Typography variant="h3" className='text-center font-roboto-mono text-3xl  mt-2' color="white">
                         SIGN UP
                     </Typography>
                     <form onSubmit={(e) => signupform(e)}>

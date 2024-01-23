@@ -8,3 +8,31 @@
     display: none;
     
 }
+
+
+:root {
+    /* --gradient-shadow-two: linear-gradient(300deg, #68d391, #38b2ac, #3498db); */
+    --gradient-shadow-two: linear-gradient(300deg, #000000,#a0a0a0, #000000, #acacac);
+    /* --gradient-shadow-two: linear-gradient(300deg, #000000, #de0000, #3100b9); */
+  }
+  
+  @keyframes slideBackground {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  .contact-highlight {
+    background-image: var(--gradient-shadow-two);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 400% 100%; /* Adjusted background size */
+    animation: slideBackground 15s linear infinite;
+  }
