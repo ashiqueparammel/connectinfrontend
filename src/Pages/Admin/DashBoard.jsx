@@ -78,7 +78,7 @@ function DashBoard() {
     });
 
     const [amountData, setamountData] = useState({
-        series: [15, 0, 10],
+        series: [15, 75, 10],
         options: {
             chart: {
                 width: 380,

@@ -57,6 +57,11 @@ function UserProtected() {
                         // console.log(response.data, 'refrshh token');
                         localStorage.setItem('token', JSON.stringify(response.data))
                         createNewToken()
+                    }).catch((error) => {
+                        localStorage.removeItem('token')
+                        dispatch(resetState);
+                        navigate('/login');
+                        console.log("Error: ", error)
                     })
                 } catch (error) {
                     localStorage.removeItem('token')

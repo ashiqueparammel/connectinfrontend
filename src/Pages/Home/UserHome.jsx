@@ -9,6 +9,7 @@ import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faC
 import logo from '../../Assets/Connectlogo.png';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast'
+import { ScaleLoader } from 'react-spinners';
 
 
 function UserHome() {
@@ -57,8 +58,10 @@ function UserHome() {
     const formattedDate = new Date(postedDate).toLocaleDateString(undefined, options);
     return formattedDate;
   };
-
+ 
   useEffect(() => {
+
+   
     setImageManage(false)
     if (userInfo) {
       const userData = axios.get(`${UserDetails}${userInfo.id}/`).then((response) => {
@@ -99,6 +102,7 @@ function UserHome() {
       })
 
     }
+  
   }, [ImageManage]);
 
 
@@ -411,6 +415,13 @@ function UserHome() {
     navigate('/profileview', { state: { data: event } })
   }
 
+
+
+  if (!userDetail) {
+    return <ScaleLoader color="#051339" />
+  }
+
+
   return (
     <div className=' flex flex-row mt-5  '>
       <div className='mt-2 '>
@@ -491,6 +502,7 @@ function UserHome() {
             <Button onClick={() => navigate('/chat')} className='bg-[#051339] rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faMessage} className='w-7 h-7 mt-1' /><span className='mt-1 '>Messages</span></Button>
             <Button className='bg-[#051339] rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faUserPlus} className='w-7 h-7 mt-1' /><span className='mt-1 '>Connections</span></Button>
           </div>
+
         </Card>
       </div>
       <div className='max-w-[45rem] w-full overflow-hidden'>
@@ -523,7 +535,7 @@ function UserHome() {
                     <div onClick={(e) => profileviewhandle(post.user.id)} className='hover:cursor-pointer'>
                       {(post.user.profile_image ? <img src={post.user.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
                         <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
-                    </div> : 
+                    </div> :
                     <div onClick={checkProfile} className='hover:cursor-pointer'>
                       {(post.user.profile_image ? <img src={post.user.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl w-16 h-16  mt-4 ' /> :
                         <UserCircleIcon className="ml-4 rounded-full w-16 h-16  mt-4 " />)}
