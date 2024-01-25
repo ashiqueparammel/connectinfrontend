@@ -1,6 +1,8 @@
 import { Card, Typography } from '@material-tailwind/react';
+import axios from 'axios';
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
+import { AdmindashBoardCount } from '../../Constants/Constants';
 
 
 
@@ -9,18 +11,42 @@ function DashBoard() {
     const options = { hour12: true, hour: 'numeric', minute: 'numeric', second: 'numeric' };
 
     const optionsDate = { year: 'numeric', month: 'numeric', day: 'numeric' };
+
+    const [ActiveUser, setActiveUser] = useState('')
+    const [TotalUser, setTotalUser] = useState('')
+    const [ActiveCompany, setActiveCompany] = useState('')
+    const [TotalCompany, setTotalCompany] = useState('')
+
     useEffect(() => {
         var timer = setInterval(() => setDate(new Date()), 1000)
         return function cleanup() {
             clearInterval(timer)
         }
     });
+
     const time12hrWithSeconds = date.toLocaleTimeString(undefined, options);
     const [time, ampm] = time12hrWithSeconds.split(' ');
 
     const dateTimeString = date.toLocaleDateString(undefined, optionsDate);
     const [month, day, year] = dateTimeString.split('/');
 
+    useEffect(() => {
+        axios.get(AdmindashBoardCount).then((response) => {
+            response.data
+            const checkData = response.data
+            let userActive = checkData.filter((obj) => (obj.is_company === false && obj.is_active === true))
+            let companyActive = checkData.filter((obj) => (obj.is_company === true && obj.is_active === true))
+            let totalCompany = checkData.filter((obj) => (obj.is_company === true))
+            let totalUser = checkData.filter((obj) => (obj.is_company === false))
+            setActiveCompany(companyActive.length)
+            setTotalCompany(totalCompany.length)
+            setTotalUser(totalUser.length)
+            setActiveUser(userActive.length)
+            // console.log(response.data,'=========<<<<<<<<<<<<<<<<<<<data cheking in admin side');
+        }).catch((error) => {
+            console.log(error);
+        })
+    }, [])
 
 
 
@@ -134,25 +160,25 @@ function DashBoard() {
                         <div className="border-[#d9d9d9]  p-1 w-[12rem] text-white   h-[6rem] shadow-md shadow-blue-gray-200 rounded-lg  bg-[#335a91]">
                             <div className="flex flex-col items-center ">
                                 <Typography className='font-prompt mt-2' variant="h5">Active companies</Typography>
-                                {/* <Typography variant="h2">{data && data.data && data.data.activeUsers}</Typography> */}
+                                <Typography variant="h2">{ActiveCompany}</Typography>
                             </div>
                         </div>
                         <div className="border-[#d9d9d9] ml-5 rounded-lg p-1 w-[12rem] text-white  h-[6rem] shadow-md shadow-blue-gray-200  bg-[#335a91]">
                             <div className="flex flex-col items-center ">
                                 <Typography className='font-prompt mt-2' variant="h5">Active Users</Typography>
-                                {/* <Typography variant="h2">{data && data.data && data.data.grandTotal}/-</Typography> */}
+                                <Typography variant="h2">{ActiveUser}</Typography>
                             </div>
                         </div>
                         <div className="border-[#d9d9d9] ml-5 rounded-lg p-1 w-[12rem] text-white  h-[6rem] shadow-md shadow-blue-gray-200  bg-[#335a91]">
                             <div className="flex flex-col items-center ">
                                 <Typography className='font-prompt mt-2' variant="h5">Total companies</Typography>
-                                {/* <Typography variant="h2">{data && data.data && data.data.activeJobs}</Typography> */}
+                                <Typography variant="h2">{TotalCompany}</Typography>
                             </div>
                         </div>
                         <div className="border-[#d9d9d9] ml-5 rounded-lg p-1 w-[12rem] text-white  h-[6rem] shadow-md shadow-blue-gray-200  bg-[#335a91]">
                             <div className="flex flex-col items-center ">
-                                <Typography className='font-prompt mt-2' variant="h5">Active jobs</Typography>
-                                {/* <Typography variant="h2">{data && data.data && data.data.applications}</Typography> */}
+                                <Typography className='font-prompt mt-2' variant="h5">Total Users</Typography>
+                                <Typography variant="h2">{TotalUser}</Typography>
                             </div>
                         </div>
                     </div>

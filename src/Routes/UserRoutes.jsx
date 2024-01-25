@@ -13,6 +13,7 @@ import AppliedView from '../Pages/User/AppliedView/AppliedView'
 import Chat from '../Pages/Chat/Chat'
 import ProfileView from '../Pages/Profileview/ProfileView'
 import VideoCall from '../Pages/VideoCall/VideoCall'
+import Notifications from '../Pages/Notifications/Notifications'
 
 
 
@@ -32,6 +33,7 @@ function UserRoutes() {
                         <Route element={<Chat />} path='/chat' />
                         <Route element={<VideoCall />} path='/videocall' />
                         <Route element={<ProfileView />} path='/profileview' />
+                        <Route element={<Notifications />} path='/notifications' />
 
 
 

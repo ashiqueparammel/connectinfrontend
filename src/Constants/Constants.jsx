@@ -77,6 +77,9 @@ export const Previos_Chat = import.meta.env.VITE_Previos_Chat
 export const UserListChat = import.meta.env.VITE_UserListChat 
 export const publicReportListAll = import.meta.env.VITE_publicReportListAll 
 export const ConnectionChatList = import.meta.env.VITE_ConnectionChatList 
+export const AdmindashBoardCount = import.meta.env.VITE_AdmindashBoardCount  
+export const NotificationListingUser  = import.meta.env.VITE_NotificationListingUser 
+
 export const ServerSecret = import.meta.env.VITE_ServerSecret 
 export const AppKey = import.meta.env.VITE_AppKey 
 
