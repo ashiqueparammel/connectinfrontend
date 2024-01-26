@@ -3,13 +3,14 @@ import { Button, Card, Dialog, Typography } from '@material-tailwind/react';
 import { faFilePdf, faSuitcase } from '@fortawesome/free-solid-svg-icons'
 import toast, { Toaster } from 'react-hot-toast'
 import axios from 'axios';
-import { ListPersonalSkills, MySingleJobsList, job_ApplicationsUpdate } from '../../../Constants/Constants';
+import { ListPersonalSkills, MySingleJobsList, UserFollow, job_ApplicationsUpdate } from '../../../Constants/Constants';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
 import PdfHelper from '../../../Helpers/PdfHelper';
 import { pdfjs } from 'react-pdf';
+import { useSelector } from 'react-redux';
 pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.js', import.meta.url,).toString();
 
 
@@ -18,6 +19,7 @@ function ApplicationProfile() {
     const location = useLocation()
     const job_id = location.state.data || ''
     const navigate = useNavigate()
+    const userInfo = useSelector((state) => state.user.userInfo);
 
     // console.log(job_id, 'check this datattttttt');
     const formatPostedDate = (postedDate) => {
@@ -84,6 +86,11 @@ function ApplicationProfile() {
 
     }
 
+    const ContactHandle = (event) => {
+        navigate('/chat',{state:{data:event}})
+         
+    }
+
     return (
         <div>
             <div className='flex justify-center'>
@@ -148,7 +155,7 @@ function ApplicationProfile() {
                             </div>
                             {(ApplicationData.Updated ? <div className='flex flex-row justify-end gap-2 mt-6 mb-6 mr-6'>
                                 <h1 className='absolute left-6 font-prompt text-lg'>This Application status updated </h1>
-                                {(ApplicationData.ApplicationStatus === 'Accept' ? <Button disabled className='bg-[#1b681c] font-prompt-normal'>Accepted</Button> : '')}
+                                {(ApplicationData.ApplicationStatus === 'Accept' ? <div><Button disabled className='bg-[#1b681c] font-prompt-normal'>Accepted</Button> <Button onClick={(e) => ContactHandle(UserData.id)} className='bg-[#1f1a49] font-prompt-normal'>Contact</Button></div> : '')}
                                 {(ApplicationData.ApplicationStatus === 'Reject' ? <Button disabled className='bg-[#7e2222] font-prompt-normal'>Rejected</Button> : '')}
 
                             </div> : <div className='flex flex-row justify-end gap-2 mt-6 mb-6 mr-6'>

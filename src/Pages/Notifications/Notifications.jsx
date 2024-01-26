@@ -6,8 +6,6 @@ import { Button, Card, Typography, Dialog, DialogHeader, DialogFooter, CardBody,
 import { Tabs, TabsHeader, TabsBody, Tab, } from "@material-tailwind/react";
 import toast, { Toaster } from 'react-hot-toast'
 import { UserCircleIcon } from '@heroicons/react/24/solid';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
 

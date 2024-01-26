@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import EmojiPicker from 'emoji-picker-react';
 import blankImage from '../../Assets/blankprofile.png'
+import { timeAgo } from "../../Helpers/TimeManage";
 
 // import { jwtDecode } from 'jwt-decode'
 // const token = localStorage.getItem("token");
@@ -24,9 +25,12 @@ function Chat() {
     const [senderdetails, setSenderDetails] = useState(userInfo);
     const [messageText, setMessageText] = useState('')
     const [messages, setMessages] = useState([]);
-    const [ChatList, setChatList] = useState([])
+    const [ChatList, setChatList] = useState([]);
     const [recipientDetails, setrecipientDetails] = useState([])
     const [manageEmoji, setmanageEmoji] = useState(false)
+
+
+
     const setUpChat = async () => {
         await axios.get(`${Previos_Chat}${senderdetails.id}/${recipientDetails.id}/`).then(
             (response) => {
@@ -64,7 +68,7 @@ function Chat() {
 
     }
     const sendMessage = () => {
-        if (messageText === '') {
+        if (messageText.trim() === '') {
             return;
         } else {
             clientstate.send(
@@ -232,8 +236,12 @@ function Chat() {
                                 <div key={message.id} className={message.sender_email === userInfo.email ? 'mt-2 ml-auto' : 'mt-2 mr-auto'}>
                                     <div className={`font-prompt-normal text-lg ${message.sender_email === userInfo.email ? 'text-white bg-[#324674df] float-right max-w-96 mr-4 ' : 'text-black bg-[#d4d2d2] float-left max-w-96 ml-4 '} rounded-md shadow-black w-fit`} style={{ overflow: 'hidden', wordWrap: 'break-word', whiteSpace: 'pre-wrap', paddingLeft: '8px', paddingRight: '8px', paddingBottom: '2px', paddingTop: '2px' }}>
                                     {message.message}
+                                    
                                     </div>
-                                    <h1 className={`${message.sender_email === userInfo.email ? 'text-right mr-4' : 'text-left ml-4'} text-xs`}>11.30PM</h1>
+                                    <br />
+                                    <h1 className={`${message.sender_email === userInfo.email ? 'text-right mr-4 float-right ' : 'text-left ml-4 float-left'} text-xs`}>{timeAgo(message.timestamp) == "NaN years ago"
+                        ? "just now"
+                        : timeAgo(message.timestamp)}</h1>
                                 </div>
                             ))}
                         </div>

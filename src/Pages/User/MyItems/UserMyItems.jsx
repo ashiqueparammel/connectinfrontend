@@ -22,7 +22,7 @@ function UserMyItems() {
     const [Managestate, setManagestate] = useState(false)
     const [ListAppliedJobs, setListAppliedJobs] = useState([])
 
-    const Head = [{ Heading: 'Applied' }, { Heading: 'Interviews' }, { Heading: 'Saved' }]
+    const Head = [{ Heading: 'Applied' }, { Heading: 'Saved' }]
     const formatPostedDate = (postedDate) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric', time: 'numeric' };
         const formattedDate = new Date(postedDate).toLocaleDateString(undefined, options);
@@ -64,15 +64,13 @@ function UserMyItems() {
         })
     }
 
-    console.log(ListAppliedJobs, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa====');
     return (
         <div className='flex justify-center'>
             <Card className='w-[80rem] mt-14 bg-gray-200'>
                 <div className='flex justify-between border-b-[1px] border-[#a39f9f] ' >
                     <Typography className='font-prompt mt-4 ml-4' variant='h4'>
-                        MyItems
+                        MyJobs
                     </Typography>
-                    {/* <Button className='mt-4 mr-4 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faPlus} /><span>Add Post</span></Button> */}
                 </div>
 
                 <div>
@@ -125,7 +123,7 @@ function UserMyItems() {
                                     ))}
                                 </div> : '')}
 
-                            {(activeTab === 'Interviews' ? 'interview' : '')}
+                            {/* {(activeTab === 'Interviews' ? 'interview' : '')} */}
 
                             {(activeTab === 'Saved' ? < div className='flex flex-col w-full ml-24' >
                                 {

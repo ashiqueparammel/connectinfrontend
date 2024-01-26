@@ -10,15 +10,22 @@ const TABLE_HEAD = ["ID", "REPORTER NAME", "REPORTED COMPANY", "VIEW", "ACTION"]
 function JobReports() {
     const [ListReportJob, setListReportJob] = useState([]);
     const [open, setOpen] = React.useState(false);
-    const [selectedId, setSelectedId] = useState(null)
-    const [selectedState, setSelectedState] = useState(null)
-    const [checkState, setcheckState] = useState(null)
-
+    const [selectedId, setSelectedId] = useState(null);
+    const [selectedState, setSelectedState] = useState(null);
+    const [checkState, setcheckState] = useState(null);
+    const [viewData, setviewData] = useState(null);
 
     // report view
     const [openReportView, setReportViewOpen] = useState(false);
-    const handleOpenReportView = () => {
+    const handleOpenReportView = (event) => {
+        const findData = ListReportJob.find((viewPost) => (viewPost.id === event))
+        setviewData(findData)
         setReportViewOpen(!openReportView);
+    }
+
+    const handleCloseReportView = () => {
+        setReportViewOpen(!openReportView);
+
     }
 
     const handleOpen = () => setOpen(!open);
@@ -64,7 +71,6 @@ function JobReports() {
             });
     }, [checkState]);
 
-
     return (
         <div className='w-full'>
 
@@ -107,12 +113,11 @@ function JobReports() {
                                     </Typography>
                                 </td>
                                 <td className={classes}>
-                                    <Button onClick={handleOpenReportView} className='bg-[#878686] font-prompt-normal w-24'>view</Button>
-                                    {/* report view */}
+                                    <Button onClick={(e) => handleOpenReportView(Reports.id)} className='bg-[#878686] font-prompt-normal w-24'>view</Button>
                                     <div>
                                         <>
 
-                                            <Dialog open={openReportView} handler={handleOpenReportView}>
+                                            {(viewData !== null ? <Dialog open={openReportView} handler={handleCloseReportView}>
                                                 <DialogHeader>Report View</DialogHeader>
                                                 <DialogBody className="h-[34rem] overflow-scroll hidescroll">
                                                     <div className='font-prompt'>
@@ -120,22 +125,22 @@ function JobReports() {
                                                             About Job
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            company name:{Reports.Post.company.company_name}
+                                                            company name:{viewData.Post.company.company_name}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Jobtitle:{Reports.Post.Job_title}
+                                                            Jobtitle:{viewData.Post.Job_title}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Openings: {Reports.Post.Openings}
+                                                            Openings: {viewData.Post.Openings}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Job discription:{Reports.Post.job_description}
+                                                            Job discription:{viewData.Post.job_description}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Post date:{Reports.Post.posted_date}
+                                                            Post date:{viewData.Post.posted_date}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            salary:{Reports.Post.salary}
+                                                            salary:{viewData.Post.salary}
                                                         </Typography>
                                                     </div>
                                                     <div className='font-prompt mt-2'>
@@ -143,22 +148,22 @@ function JobReports() {
                                                             About Company
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            company name:{Reports.Post.company.company_name}
+                                                            company name:{viewData.Post.company.company_name}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Address:{Reports.Post.company.Address}
+                                                            Address:{viewData.Post.company.Address}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Company Size: {Reports.Post.company.Company_Size}
+                                                            Company Size: {viewData.Post.company.Company_Size}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Description:{Reports.Post.company.Description}
+                                                            Description:{viewData.Post.company.Description}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Location:{Reports.Post.company.Location}
+                                                            Location:{viewData.Post.company.Location}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Industry:{Reports.Post.company.Industry}
+                                                            Industry:{viewData.Post.company.Industry}
                                                         </Typography>
                                                     </div>
                                                     <div className='font-prompt mt-2'>
@@ -166,14 +171,14 @@ function JobReports() {
                                                             About Report
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Reason:{Reports.Reason}
+                                                            Reason:{viewData.Reason}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Reported By:{Reports.user.username}
+                                                            Reported By:{viewData.user.username}
                                                         </Typography>
                                                     </div>
                                                 </DialogBody>
-                                            </Dialog>
+                                            </Dialog> : '')}
                                         </>
                                     </div>
 

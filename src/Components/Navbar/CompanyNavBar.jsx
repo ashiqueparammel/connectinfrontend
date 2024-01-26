@@ -131,7 +131,7 @@ function CompanyNavBar() {
                     color="blue-gray"
                     className="p-1 font-normal"
                 >
-                    <Button className='bg-[#051339] '><FontAwesomeIcon icon={faUsers} className='w-12 h-6' /></Button>
+                    <Button onClick={() => navigate('/followings')} className='bg-[#051339] '><FontAwesomeIcon icon={faUsers} className='w-12 h-6' /></Button>
                 </Typography>
                 <Typography
                     as="li"
@@ -139,7 +139,7 @@ function CompanyNavBar() {
                     color="blue-gray"
                     className="p-1 font-normal"
                 >
-                    <Button onClick={() => navigate('/')} className='bg-[#051339] '><FontAwesomeIcon icon={faBriefcase} className='w-12 h-6' /></Button>
+                    <Button onClick={() => navigate('/company/jobsearch')} className='bg-[#051339] '><FontAwesomeIcon icon={faBriefcase} className='w-12 h-6' /></Button>
                 </Typography>
                 <Typography
                     as="li"
@@ -155,7 +155,7 @@ function CompanyNavBar() {
                     color="blue-gray"
                     className="p-1 font-normal"
                 >
-                    <Button className='bg-[#051339] '><FontAwesomeIcon icon={faBell} className='w-12 h-6' /></Button>
+                    <Button onClick={() => navigate('/notifications')} className='bg-[#051339] '><FontAwesomeIcon icon={faBell} className='w-12 h-6' /></Button>
                 </Typography>
                 <Typography
                     as="li"

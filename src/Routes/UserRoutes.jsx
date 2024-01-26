@@ -16,6 +16,7 @@ import VideoCall from '../Pages/VideoCall/VideoCall'
 import Notifications from '../Pages/Notifications/Notifications'
 import FollowingFollowings from '../Pages/FollowingFollowers/FollowingFollowings'
 import ErrorPage from '../Pages/ErrorPage/ErrorPage'
+import Connections from '../Pages/Connections/Connections'
 
 
 
@@ -37,6 +38,7 @@ function UserRoutes() {
                         <Route element={<ProfileView />} path='/profileview' />
                         <Route element={<Notifications />} path='/notifications' />
                         <Route element={<FollowingFollowings />} path='/followings' />
+                        <Route element={<Connections />} path='/connections' />
                     </Route>
                 </Route>
                 <Route element={<ErrorPage />} path='/*' />

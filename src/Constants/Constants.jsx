@@ -83,6 +83,7 @@ export const JobListAdminside  = import.meta.env.VITE_JobListAdminside
 export const AdmindashBoardRecentUser  = import.meta.env.VITE_AdmindashBoardRecentUser 
 export const AdmindashBoardRecentCompany  = import.meta.env.VITE_AdmindashBoardRecentCompany 
 export const NotificationUpdateUser  = import.meta.env.VITE_NotificationUpdateUser 
+export const EmployeeListing  = import.meta.env.VITE_EmployeeListing 
 
 
 export const ServerSecret = import.meta.env.VITE_ServerSecret 

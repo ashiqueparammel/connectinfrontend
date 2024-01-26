@@ -12,12 +12,20 @@ function PostReports() {
     const [selectedId, setSelectedId] = useState(null)
     const [selectedState, setSelectedState] = useState(null)
     const [checkState, setcheckState] = useState(null)
+    const [viewData, setviewData] = useState(null);
 
 
     // report view
     const [openReportView, setReportViewOpen] = useState(false);
-    const handleOpenReportView = () => {
+    const handleOpenReportView = (event) => {
+        const findData = ListReportPost.find((viewPost) => (viewPost.id === event))
+        setviewData(findData)
         setReportViewOpen(!openReportView);
+    }
+
+    const handleCloseReportView = () => {
+        setReportViewOpen(!openReportView);
+
     }
 
     const handleOpen = () => setOpen(!open);
@@ -105,12 +113,12 @@ function PostReports() {
                                     </Typography>
                                 </td>
                                 <td className={classes}>
-                                    <Button onClick={handleOpenReportView} className='bg-[#878686] font-prompt-normal w-24'>view</Button>
+                                    <Button onClick={(e) => handleOpenReportView(Reports.id)} className='bg-[#878686] font-prompt-normal w-24'>view</Button>
                                     {/* report view */}
                                     <div>
                                         <>
 
-                                            <Dialog open={openReportView} handler={handleOpenReportView}>
+                                            {(viewData !== null ? <Dialog open={openReportView} handler={handleCloseReportView}>
                                                 <DialogHeader>Report View</DialogHeader>
                                                 <DialogBody className="h-[34rem] overflow-scroll hidescroll">
                                                     <div className='font-prompt'>
@@ -118,39 +126,39 @@ function PostReports() {
                                                             About Post
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Posted : {Reports.Post.user.username}
+                                                            Posted : {viewData.Post.user.username}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Post text : {Reports.Post.description}
+                                                            Post text : {viewData.Post.description}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Post like : {Reports.Post.likes}
+                                                            Post like : {viewData.Post.likes}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Post comments : {Reports.Post.Comments}
+                                                            Post comments : {viewData.Post.Comments}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Posted Date : {Reports.Post.created_at}
+                                                            Posted Date : {viewData.Post.created_at}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Post Image : <img src={Reports.Post.Post_Image} className='w-96 h-52 ml-16' alt="Image" />
+                                                            Post Image : <img src={viewData.Post.Post_Image} className='w-96 h-52 ml-16' alt="Image" />
                                                         </Typography>
 
                                                     </div>
-                                                   
+
                                                     <div className='font-prompt mt-2'>
                                                         <Typography className="font-prompt text-black text-lg">
                                                             About Report
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Reason : {Reports.Reason}
+                                                            Reason : {viewData.Reason}
                                                         </Typography>
                                                         <Typography className="font-prompt text-black">
-                                                            Reported By : {Reports.user.username}
+                                                            Reported By : {viewData.user.username}
                                                         </Typography>
-                                                    </div> 
+                                                    </div>
                                                 </DialogBody>
-                                            </Dialog>
+                                            </Dialog> : '')}
                                         </>
                                     </div>
 

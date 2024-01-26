@@ -35,8 +35,8 @@ function ApplicationViews() {
         if (response.data.length === 0) {
           setJobDetail([])
         } else {
-          const ApplicationAllData = response.data[0]
-          setJobDetail([ApplicationAllData])
+          const ApplicationAllData = response.data
+          setJobDetail(ApplicationAllData)
         }
       }).catch((error) => {
         console.error("Error fetching MyApplicationList:", error);
@@ -59,11 +59,11 @@ function ApplicationViews() {
         console.error("Error fetching MyApplicationList:", error);
       })
       axios.get(`${MySingleJobsListUnRead}${job_id}/`).then((response) => {
-        const ApplicationAllData = response.data[0]
+        const ApplicationAllData = response.data
         if (ApplicationAllData) {
           setunReadManage(true)
         }
-        setUnReadApplication([ApplicationAllData])
+        setUnReadApplication(ApplicationAllData)
       }).catch((error) => {
         console.error("Error fetching MyApplicationList:", error);
       })
@@ -130,7 +130,7 @@ function ApplicationViews() {
                             <UserCircleIcon className="ml-4 rounded-full w-14 h-14  mt-4 " />)}
                         </div>
                         <div>
-                          <Typography className='mt-2 font-prompt text-xl text-black'>{job.job_post.Job_title}</Typography>
+                          <Typography className='mt-2 font-prompt text-xl text-black uppercase'>{job.profile.header}</Typography>
                           <Typography className='font-prompt text-md text-black'>{job.profile.user.username}</Typography>
                           <Typography className='font-prompt text-sm text-black'>{job.profile.user.email}</Typography>
                           <Typography className='font-prompt text-sm text-black'>{formatPostedDate(job.posted_date)}</Typography>
@@ -154,7 +154,7 @@ function ApplicationViews() {
                           <UserCircleIcon className="ml-4 rounded-full w-14 h-14  mt-4 " />)}
                       </div>
                       <div>
-                        <Typography className='mt-2 font-prompt text-xl text-black'>{job.job_post.Job_title}</Typography>
+                        <Typography className='mt-2 font-prompt text-xl uppercase text-black'>{job.profile.header}</Typography>
                         <Typography className='font-prompt text-md text-black'>{job.profile.user.username}</Typography>
                         <Typography className='font-prompt text-sm text-black'>{job.profile.user.email}</Typography>
                         <Typography className='font-prompt text-sm text-black'>{formatPostedDate(job.posted_date)}</Typography>
@@ -175,7 +175,7 @@ function ApplicationViews() {
                           <UserCircleIcon className="ml-4 rounded-full w-14 h-14  mt-4 " />)}
                       </div>
                       <div>
-                        <Typography className='mt-2 font-prompt text-xl text-black'>{job.job_post.Job_title}</Typography>
+                        <Typography className='mt-2 font-prompt text-xl uppercase text-black'>{job.profile.header}</Typography>
                         <Typography className='font-prompt text-md text-black'>{job.profile.user.username}</Typography>
                         <Typography className='font-prompt text-sm text-black'>{job.profile.user.email}</Typography>
                         <Typography className='font-prompt text-sm text-black'>{formatPostedDate(job.posted_date)}</Typography>

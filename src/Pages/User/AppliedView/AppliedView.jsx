@@ -38,9 +38,9 @@ function AppliedView() {
                     const { job_post } = response.data
                     const { profile } = response.data
                     const { company } = job_post
-                    const {user} = company 
+                    const { user } = company
                     const { Required_Skill } = job_post
-                    console.log(Required_Skill,'job post+++++++++++++111');
+                    console.log(Required_Skill, 'job post+++++++++++++111');
                     // console.log(profile,'profile+++++++++++++111');
                     // console.log(company,'company+++++++++++++111');
                     setRequiredJobSkills(Required_Skill)
@@ -57,7 +57,9 @@ function AppliedView() {
         }
     }, []);
 
-
+    const ContactHandle = (event) => {
+        navigate('/chat', { state: { data: event } })
+    }
 
     return (
         <div className='flex justify-center'>
@@ -106,7 +108,7 @@ function AppliedView() {
 
                         </div>
                     </Card>
-                   
+
                     <Card className='bg-[#FAFAFA] shadow-2xl mt-2 mb-2  rounded-md w-[90%]'>
                         <div className='m-6 font-prompt'>
                             <Typography className='font-prompt text-lg mb-1'>Job Discription </Typography>
@@ -134,7 +136,7 @@ function AppliedView() {
                             <h1>Company name :{CompanyDetail.company_name} </h1>
                             <h1>Location : {CompanyDetail.Location}</h1>
                             <h1>Company Address : {CompanyDetail.Address}</h1>
-                            <h1>Company Size : {CompanyDetail.Company_Size } Employees</h1>
+                            <h1>Company Size : {CompanyDetail.Company_Size} Employees</h1>
                             <h1>Industry : {CompanyDetail.Industry}</h1>
                             <h1>Company Email : {CompanyUserData.email}</h1>
                             <h1>Company Contact : {CompanyUserData.phone_number}</h1>
@@ -146,20 +148,20 @@ function AppliedView() {
                     </Card>
                     <Card className='bg-[#FAFAFA] shadow-2xl mt-2 mb-2  rounded-md w-[90%]'>
                         <div className='m-6 font-prompt'>
-                        <div style={{ borderBottom: '1px solid #9da3a3' }} className='h-16'>
+                            <div style={{ borderBottom: '1px solid #9da3a3' }} className='h-16'>
                                 <Typography className='font-prompt text-2xl text-center ml-6 mt-1 text-black'>Application Status</Typography>
 
                             </div>
-                            
+
                             <div className='flex flex-row justify-end gap-2 mt-6 mb-6 mr-6'>
                                 <h1 className='absolute left-6 font-prompt text-lg'> Your Application status  </h1>
-                               
-                                {(ApplyDetails.ApplicationStatus==='Pending'?<Button disabled className='bg-[#a3a0a0] font-prompt-normal text-black'>Pending</Button>:'')}
-                                {(ApplyDetails.ApplicationStatus==='Accept'?<Button disabled className='bg-[#1b681c] font-prompt-normal'>Accepted</Button>:'')}
-                                {(ApplyDetails.ApplicationStatus==='Reject'?<Button disabled className='bg-[#7e2222] font-prompt-normal'>Rejected</Button>:'')}
-                                {(ApplyDetails.ApplicationStatus==='Accept'?<Button  className='bg-[#051339] font-prompt-normal'>Contact</Button>:'')}
-                               
-                               
+
+                                {(ApplyDetails.ApplicationStatus === 'Pending' ? <Button disabled className='bg-[#a3a0a0] font-prompt-normal text-black'>Pending</Button> : '')}
+                                {(ApplyDetails.ApplicationStatus === 'Accept' ? <Button disabled className='bg-[#1b681c] font-prompt-normal'>Accepted</Button> : '')}
+                                {(ApplyDetails.ApplicationStatus === 'Reject' ? <Button disabled className='bg-[#7e2222] font-prompt-normal'>Rejected</Button> : '')}
+                                {(ApplyDetails.ApplicationStatus === 'Accept' ? <Button onClick={(e) => ContactHandle(CompanyUserData.id)} className='bg-[#051339] font-prompt-normal'>Contact</Button> : '')}
+
+
                             </div>
 
                         </div>

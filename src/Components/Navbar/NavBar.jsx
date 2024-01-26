@@ -26,7 +26,6 @@ function NavBar() {
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchValues, setsearchValues] = useState('')
     const [searchUsersData, setsearchUsersData] = useState([])
-    // const SearchhandleOpen = () => searchSetOpen(!searchOpen);/
 
     const logout = async () => {
         try {
@@ -35,13 +34,11 @@ function NavBar() {
             const { refresh } = AuthCheck;
             const config = { headers: { Authorization: `Bearer ${access}` } };
             const token = { refresh_token: String(refresh) };
-            // console.log(token, 'shhhhhhhhhhhhhhhhhhhhhhhahahhhafi');
             const LogoutUser = await axios.post(LogoutBlackList, token, config);
             const response = LogoutUser.data;
             localStorage.removeItem('token')
             dispatch(resetState);
             navigate('/login');
-            // console.log(response, 'Authentication response data');
         } catch (error) {
             console.log("Error: ", error);
         }
@@ -141,7 +138,7 @@ function NavBar() {
                     color="blue-gray"
                     className="p-1 font-normal"
                 >
-                    <Button className='bg-[#051339] '><FontAwesomeIcon icon={faUsers} className='w-12 h-6' /></Button>
+                    <Button onClick={() => navigate('/followings')} className='bg-[#051339] '><FontAwesomeIcon icon={faUsers} className='w-12 h-6' /></Button>
                 </Typography>
                 <Typography
                     as="li"

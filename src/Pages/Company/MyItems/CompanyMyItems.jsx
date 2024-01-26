@@ -17,7 +17,7 @@ function CompanyMyItems() {
   const UserDetails = useSelector((state) => state.user.userInfo)
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('Posts');
-  const Head = [{ Heading: 'Posts' }, { Heading: 'Interviews' }] //{ Heading: 'Applications' }
+  const Head = [{ Heading: 'Posts' }] //{ Heading: 'Applications' }
   const [JobDetails, setJobDetails] = useState([]);
   const [CompanyDetail, setCompanyDetails] = useState([])
   const [jobAllSkills, setJobAllSkills] = useState([])
@@ -228,7 +228,7 @@ function CompanyMyItems() {
                   ))}
                 </div> : '')}
 
-              {(activeTab === 'Interviews' ? 'interview' : '')}
+              {/* {(activeTab === 'Interviews' ? 'interview' : '')} */}
               {/* {(activeTab === 'Applications' ? 'Applications' : '')} */}
 
             </TabsBody>

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { UserFollowers, UserFollowing, UserUnFollow } from '../../Constants/Constants'
+import { UserFollow, UserFollowers, UserFollowing, UserUnFollow } from '../../Constants/Constants'
 import { useSelector } from 'react-redux'
 import { Button, Card, Typography, Dialog, DialogHeader, DialogFooter, CardBody, CardFooter, } from '@material-tailwind/react';
 import { Tabs, TabsHeader, TabsBody, Tab, } from "@material-tailwind/react";
@@ -17,6 +17,8 @@ function FollowingFollowings() {
     const navigate = useNavigate()
     const [FollowingUsers, setFollowingUsers] = useState([])
     const [FollowresUsers, setFollowresUsers] = useState([])
+    const [followersData, setfollowersData] = useState([])
+
 
     const Head = [{ Heading: `Following (${followingCount})` }, { Heading: `Followers (${followersCount})` }]
     const [activeTab, setActiveTab] = useState('Following ');
@@ -43,7 +45,7 @@ function FollowingFollowings() {
             let count = response.data.length
             setfollowersCount(count)
             setFollowresUsers(response.data)
-            console.log(response.data, '=======================>>>>>>>>>>>>>>>>>>');
+
         }).catch((error) => {
             console.log(error);
         })
@@ -59,7 +61,40 @@ function FollowingFollowings() {
         }).catch((error) => { console.log(error); })
     }
 
+    const FllowFunction = (user_Id) => {
+        const data = {
+            following: user_Id,
+            followers: userInfo.id
+        }
+        axios.post(UserFollow, data).then((response) => {
+            if (response.status === 201) {
+                toast.success('Followed')
+                setManagePage(true)
 
+            }
+        })
+
+    }
+
+    const followedUnfollow = (event) => {
+        const followingUser = FollowingUsers.find((findfollow) => findfollow.following.email === event);
+        if (followingUser) {
+            axios.delete(`${UserUnFollow}${followingUser.id}/`).then((response) => {
+                if (response.status === 204) {
+                    toast.success('Unfollowed')
+                    setManagePage(true)
+                }
+            }).catch((error) => { console.log(error); })
+
+        }
+
+    }
+
+
+    const getFollowStatus = (event) => {
+        const followingUser = FollowingUsers.find((findfollow) => findfollow.following.email === event);
+        return followingUser ? 'followed' : 'unfollow'
+    };
     return (
 
         <div className='flex justify-center'>
@@ -106,9 +141,8 @@ function FollowingFollowings() {
                                                             <Typography className='font-prompt text-md   text-black'><span className='font-prompt-normal text-lg text-black mr-4'>{Following.following.username}</span></Typography>
                                                             <Typography className='font-prompt text-md   text-black'>{Following.following.email}</Typography>
                                                         </div>
-                                                        {/* <Typography className='absolute right-5 bottom-5 font-prompt text-md  text-black'>Unfollow</Typography> */}
                                                         <div className='absolute right-5 bottom-4'>
-                                                            <Button onClick={(e)=>unfollowFunction(Following.id)} className="bg-[#051339]    mt-2 text-white font-prompt-normal  px-4 py-2 rounded-md mr-1">Unfollow</Button>
+                                                            <Button onClick={(e) => unfollowFunction(Following.id)} className="bg-[#051339]    mt-2 text-white font-prompt-normal  px-4 py-2 rounded-md mr-1">Unfollow</Button>
                                                         </div>
 
                                                     </div>
@@ -130,11 +164,21 @@ function FollowingFollowings() {
                                                 {(Followers.followers.profile_image ? <img src={Followers.followers.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl  w-14 h-14   ' /> :
                                                     <UserCircleIcon className="ml-4 rounded-full w-14 h-14   " />)}
                                             </div>
+
                                             <div className='flex  gap-10 justify-center  items-center mt-1 mb-1'>
-                                                <div>
-                                                    <Typography className='font-prompt text-md   text-black'><span className='font-prompt-normal text-lg text-black mr-4'>{Followers.followers.username}</span> </Typography>
-                                                    <Typography className='font-prompt text-md   text-black'>{Followers.followers.email}</Typography>
-                                                    <Typography className='absolute right-5 bottom-5 font-prompt text-md  text-black'>null</Typography>
+                                                <div className=''>
+                                                    <div className=''>
+                                                        <Typography className='font-prompt text-md   text-black'><span className='font-prompt-normal text-lg text-black mr-4'>{Followers.followers.username}</span></Typography>
+                                                        <Typography className='font-prompt text-md   text-black'>{Followers.followers.email}</Typography>
+                                                    </div>
+                                                    <div className='absolute right-5 bottom-4'>
+                                                        {(getFollowStatus(Followers.followers.email) === 'followed' ? <Button onClick={(e) => followedUnfollow(Followers.followers.email)} className="bg-[#051339]    mt-2 text-white font-prompt-normal  px-4 py-2 rounded-md mr-1">Unfollow</Button> :
+                                                            <Button onClick={(e) => FllowFunction(Followers.followers.id)} className="bg-[#051339]    mt-2 text-white font-prompt-normal  px-4 py-2 rounded-md mr-1">Follow</Button>
+
+                                                        )}
+
+                                                    </div>
+
                                                 </div>
                                             </div>
                                         </div>
