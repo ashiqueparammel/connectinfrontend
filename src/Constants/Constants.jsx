@@ -79,6 +79,11 @@ export const publicReportListAll = import.meta.env.VITE_publicReportListAll
 export const ConnectionChatList = import.meta.env.VITE_ConnectionChatList 
 export const AdmindashBoardCount = import.meta.env.VITE_AdmindashBoardCount  
 export const NotificationListingUser  = import.meta.env.VITE_NotificationListingUser 
+export const JobListAdminside  = import.meta.env.VITE_JobListAdminside 
+export const AdmindashBoardRecentUser  = import.meta.env.VITE_AdmindashBoardRecentUser 
+export const AdmindashBoardRecentCompany  = import.meta.env.VITE_AdmindashBoardRecentCompany 
+export const NotificationUpdateUser  = import.meta.env.VITE_NotificationUpdateUser 
+
 
 export const ServerSecret = import.meta.env.VITE_ServerSecret 
 export const AppKey = import.meta.env.VITE_AppKey 

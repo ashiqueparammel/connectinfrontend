@@ -4,35 +4,78 @@
 @import 'tailwindcss/utilities';
 
 /* Your other styles go here */
-.hidescroll::-webkit-scrollbar{
-    display: none;
-    
+.hidescroll::-webkit-scrollbar {
+  display: none;
+
+}
+
+body{
+overflow-x: hidden;
+}
+
+:root {
+  /* --gradient-shadow-two: linear-gradient(300deg, #68d391, #38b2ac, #3498db); */
+  /* --gradient-shadow-two: linear-gradient(300deg, #000000,#a0a0a0, #000000, #acacac); */
+  /* --gradient-shadow-three: linear-gradient(300deg,rgb(166, 255, 249), #797474, #eeeaea, rgb(255, 166, 190),#f7fb72,#b0ff8e,#06027d,#ff8f16,#fb0d0d,#177516); */
+  --gradient-shadow-four: linear-gradient(300deg, rgb(194, 255, 251), rgb(255, 150, 178));
+  --gradient-shadow-three: linear-gradient(300deg, rgb(104, 103, 103), rgb(255, 255, 255));
+  /* --gradient-shadow-three: linear-gradient(300deg,rgb(32, 0, 161), #ff0000, #0de747, rgb(6, 0, 2)); */
+}
+
+@keyframes slideBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 
-:root {
-    /* --gradient-shadow-two: linear-gradient(300deg, #68d391, #38b2ac, #3498db); */
-    --gradient-shadow-two: linear-gradient(300deg, #000000,#a0a0a0, #000000, #acacac);
-    /* --gradient-shadow-two: linear-gradient(300deg, #000000, #de0000, #3100b9); */
+@keyframes slideBackground {
+  0% {
+    background-position: 0% 50%;
   }
-  
-  @keyframes slideBackground {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
+
+  50% {
+    background-position: 100% 50%;
   }
-  
-  .contact-highlight {
-    background-image: var(--gradient-shadow-two);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    background-size: 400% 100%; /* Adjusted background size */
-    animation: slideBackground 15s linear infinite;
+
+  100% {
+    background-position: 0% 50%;
   }
+}
+
+.contact-highlight {
+  background-image: var(--gradient-shadow-two);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 400% 100%;
+  /* Adjusted background size */
+  animation: slideBackground 15s linear infinite;
+}
+
+
+.contact-highlights {
+  overflow: hidden;
+  background: var(--gradient-shadow-three);
+  /* Initial gradient colors */
+  background-size: 400% 400%;
+  animation: slideBackground 15s linear infinite;
+  /* Fix: Use the correct animation name */
+}
+
+.contact-errorpage {
+  overflow: hidden;
+  background: var(--gradient-shadow-four);
+  /* Initial gradient colors */
+  background-size: 400% 400%;
+  animation: slideBackground 15s linear infinite;
+  /* Fix: Use the correct animation name */
+}

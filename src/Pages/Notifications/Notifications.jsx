@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { NotificationListingUser } from '../../Constants/Constants'
+import { NotificationListingUser, NotificationUpdateUser } from '../../Constants/Constants'
 import { useSelector } from 'react-redux'
 import { Button, Card, Typography, Dialog, DialogHeader, DialogFooter, CardBody, CardFooter, } from '@material-tailwind/react';
 import { Tabs, TabsHeader, TabsBody, Tab, } from "@material-tailwind/react";
@@ -23,7 +23,6 @@ function Notifications() {
         return formattedDate;
     };
 
-
     const [unReadManage, setunReadManage] = useState(false)
     const [ReadManage, setReadManage] = useState(false)
 
@@ -33,13 +32,22 @@ function Notifications() {
     useEffect(() => {
         axios.get(`${NotificationListingUser}${userInfo.id}/`).then((response) => {
             setNotificationsListUsers(response.data)
-            console.log(response.data, '==========================>>>>>>>>>>>>>>>>>cheking datass');
         }).catch((error) => {
             console.log(error);
         })
 
     }, [])
 
+    const manageReadNotifications = (user_id, Notification_id) => {
+
+        const data = { is_read: true }
+        axios.patch(`${NotificationUpdateUser}${Notification_id}/`, data).then((response) => {
+            if (response.status === 200) {
+                navigate('/profileview', { state: { data: user_id } })
+            }
+
+        }).catch((error) => { toast.error(error) })
+    }
 
     return (
 
@@ -89,7 +97,6 @@ function Notifications() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            {/* <Button onClick={() => navigate('/company/applicationprofile', { state: { data: job.id } })} className='mt-8 mr-16 h-10 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faEye} /><span>View</span></Button> */}
                                         </Card>
 
                                     )) : ''}
@@ -121,7 +128,7 @@ function Notifications() {
                             {(activeTab === 'UnRead' ? <div className='flex flex-col w-full ml-24'>
                                 {NotificationsListUsers.length !== 0 ? NotificationsListUsers.map((Notification, index) => (
                                     (!Notification.is_read ?
-                                        <Card  onClick={() => navigate('/profileview', { state: { data: Notification.NotifyUser.id } })} className=' cursor-pointer flex flex-row mb-2 rounded-md w-[90%] mt-2 justify-between' key={index}>
+                                        <Card onClick={(e) => manageReadNotifications(Notification.NotifyUser.id, Notification.id)} className=' cursor-pointer flex flex-row mb-2 rounded-md w-[90%] mt-2 justify-between' key={index}>
                                             <div className='flex gap-5'>
                                                 <div className='mt-1 mb-1'>
                                                     {(Notification.NotifyUser.profile_image ? <img src={Notification.NotifyUser.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl  w-14 h-14   ' /> :
@@ -142,10 +149,7 @@ function Notifications() {
                         </TabsBody>
                     </Tabs>
                 </div>
-
             </Card>
-
-
             <Toaster />
         </div>
     )

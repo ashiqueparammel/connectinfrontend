@@ -13,6 +13,7 @@ import ApplicationProfile from '../Pages/Company/ApplicationProfileView/Applicat
 import Chat from '../Pages/Chat/Chat'
 import ProfileView from '../Pages/Profileview/ProfileView'
 import VideoCall from '../Pages/VideoCall/VideoCall'
+import ErrorPage from '../Pages/ErrorPage/ErrorPage'
 
 
 function CompanyRoutes() {
@@ -31,11 +32,12 @@ function CompanyRoutes() {
           <Route element={<ApplicationProfile/>} path='/applicationprofile' />
           <Route element={<Chat/>} path='/chat' />
           <Route element={<VideoCall />} path='/videocall' />
-
           <Route element={<ProfileView />} path='/profileview' />
 
         </Route>
         </Route>
+        <Route element={<ErrorPage />} path='/*' />
+
       </Routes>
     </div>
   )

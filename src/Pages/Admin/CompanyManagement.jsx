@@ -52,11 +52,9 @@ function CompanyManagement() {
     }
   };
 
-  // console.log(users, '+++++++++++++++++++>>>>>>>>>>>>>>>>>>>>>>>');
   const handleOpen = () => setOpen(!open);
 
   const ModalOpen = (userid, is_active, id) => {
-    // console.log(userid, is_active, id, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa>>><<<<');
     setSelectedId(userid)
     setSelectedState(is_active)
     setCompanyid(id)
@@ -95,7 +93,6 @@ function CompanyManagement() {
       });
   }, [checkState]);
 
-  console.log(users, 'hloooooooooooooooooooooooooooooooo');
   return (
     <div className='w-full'>
       <div className='flex justify-between border-blue-gray-200 bg-blue-gray-50 p-4' >
