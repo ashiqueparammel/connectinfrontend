@@ -17,7 +17,7 @@ function Login() {
     const location = useLocation();
     const dispatch = useDispatch();
 
-    // let message = new URLSearchParams(location.search)?.get('message') ?? null;
+    let message = new URLSearchParams(location.search)?.get('message') ?? null;
 
     const navigate = useNavigate();
 
@@ -202,14 +202,14 @@ function Login() {
 
 
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         if (message) {
-    //             toast.success(message);
-    //             message = null
-    //         };
-    //     }, 500);
-    // }, [message])
+    useEffect(() => {
+        setTimeout(() => {
+            if (message) {
+                toast.success(message);
+                message = null
+            };
+        }, 500);
+    }, [message])
 
 
 
