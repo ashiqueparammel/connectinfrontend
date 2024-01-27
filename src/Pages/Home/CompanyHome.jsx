@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, } from "@material-tailwind/react";
+import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, List, ListItem, ListItemPrefix, Avatar, } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { CompanyDetails, Company_Profile, AddComments, AddLikes, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, RemoveComments, UpdateLikes, UserFollowers, UserFollowing, } from '../../Constants/Constants';
+import { CompanyDetails, Company_Profile, AddComments, AddLikes, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, RemoveComments, UpdateLikes, UserFollowers, UserFollowing, ConnectionChatList, } from '../../Constants/Constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faCamera, faUser, faTrash, faPaperPlane, faAdd, faImage, faArrowRight, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { setCompanyDetails } from '../../Redux/Companyees';
 import toast, { Toaster } from 'react-hot-toast'
 import { setUserDetails } from '../../Redux/Users';
-
+import blankImage from '../../Assets/blankprofile.png'
 function CompanyHome() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -48,6 +48,8 @@ function CompanyHome() {
     const [reportPostId, setReportPostId] = useState('')
     const [Reportopen, setreportOpen] = useState(false);
     const [checkIsLiked, setCheckIsLiked] = useState([])
+    const [ChatList, setChatList] = useState([]);
+
     const ReporthandleOpen = (e) => {
         setreportOpen(!Reportopen); if (Reportopen === false) { setReportPostId(e); } {
 
@@ -111,6 +113,9 @@ function CompanyHome() {
             }).catch((error) => {
                 console.log(err);
             })
+            axios.get(`${ConnectionChatList}${userInfo.id}/`).then((response) => {
+                setChatList(response.data)
+            }).catch((error) => { console.log(error); })
             axios.get(`${UserFollowers}${userInfo.id}/`).then((response) => {
                 let count = response.data.length
                 setfollowersCount(count)
@@ -469,7 +474,7 @@ function CompanyHome() {
                         <Button onClick={() => navigate('/company/myitems')} className='bg-[#051339]  rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faBookBookmark} className='w-7 h-7 mt-1' /> <span className='mt-1 '>My Jobs</span></Button>
                         <Button onClick={() => navigate('/followings')} className='bg-[#051339] rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faUsers} className='w-7 h-7 mt-1' /><span className='mt-1 '>Following & Followers</span></Button>
                         <Button onClick={() => navigate('/chat')} className='bg-[#051339] rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faMessage} className='w-7 h-7 mt-1' /><span className='mt-1 '>Messages</span></Button>
-                        <Button onClick={()=> navigate('/connections')} className='bg-[#051339] rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faUserPlus} className='w-7 h-7 mt-1' /><span className='mt-1 '>Connections</span></Button>
+                        <Button onClick={() => navigate('/connections')} className='bg-[#051339] rounded-md h-14 font-prompt-normal text-md flex gap-5'><FontAwesomeIcon icon={faUserPlus} className='w-7 h-7 mt-1' /><span className='mt-1 '>Connections</span></Button>
                     </div>
                 </Card>
             </div>
@@ -601,23 +606,46 @@ function CompanyHome() {
             </div>
             <div className='flex flex-col max-w-[24rem] w-full'>
                 <h1 className='ml-20  font-prompt-normal'>Recent Chats </h1>
-                <Card className=" flex flex-row gap-2 h-[6rem] rounded-b-none bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2" style={{ borderBottom: '1px solid #9da3a3 ' }}>
-                    {(CompanyuserDetails.profile_image ? <img src={CompanyuserDetails.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl  w-14 h-14  mt-4 ' /> :
-                        <UserCircleIcon className="ml-4 rounded-full w-14 h-14  mt-4 " />)}
-                    <h1 className='font-prompt-normal ml-3 mt-9 text-sm '>{CompanyuserDetails.username}</h1>
-                    <div className='text-center w-24  mt-8 h-7 ml-12 font-prompt bg-[#051339] rounded-md text-white  hover:bg-[#1e2c51] hover:cursor-pointer'>
-                        <p className='mt-[2px]'><span className='text-[#051339] ml-1'>.</span>Message<span className='text-[#051339] mr-1'>.</span></p>
+                <Card className=" flex flex-row gap-2 h-[15rem] rounded-b-none bg-[#ededed] mt-2 ml-16  shadow-2xl shadow-blue-gray-900/2" >
+                    <List className="min-h-20 max-h-full overflow-y-auto hidescroll">
+                        {(ChatList.length === 0 ? <h1 className="text-center text-lg font-prompt-normal" style={{ paddingTop: '15px' }} >User not found</h1> :
+                            (ChatList.map(({ following }, index) => (
+                                (userInfo.email != following.email ?
+                                    <div >
+                                        <ListItem key={index} className='grid grid-cols-5 border-[1px] border-[#cfcece] shadow-md ' >
+                                            <ListItemPrefix className='col-span-1'>
+                                                {following.profile_image ? (
+                                                    <Avatar variant="circular" alt="candice" src={following.profile_image} />
+                                                ) : (
+                                                    <Avatar variant="circular" alt="candice" src={blankImage} />
+                                                )}
+                                            </ListItemPrefix>
+                                            <div className='col-span-2'>
+                                                <Typography variant="h6" color="blue-gray">
+                                                    {following.username}
+                                                </Typography>
 
-                    </div>
-                    <Menu>
-                        <MenuHandler>
-                            <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-5 h-5 mt-9 rounded-full hover:text-[#000000]   mr-4 hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer ' />
-                        </MenuHandler>
-                        <MenuList className="max-h-72">
-                            <MenuItem>Delete</MenuItem>
-                            <MenuItem>Archive</MenuItem>
-                        </MenuList>
-                    </Menu>
+                                            </div>
+                                            <div onClick={(e) => StartChat(following.email)} className='text-center w-10 h-9  ml-5   font-prompt bg-[#dadada] rounded-md text-white  '>
+                                                <FontAwesomeIcon icon={faPaperPlane} className=' text-[#051339]   w-6 h-6 mt-1    rounded-full hover:text-[#4c4b4b] rotate-45  ' />
+
+                                            </div>
+                                            <div>
+                                                <Menu>
+                                                    <MenuHandler>
+                                                        <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-5 h-5   rounded-full hover:text-[#000000]    hover:bg-gray-600 hover:bg-opacity-20 hover:cursor-pointer ' />
+                                                    </MenuHandler>
+                                                    <MenuList className="max-h-72">
+                                                        <MenuItem>Block</MenuItem>
+                                                        <MenuItem>Archive</MenuItem>
+                                                    </MenuList>
+                                                </Menu>
+                                            </div>
+
+                                        </ListItem>
+                                    </div> : null)
+                            ))))}
+                    </List>
                 </Card>
                 <Card className="flex flex-col  h-[8rem] bg-[#ededed] mt-16 ml-16  shadow-2xl shadow-blue-gray-900/2">
                     <img src={logo} alt="logo " className='w-[80%]  ml-10' />

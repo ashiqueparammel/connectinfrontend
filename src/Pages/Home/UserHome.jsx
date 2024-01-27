@@ -642,13 +642,13 @@ function UserHome() {
           </div>
           <div className='flex flex-col max-w-[24rem] w-full'>
             <h1 className='ml-20  font-prompt-normal'>Recent Chats </h1>
-            <Card className=" flex flex-row gap-2 h-[15rem] rounded-b-none bg-[#ededed] mt-2 ml-14   shadow-2xl shadow-blue-gray-900/2" style={{ borderBottom: '1px solid #9da3a3 ' }}>
+            <Card className=" flex flex-row gap-2 h-[15rem] rounded-b-none bg-[#ededed] mt-2 ml-14   shadow-2xl shadow-blue-gray-900/2" >
               <List className="min-h-20 max-h-full overflow-y-auto hidescroll">
                 {(ChatList.length === 0 ? <h1 className="text-center text-lg font-prompt-normal" style={{ paddingTop: '15px' }} >User not found</h1> :
                   (ChatList.map(({ following }, index) => (
                     (userInfo.email != following.email ?
                       <div >
-                        <ListItem key={index} className='grid grid-cols-5'>
+                        <ListItem key={index} className='grid grid-cols-5 border-[1px] border-[#cfcece] shadow-md '>
                           <ListItemPrefix className='col-span-1'>
                             {following.profile_image ? (
                               <Avatar variant="circular" alt="candice" src={following.profile_image} />
