@@ -6,7 +6,6 @@ import CompanyLayout from '../Pages/Company/CompanyLayout/CompanyLayout'
 import CompanyHome from '../Pages/Home/CompanyHome'
 import CompanyMyItems from '../Pages/Company/MyItems/CompanyMyItems'
 import PostView from '../Pages/Company/PostView/PostView'
-import AddPost from '../Components/CompanyComponents/AddPost/AddPost.Jsx'
 import ProfileCompany from '../Pages/Company/Profile/Profile'
 import ApplicationViews from '../Pages/Company/ApplicationViews/ApplicationViews'
 import ApplicationProfile from '../Pages/Company/ApplicationProfileView/ApplicationProfile'
@@ -31,7 +30,6 @@ function CompanyRoutes() {
             <Route element={<ProfileCompany />} path='/profile' />
             <Route element={<CompanyMyItems />} path='/myitems' />
             <Route element={<PostView />} path='/postview' />
-            <Route element={<AddPost />} path='/addpost' />
             <Route element={<ApplicationViews />} path='/applicationviews' />
             <Route element={<ApplicationProfile />} path='/applicationprofile' />
             <Route element={<Chat />} path='/chat' />
