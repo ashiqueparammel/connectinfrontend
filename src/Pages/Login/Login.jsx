@@ -16,18 +16,8 @@ import { useDispatch } from 'react-redux';
 function Login() {
     const location = useLocation();
     const dispatch = useDispatch();
-    // let message = new URLSearchParams(location.search).get('message');
-    // Get the value of 'message' from the URL query parameters
-let message = new URLSearchParams(location.search).get('message');
 
-// Check if 'message' exists
-if (message) {
-  // 'message' is present in the URL
-  console.log(`Message from URL: ${message}`);
-} else {
-  // 'message' is not present in the URL
-  console.log('No message found in the URL');
-}
+    let message = new URLSearchParams(location.search)?.get('message') ?? null;
 
     const navigate = useNavigate();
 
