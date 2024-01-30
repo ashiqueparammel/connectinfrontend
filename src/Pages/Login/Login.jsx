@@ -239,8 +239,9 @@ function Login() {
                             <Button type='submit' variant="filled" className='bg-[#0A3863] font-prompt text-xl font-prompt-normal rounded-sm' fullWidth >
                                 LOGIN
                             </Button>
+                            <h1 className='text-white float-right mr-2 mt-2 font-prompt hover:cursor-pointer hover:text-[#cac9c9] ' >Forgot Password?</h1>
                             <br />
-                            <p className='text-white ml-2 text-center'>  or  </p>
+                            <p className='text-white  ml-24  text-center'>  or  </p>
                             <br />
                             <Button onClick={() => LoginWithGoogleAuth()} variant="filled" className=' flex bg-[#ffffff] gap-5 font-prompt font-prompt-normal rounded-sm text-black text-lg' fullWidth >
                                 <img src={googleImage} className='w-8  h-8 ml-2' alt="" />

@@ -27,7 +27,7 @@ function VideoCall() {
         roomId = queryParams.get("roomId");
         receiverId = queryParams.get("receiverId");
 
-        if (decode.user_id.toString() != receiverId.toString()) {
+        if (decode.user_id.toString() != receiverId.toString() ) {
             setTimeout(() => {
                 navigate("/chat");
             });
