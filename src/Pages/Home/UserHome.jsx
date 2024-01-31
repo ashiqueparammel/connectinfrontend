@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Button, Card, Menu, MenuHandler, MenuList, MenuItem, Typography, Dialog, DialogHeader, DialogBody, DialogFooter, List, ListItem, ListItemPrefix, Avatar, } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import axios from 'axios';
-import { AddComments, AddLikes, ConnectionChatList, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, RemoveComments, UpdateLikes, UserDetails, UserFollowers, UserFollowing, UserProfileDetails } from '../../Constants/Constants';
+import { AddComments, AddLikes, ConnectionChatList, EmployeeProfileAdd, ListUserLikes, NotInterestedPosts, PostListComments, PublicPostAdd, PublicPostList, PublicPostReport, PublicPostReportUser, PublicPostUpdate, RemoveComments, UserDetails, UserFollowers, UserFollowing, UserProfileDetails } from '../../Constants/Constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMessage, faBookBookmark, faUsers, faUserPlus, faEllipsisVertical, faComment, faHeart, faThumbsUp, faCommenting, faShareAlt, faSave, faUser, faCamera, faPaperPlane, faImage, faAdd, faPlus, faArrowRight, faTrash, } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../Assets/Connectlogo.png';
@@ -297,20 +297,20 @@ function UserHome() {
   }
 
   // ListUserLikes
-  const RemovePostLike = (event) => {
-    const data = {
-      user: userInfo.id,
-      Post: event
-    }
-    axios.post(UpdateLikes, data).then((response) => {
-      if (response.status === 200) {
-        toast.success('Liked Removed');
-        setImageManage(true)
-      }
-    }).catch((error) => {
-      toast.error(error);
-    })
-  }
+  // const RemovePostLike = (event) => {
+  //   const data = {
+  //     user: userInfo.id,
+  //     Post: event
+  //   }
+  //   axios.post(UpdateLikes, data).then((response) => {
+  //     if (response.status === 200) {
+  //       toast.success('Liked Removed');
+  //       setImageManage(true)
+  //     }
+  //   }).catch((error) => {
+  //     toast.error(error);
+  //   })
+  // }
 
   const likeAddPost = (event) => {
     const data = {
@@ -577,7 +577,7 @@ function UserHome() {
                     </div>
                     <div className='flex justify-around mt-7'>
                       <div className='hover:cursor-pointer '>
-                        {(getLikedStatus(post.id) === 'Liked' ? <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} onClick={(e) => RemovePostLike(post.id)} className=' text-[#294b8d] w-7 h-7 hover:text-[#7e7b7b]' title='Remove Like' /> like</h1> :
+                        {(getLikedStatus(post.id) === 'Liked' ? <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} onClick={(e) => likeAddPost(post.id)} className=' text-[#294b8d] w-7 h-7 hover:text-[#7e7b7b]' title='Remove Like' /> like</h1> :
                           <h1 className='font-prompt-normal ml-5 mb-2'><FontAwesomeIcon icon={faThumbsUp} onClick={(e) => likeAddPost(post.id)} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b] ' title='Like' /> like</h1>)}
                       </div>
 
