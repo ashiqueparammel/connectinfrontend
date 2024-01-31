@@ -48,7 +48,7 @@ function Signup() {
             is_company: company_data,
             is_google: false,
         };
-        console.log('User data:', user);
+        // console.log('User data:', user);
         const validateForm = () => {
             if (user.username.trim() === "") {
                 toast.error('Username should not be empty!');
