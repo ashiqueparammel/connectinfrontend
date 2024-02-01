@@ -11,7 +11,6 @@ export const companySlice = createSlice({
     reducers: {
         setCompanyDetails: (state, action) => {
             state.companyInfo = action.payload;
-            console.log(action.payload,'company-----------------------------');
         },
         CompanyResetState: (state) => {
             return INITIAL_STATE;

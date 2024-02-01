@@ -8,12 +8,8 @@ import { jwtDecode } from 'jwt-decode';
 
 function AdminProtected() {
     const token = localStorage.getItem('token');
-
-    console.log(token, 'admin cheeekkkkkkkkk ');
-
     if (token) {
         const decoded = jwtDecode(token);
-        console.log(decoded, 'chehehehckedadmin');
         if (decoded.is_superuser) {
             return <Outlet />
         }

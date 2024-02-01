@@ -20,15 +20,14 @@ function App() {
 
         <Routes>
           <Route element={<FirstPage />} path='/choose' />
-
           <Route element={<Signup />} path='/signup' />
           <Route element={<ConfirmEmail />} path='/verification' />
           <Route element={<ProtectedRoutes />}>
             <Route element={<Login />} path='/login' />
           </Route>
-            <Route element={<UserRoutes />} path='/*' />
-            <Route element={<AdminRout />} path='/admin/*' />
-            <Route element={<CompanyRoutes />} path='/company/*' />
+          <Route element={<UserRoutes />} path='/*' />
+          <Route element={<AdminRout />} path='/admin/*' />
+          <Route element={<CompanyRoutes />} path='/company/*' />
 
 
         </Routes>

@@ -153,9 +153,11 @@ function Chat() {
               Video Call Link
             </button>
           );
+        }else{
+            return  message
         }
     
-        return null; // Return null if there is no link
+         
       };
     
 
@@ -235,8 +237,7 @@ function Chat() {
                             {messages.map((message) => (
                                 <div key={message.id} className={message.sender_email === userInfo.email ? 'mt-2 ml-auto' : 'mt-2 mr-auto'}>
                                     <div className={`font-prompt-normal text-lg ${message.sender_email === userInfo.email ? 'text-white bg-[#324674df] float-right max-w-96 mr-4 ' : 'text-black bg-[#d4d2d2] float-left max-w-96 ml-4 '} rounded-md shadow-black w-fit`} style={{ overflow: 'hidden', wordWrap: 'break-word', whiteSpace: 'pre-wrap', paddingLeft: '8px', paddingRight: '8px', paddingBottom: '2px', paddingTop: '2px' }}>
-                                    {message.message}
-                                    
+                                    {renderButtonIfLink(message.message)}
                                     </div>
                                     <br />
                                     <h1 className={`${message.sender_email === userInfo.email ? 'text-right mr-4 float-right ' : 'text-left ml-4 float-left'} text-xs`}>{timeAgo(message.timestamp) == "NaN years ago"

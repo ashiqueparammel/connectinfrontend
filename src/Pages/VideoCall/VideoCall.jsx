@@ -27,11 +27,11 @@ function VideoCall() {
         roomId = queryParams.get("roomId");
         receiverId = queryParams.get("receiverId");
 
-        if (decode.user_id.toString() != receiverId.toString() ) {
-            setTimeout(() => {
-                navigate("/chat");
-            });
-        }
+        // if (decode.user_id.toString() != receiverId.toString() ) {
+        //     setTimeout(() => {
+        //         navigate("/chat");
+        //     });
+        // }
     } else {
         roomId = senderdetails.id.toString();
         receiverId = recipientdetails.id.toString();
