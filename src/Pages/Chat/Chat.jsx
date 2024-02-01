@@ -156,7 +156,6 @@ function Chat() {
             return  message
         }
     
-         
       };
     
 
