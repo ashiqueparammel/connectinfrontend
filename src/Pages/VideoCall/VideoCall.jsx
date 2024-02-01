@@ -61,7 +61,7 @@ function VideoCall() {
                     url:
                         window.location.protocol +
                         "//" +
-                        window.location.host +
+                        window.location.host + 
                         "/User/videocall/" +
                         "?roomId=" +
                         roomId +

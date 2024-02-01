@@ -136,7 +136,6 @@ function Chat() {
     
       const renderButtonIfLink = (message) => {
         const linkRegex = /https?:\/\/[^\s]+/g; // Regular expression to match URLs
-    
         // Check if the message contains a link
         const hasLink = linkRegex.test(message);
     
