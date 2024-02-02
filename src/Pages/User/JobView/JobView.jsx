@@ -101,7 +101,11 @@ function JobView() {
                 if (userprofiledata.length > 0) {
                     let { user } = response.data[0]
                     setUserData(user)
-                    setUserProfile(response.data[0])
+                    let profile = response.data[0]
+                    let temp = profile.cv_file;
+                    temp = temp.substring(0, 4) + "s" + temp.substring(4);
+                    profile.cv_file = temp
+                    setUserProfile(profile)
                     axios.get(`${ListPersonalSkills}${response.data[0].id}/`).then((response) => {
                         setRequiredSkills(response.data);
                         console.log('finaljob skills get', response.data);
@@ -495,17 +499,7 @@ function JobView() {
                                 <h1 className='mt-2'>{(UserProfile.cv_file ? <div onClick={CvViewOpen} className='flex flex-row gap-10 bg-[#dfdbdb] hover:cursor-pointer hover:bg-[#b6b3b3] rounded-sm '><h1 className='ml-2' >view your cv </h1><FontAwesomeIcon icon={faEye} color='#051339' className=' w-6 h-8 mr-2' /></div> : <div onClick={HandleCV} className='flex flex-row gap-10 bg-[#dfdbdb] hover:cursor-pointer hover:bg-[#b6b3b3] rounded-sm '><h1 className='ml-2' >upload your cv </h1><FontAwesomeIcon icon={faUpload} color='#051339' className=' w-6 h-8 mr-2' /></div>)}</h1>
                                 <div>
                                     <FontAwesomeIcon onClick={removeCV} title='Remove your CV' icon={faTrash} color='#051339' className='mr-2 mt-2 hover:text-[#403f3f] bg-white border-4 border-white  hover:cursor-pointer' />
-                                    {/* <FontAwesomeIcon onClick={HandleCV} icon={faAdd} color='#051339' className='hover:text-[#403f3f] bg-white border-4 border-white  hover:cursor-pointer' /> */}
                                 </div>
-                                {/* <Menu>
-                                <MenuHandler>
-                                    <FontAwesomeIcon icon={faEllipsisVertical} color='#051339' className=' w-5 h-5 mt-2  rounded-md shadow-2xl shadow-black hover:text-[#403f3f] bg-white border-4 border-white mr-4 hover:cursor-pointer ' />
-                                </MenuHandler>
-                                <MenuList className="max-h-72 font-prompt text-black">
-                                    <MenuItem onClick={removeCV}><FontAwesomeIcon icon={faTrash} color='#051339' className='mr-2' />Remove CV</MenuItem>
-                                    <MenuItem onClick={HandleCV}><FontAwesomeIcon icon={faEdit} color='#051339' className='mr-2' />{(UserProfile.cv_file ? 'Update CV' : 'Upload CV')}</MenuItem>
-                                </MenuList>
-                            </Menu> */}
                             </div>
                             <input
                                 type="file"
