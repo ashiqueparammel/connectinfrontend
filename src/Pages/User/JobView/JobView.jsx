@@ -318,7 +318,7 @@ function JobView() {
         const formData = new FormData();
 
         if (UserProfile.cv_file) {
-            fetch(fileUrl)
+            fetch(UserProfile.cv_file)
                 .then((response) => response.blob())
                 .then((blob) => {
                     const Cv_file = new File([blob], { type: 'application/pdf' });
