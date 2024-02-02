@@ -5,6 +5,8 @@ import { Document, Page } from 'react-pdf';
 
 function PdfHelper({ cvFileUrl }) {
 
+  console.log('=========>>>>>>.',cvFileUrl);
+
   const [numPages, setNumPages] = useState();
   const [pageNumber, setPageNumber] = useState(1);
   function onDocumentLoadSuccess({ numPages }) {
