@@ -45,6 +45,8 @@ function UserProfile() {
     const [EducationId, setEducationId] = useState('')
 
 
+
+
     //edit profile states
     const [userName, setUserName] = useState('');
     const [userLocation, setUserLoacation] = useState('');
@@ -65,6 +67,7 @@ function UserProfile() {
     const [addNewSkills, setaddNewSkills] = useState('')
     const [updateSkills, setUpdateSkills] = useState([])
     const [openSkill, setSkillOpen] = useState(false);
+    let tempre = '';
 
     const handleSkillOpen = () => setSkillOpen((cur) => !cur);
 
@@ -76,7 +79,14 @@ function UserProfile() {
                 if (userprofiledata.length > 0) {
                     let { user } = response.data[0]
                     setUserData(user)
-                    setUserProfile(response.data[0])
+                    let temp1 = response.data[0]
+                    let tempre = temp1.cv_file;
+                    tempre = tempre.substring(0, 4) + "s" + tempre.substring(4);
+                    temp1.cv_file = tempre
+                    setUserProfile(temp1)
+                    // console.log(tempre, "jjjjjjjjjjjjjjjjjjjjj");
+
+                    // console.log(temp1, '======<<<<<<<<<<<< monna<<<<<<<<<lottta');
                     setUserName(user.username)
                     setUserLoacation(response.data[0].Location)
                     setUserDescription(response.data[0].description)
@@ -558,9 +568,11 @@ function UserProfile() {
 
     }
 
+    // let  temp =  UserProfile.cv_file
+    // console.log(tempre, "lllllllllllllll");
+    console.log(UserProfile.cv_file, '<<<<<<<<<<<<<<<<<<<<<<<<<<<<hlo');
 
-console.log(UserProfile,'<<<<<<<<<<<<<<<<<<<<<<<<<<<<hlo');
-console.log(userData,'<<<<<<<<<<<<<<<<<<<<<<<<<<<<hlo lotttta');
+    console.log(userData, '<<<<<<<<<<<<<<<<<<<<<<<<<<<<hlo lotttta');
     return (
         <div>
             <Card className='w-[80%] ml-[10%] mt-10 mb-8 bg-[#dfdfdf] rounded-sm' >
