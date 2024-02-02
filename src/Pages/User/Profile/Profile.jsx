@@ -559,7 +559,8 @@ function UserProfile() {
     }
 
 
-
+console.log(UserProfile,'<<<<<<<<<<<<<<<<<<<<<<<<<<<<hlo');
+console.log(userData,'<<<<<<<<<<<<<<<<<<<<<<<<<<<<hlo lotttta');
     return (
         <div>
             <Card className='w-[80%] ml-[10%] mt-10 mb-8 bg-[#dfdfdf] rounded-sm' >
