@@ -322,7 +322,10 @@ function JobView() {
             currentSalary: currentCtc,
             ExpectedSalary: ExpetedCtc,
             description: description,
+            cv_file:UserProfile.cv_file || null
         }
+
+
         console.log('postdata data:', postData);
         const validateForm = () => {
             if (expriance === "") {
