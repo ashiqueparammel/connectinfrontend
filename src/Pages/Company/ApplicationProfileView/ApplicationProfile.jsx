@@ -49,9 +49,11 @@ function ApplicationProfile() {
                 const { job_post } = ApplicationAllData
                 let { profile } = ApplicationAllData
                 const profileData = profile
-                let temp = profile.cv_file;
-                temp = temp.substring(0, 4) + "s" + temp.substring(4);
-                profile.cv_file = temp
+                if (profile.cv_file) {
+                    let temp = profile.cv_file;
+                    temp = temp.substring(0, 4) + "s" + temp.substring(4);
+                    profile.cv_file = temp
+                }
                 setUserProfile(profile)
                 const { user } = profile
                 setUserData(user)
@@ -90,8 +92,8 @@ function ApplicationProfile() {
     }
 
     const ContactHandle = (event) => {
-        navigate('/chat',{state:{data:event}})
-         
+        navigate('/chat', { state: { data: event } })
+
     }
 
     return (

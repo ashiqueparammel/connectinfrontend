@@ -102,9 +102,11 @@ function JobView() {
                     let { user } = response.data[0]
                     setUserData(user)
                     let profile = response.data[0]
-                    let temp = profile.cv_file;
-                    temp = temp.substring(0, 4) + "s" + temp.substring(4);
-                    profile.cv_file = temp
+                    if (profile.cv_file) {
+                        let temp = profile.cv_file;
+                        temp = temp.substring(0, 4) + "s" + temp.substring(4);
+                        profile.cv_file = temp
+                    }
                     setUserProfile(profile)
                     axios.get(`${ListPersonalSkills}${response.data[0].id}/`).then((response) => {
                         setRequiredSkills(response.data);

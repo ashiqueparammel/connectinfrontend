@@ -80,9 +80,11 @@ function UserProfile() {
                     let { user } = response.data[0]
                     setUserData(user)
                     let temp1 = response.data[0]
-                    let tempre = temp1.cv_file;
-                    tempre = tempre.substring(0, 4) + "s" + tempre.substring(4);
-                    temp1.cv_file = tempre
+                    if (temp1.cv_file){
+                        let tempre = temp1.cv_file;
+                        tempre = tempre.substring(0, 4) + "s" + tempre.substring(4);
+                        temp1.cv_file = tempre
+                    }
                     setUserProfile(temp1)
                     // console.log(tempre, "jjjjjjjjjjjjjjjjjjjjj");
 
