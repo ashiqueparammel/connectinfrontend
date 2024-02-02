@@ -313,40 +313,17 @@ function JobView() {
     }
 
     const ApplyJobHandle = () => {
+        // job axios
 
-        let Cv_file = null
-        const formData = new FormData();
-
-        if (UserProfile.cv_file) {
-            fetch(UserProfile.cv_file)
-                .then((response) => response.blob())
-                .then((blob) => {
-                    const Cv_file = new File([blob], { type: 'application/pdf' });
-                })
-
-            formData.append('cv_file', Cv_file);
-
+        const postData = {
+            profile: UserProfile.id,
+            job_post: job_id,
+            Experience: expriance,
+            currentSalary: currentCtc,
+            ExpectedSalary: ExpetedCtc,
+            description: description,
         }
-        formData.append('profile',UserProfile.id);
-        formData.append('job_post',job_id);
-        formData.append('Experience',expriance);
-        formData.append('currentSalary',currentCtc);
-        formData.append('ExpectedSalary',ExpetedCtc);
-        formData.append('description',description);
-
-
-
-        // const postData = {
-        //     profile: UserProfile.id,
-        //     job_post: job_id,
-        //     Experience: expriance,
-        //     currentSalary: currentCtc,
-        //     ExpectedSalary: ExpetedCtc,
-        //     description: description,
-        // }
-
-
-        // console.log('postdata data:', postData);
+        console.log('postdata data:', postData);
         const validateForm = () => {
             if (expriance === "") {
                 toast.error('Experience should not be empty!');
@@ -365,7 +342,7 @@ function JobView() {
 
         if (validateForm()) {
             try {
-                axios.post(JobApplicationsAdd, formData)
+                axios.post(JobApplicationsAdd, postData)
                     .then((response) => {
                         const responseData = response.data
                         console.log(response, 'respose Apply Job add');
