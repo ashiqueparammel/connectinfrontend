@@ -39,10 +39,7 @@ function Connections() {
         }).catch((error) => { console.log(error); })
 
     }, [])
-    const manageMessage = (user_id) => {
-        // navigate('/profileview', { state: { data: user_id } })
  
-    }
     return (
 
         <div className='flex justify-center'>
@@ -91,7 +88,7 @@ function Connections() {
                                                             <Typography className='font-prompt text-md   text-black'>{following.email}</Typography>
                                                         </div>
                                                         <div className='absolute right-5 bottom-3'>
-                                                            <Button onClick={(e) =>manageMessage(following.id)} className="bg-[#051339]    mt-3 text-white font-prompt-normal  px-4 py-2 rounded-md mr-1"><FontAwesomeIcon icon={faMessage} className='w-5 h-5   ' /></Button>
+                                                            <Button onClick={() => navigate('/chat',{state:{data:following}})} className="bg-[#051339]    mt-3 text-white font-prompt-normal  px-4 py-2 rounded-md mr-1"><FontAwesomeIcon icon={faMessage} className='w-5 h-5   ' /></Button>
 
                                                         </div>
 

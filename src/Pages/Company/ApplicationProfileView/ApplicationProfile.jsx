@@ -21,7 +21,6 @@ function ApplicationProfile() {
     const navigate = useNavigate()
     const userInfo = useSelector((state) => state.user.userInfo);
 
-    // console.log(job_id, 'check this datattttttt');
     const formatPostedDate = (postedDate) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric', time: 'numeric' };
         const formattedDate = new Date(postedDate).toLocaleDateString(undefined, options);

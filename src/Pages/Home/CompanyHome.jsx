@@ -12,6 +12,8 @@ import { setCompanyDetails } from '../../Redux/Companyees';
 import toast, { Toaster } from 'react-hot-toast'
 import { setUserDetails } from '../../Redux/Users';
 import blankImage from '../../Assets/blankprofile.png'
+import Loader from '../Loader/Loader';
+
 function CompanyHome() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -23,7 +25,7 @@ function CompanyHome() {
     const [CompanyuserDetails, setCompanyuserDetails] = useState([]);
     const [companyDetail, setCompanyDetail] = useState([]);
     const [ImageManage, setImageManage] = useState(false);
-
+    const [LoadingManage, setLoadingManage] = useState(false)
     //followings and followers
     const [followingCount, setfollowingCount] = useState('')
     const [followersCount, setfollowersCount] = useState('')
@@ -65,6 +67,7 @@ function CompanyHome() {
     };
 
     useEffect(() => {
+        setLoadingManage(true)
         setImageManage(false)
         if (userInfo) {
             const userData = axios.get(`${Company_Profile}${userInfo.id}/`).then((response) => {
@@ -123,6 +126,7 @@ function CompanyHome() {
                 console.log(error);
             })
         }
+        setLoadingManage(false)
     }, [ImageManage]);
 
 
@@ -188,8 +192,10 @@ function CompanyHome() {
             Post: event,
         }
         try {
+            setLoadingManage(true)
             axios.post(NotInterestedPosts, Data).then((response) => {
                 if (response.status === 201) {
+                    setLoadingManage(false)
                     setImageManage(true)
                 }
             })
@@ -210,9 +216,11 @@ function CompanyHome() {
             formData.append('description', postText);
             formData.append('Post_Image', PostImagefile);
             formData.append('is_available', true);
+            setLoadingManage(true)
             axios.post(PublicPostAdd, formData)
                 .then((response) => {
                     if (response.status === 201) {
+                        setLoadingManage(false)
                         setImageManage(true)
                         setPostText('')
                         toast.success('Public Post Added Successfully!');
@@ -243,9 +251,11 @@ function CompanyHome() {
         if (reprotText) {
 
             try {
+                setLoadingManage(true)
                 axios.post(PublicPostReport, postDatas)
                     .then((response) => {
                         if (response.status === 201) {
+                            setLoadingManage(false)
                             toast.success('Your Post Reported has been Recived!')
                         }
                     }).catch((error) => {
@@ -274,29 +284,17 @@ function CompanyHome() {
         return PostLiked ? 'Liked' : 'notLiked'
     }
 
-    // ListUserLikes
-    // const RemovePostLike = (event) => {
-    //     const data = {
-    //         user: userInfo.id,
-    //         Post: event
-    //     }
-    //     axios.post(UpdateLikes, data).then((response) => {
-    //         if (response.status === 200) {
-    //             toast.success('Liked Removed');
-    //             setImageManage(true)
-    //         }
-    //     }).catch((error) => {
-    //         toast.error(error);
-    //     })
-    // }
+
 
     const likeAddPost = (event) => {
         const data = {
             user: userInfo.id,
             Post: event
         }
+        setLoadingManage(true)
         axios.post(AddLikes, data).then((response) => {
             if (response.status === 200) {
+                setLoadingManage(false)
                 toast.success(response.data.Text);
                 setImageManage(true)
             }
@@ -307,8 +305,10 @@ function CompanyHome() {
     }
 
     const CommentsSection = (event) => {
+        setLoadingManage(true)
         axios.get(`${PostListComments}${event}/`).then((response) => {
             setCommentsData(response.data)
+            setLoadingManage(false)
         }).catch((error) => {
             toast.error(error);
 
@@ -327,6 +327,7 @@ function CompanyHome() {
             toast.error('Comment Field Cannout Empty!')
         }
         else {
+            setLoadingManage(true)
             axios.post(AddComments, CommentData).then((response) => {
                 if (response.status === 200) {
                     toast.success('Comment Added Successfully')
@@ -336,6 +337,7 @@ function CompanyHome() {
                         toast.error(error);
 
                     })
+                    setLoadingManage(false)
                     setImageManage(true)
                     setCommentAddText('')
 
@@ -357,12 +359,13 @@ function CompanyHome() {
             Post: Commentid,
             comment_id: event,
         }
-
+        setLoadingManage(true)
         axios.post(RemoveComments, CommentData).then((response) => {
             if (response.status === 200) {
                 toast.success('Comment Removed ')
                 axios.get(`${PostListComments}${Commentid}/`).then((response) => {
                     setCommentsData(response.data)
+                    setLoadingManage(false)
                 }).catch((error) => {
                     toast.error(error);
 
@@ -383,9 +386,11 @@ function CompanyHome() {
         const data = {
             is_available: false
         }
+        setLoadingManage(true)
         axios.patch(`${PublicPostUpdate}${RemoveId}/`, data).then((response) => {
             if (response.status === 200) {
                 handleRemovePostOpen()
+                setLoadingManage(false)
                 setImageManage(true)
                 toast.success('Post deleted')
             }
@@ -398,6 +403,9 @@ function CompanyHome() {
     }
     return (
         <div className=' flex mt-5'>
+            <>
+                {(LoadingManage ? <div className='absolute ml-[50%] mt-[20%] bg-opacity-50 items-center '><Loader /></div> : '')}
+            </>
             <div className='mt-2'>
                 <Card className="h-[310px] bg-[#ededed] max-w-[20rem]  ml-16  shadow-xl shadow-blue-gray-900/2">
                     {(CompanyuserDetails.profile_cover_image ?
@@ -553,9 +561,7 @@ function CompanyHome() {
                                         {(CommentsManage && post.id === Commentid ? <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} onClick={(e) => CommentsSection(post.id)} className=' w-7 h-7 text-[#294b8d] hover:text-[#7e7b7b]  ' />Comment</h1> :
                                             <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faCommenting} onClick={(e) => CommentsSection(post.id)} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b]  ' />Comment</h1>
                                         )}</div>
-                                    {/* <div className='hover:cursor-pointer '>
-                    <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon icon={faSave} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b] ' /> Save</h1>
-                  </div> */}
+             
                                     <div className='hover:cursor-pointer '>
                                         <h1 className='font-prompt-normal ml-5 mb-2 '><FontAwesomeIcon onClick={(e) => handleshare(post.id)} icon={faShareAlt} className=' w-7 h-7 text-[#051339] hover:text-[#7e7b7b] ' /> Share</h1>
                                     </div>
@@ -626,7 +632,7 @@ function CompanyHome() {
                                                 </Typography>
 
                                             </div>
-                                            <div onClick={(e) => StartChat(following.email)} className='text-center w-10 h-9  ml-5   font-prompt bg-[#dadada] rounded-md text-white  '>
+                                            <div onClick={() => navigate('/chat',{state:{data:following}})} className='text-center w-10 h-9  ml-5   font-prompt bg-[#dadada] rounded-md text-white  '>
                                                 <FontAwesomeIcon icon={faPaperPlane} className=' text-[#051339]   w-6 h-6 mt-1    rounded-full hover:text-[#4c4b4b] rotate-45  ' />
 
                                             </div>

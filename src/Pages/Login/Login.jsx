@@ -150,6 +150,7 @@ function Login() {
                 access_token: backend_access
             }
             try {
+                setLoadingManage(true)
                 const googleResponse = await axios.post(User_Google_Login, googleUser);
                 const response = googleResponse.data
                 if (response.status === 406) {
@@ -190,6 +191,7 @@ function Login() {
                             "is_active": token.is_active,
                         }
                         dispatch(setUserDetails(setUser));
+                        setLoadingManage(false)
                         if (token.is_superuser && token.is_active) {
                             // toast.success('Login successfully!')
                             navigate('/admin/');
@@ -243,6 +245,7 @@ function Login() {
         };
         if (validateForm()) {
             try {
+                setLoadingManage(true)
                 const responseData = await axios.post(UserLoginUrl, user);
                 const response = responseData.data;
                 localStorage.setItem('token', JSON.stringify(response));
@@ -257,6 +260,7 @@ function Login() {
                         "is_active": token.is_active,
                     }
                     dispatch(setUserDetails(setUser));
+                    setLoadingManage(false)
                     if (token.is_superuser && token.is_active) {
                         toast.success('Login successfully!')
                         navigate('/admin/');

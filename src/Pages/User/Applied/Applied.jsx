@@ -1,9 +1,10 @@
 import { Button, Card, Typography } from '@material-tailwind/react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppliedImage from '../../../Assets/AppliedImage.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Loader from '../../Loader/Loader'
 
 
 
@@ -11,18 +12,24 @@ function Applied() {
     const location = useLocation()
     const email = location.state.data || ''
     const navigate = useNavigate()
+    const [LoadingManage, setLoadingManage] = useState(false)
 
-    // useEffect(() => {
-    //     if (email) {
-    // console.log(email,'email');
-      
-    //     } else {
-    //         navigate('/')
-    //     }
-    // }, [])
+
+    useEffect(() => {
+        setLoadingManage(true)
+        if (AppliedImage) {
+            setLoadingManage(false)
+        }
+
+
+    }, [])
 
     return (
         <div className='flex justify-center'>
+
+            <>
+                {(LoadingManage ? <div className='absolute ml-[50%] mt-[20%] bg-opacity-50 items-center '><Loader /></div> : '')}
+            </>
             <Card className='w-[55%] mt-12  rounded-md  mb-12 bg-white border-[1px] shadow-xl border-[#a2a0a0]'>
                 <div className='flex flex-col text-center'>
                     <div className='flex justify-center '>
@@ -41,11 +48,11 @@ function Applied() {
                             </Typography>
                         </div>
                         <br />
-                        <Typography onClick={(e)=>navigate('/myitems')}  className='text-black font-prompt-normal hover:text-[#5f5d5d] hover:cursor-pointer text-2xl' variant='h4'>
+                        <Typography onClick={(e) => navigate('/myitems')} className='text-black font-prompt-normal hover:text-[#5f5d5d] hover:cursor-pointer text-2xl' variant='h4'>
                             View your applications on My Jobs
                         </Typography>
                         <br />
-                        <Button onClick={(e)=>navigate('/jobs')} className='bg-[#0A3863] w-[40%] h-[17%] text-lg rounded-sm font-prompt-normal'>Return to Job Search </Button>
+                        <Button onClick={(e) => navigate('/jobs')} className='bg-[#0A3863] w-[40%] h-[17%] text-lg rounded-sm font-prompt-normal'>Return to Job Search </Button>
                         <br />
                         <br />
                         <br />

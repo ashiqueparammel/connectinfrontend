@@ -10,13 +10,16 @@ import { useSelector } from 'react-redux'
 import { pdfjs } from 'react-pdf';
 import { Document, Page } from 'react-pdf';
 import PdfHelper from '../../../Helpers/PdfHelper';
+import Loader from '../../Loader/Loader'
+
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.js', import.meta.url,).toString();
 // import { useSelector } from 'react-redux'
 
 function JobView() {
-
+    
+    const [LoadingManage, setLoadingManage] = useState(false)
     // const CompanyDetails = useSelector((state) => state.company.companyInfo)
     const userInfo = useSelector((state) => state.user.userInfo);
 
@@ -75,7 +78,6 @@ function JobView() {
         return formattedDate;
     };
 
-    // console.log(job_id, 'hllllllllllllllllo');
     useEffect(() => {
         const response = axios.get(`${JobUserView}${job_id}/`).then((response) => {
             setJobViews(response.data);
@@ -95,6 +97,7 @@ function JobView() {
 
     useEffect(() => {
         setEditManage(false)
+        setLoadingManage(true)
         if (userInfo) {
             const userData = axios.get(`${UserProfileDetails}${userInfo.id}/`).then((response) => {
                 let userprofiledata = response.data
@@ -164,6 +167,7 @@ function JobView() {
                     console.error("Error fetching user data:", error);
                 });
         }
+        setLoadingManage(false)
     }, [editManage]);
 
 
@@ -175,9 +179,11 @@ function JobView() {
             const remove_cv_file = {
                 cv_file: null
             }
+            setLoadingManage(true)
             axios.patch(`${EmployeeProfileUpdate}${UserProfile.id}/`, remove_cv_file).then((response) => {
                 if (response.status === 200) {
                     setEditManage(true)
+                    setLoadingManage(false)
                     toast.success('Your CV removed !');
                 }
             }).catch((error) => {
@@ -190,14 +196,15 @@ function JobView() {
         }
     }
     const updateCV = (event) => {
-        console.log('hello', event.target.files[0]);
+
         const file = event.target.files[0];
         if (file.type === "application/pdf") {
-            // console.log(true);
             const AddCV = new FormData();
             AddCV.append('cv_file', file);
+            setLoadingManage(true)
             axios.patch(`${EmployeeProfileUpdate}${UserProfile.id}/`, AddCV).then((response) => {
                 if (response.status === 200) {
+                    setLoadingManage(false)
                     setEditManage(true)
                     toast.success(' Your CV Updated !');
                 }
@@ -208,7 +215,6 @@ function JobView() {
             })
         }
         else {
-            // console.log(false)
             toast.error(' CV should be Pdf file !');
         }
     }
@@ -223,6 +229,7 @@ function JobView() {
             skills: addOnNewSkills
         }
         try {
+            setLoadingManage(true)
             axios.post(List_Skills, addOnskill).then((response) => {
                 if (response.status === 201) {
                     const res = response.data
@@ -258,6 +265,7 @@ function JobView() {
         } catch (error) {
             console.log('error add skills', error);
         }
+        setLoadingManage(false)
         setEditManage(true)
         handleSkillOpen()
     }
@@ -273,6 +281,7 @@ function JobView() {
                 profile: UserProfile.id
             }
             try {
+                setLoadingManage(true)
                 axios.post(PersonalSkillsAdd, addOnskill).then((response) => {
                     if (response.status === 201) {
                         const res = response.data
@@ -286,6 +295,7 @@ function JobView() {
             } catch (error) {
                 console.log('error add skills', error);
             }
+            setLoadingManage(false)
             setEditManage(true)
             handleSkillOpen()
         }
@@ -293,10 +303,11 @@ function JobView() {
     const removeSelectedSkills = (skills) => {
         console.log(skills, 'helllllloooomanog');
         try {
+            setLoadingManage(true)
             axios.delete(`${RemovePersonalSkills}${parseInt(skills)}/`,).then((response) => {
                 if (response.status === 204) {
                     toast.success(' Skill Removed!');
-
+                    setLoadingManage(false)
                     setEditManage(true)
                 }
             }).catch((error) => {
@@ -342,22 +353,25 @@ function JobView() {
 
         if (validateForm()) {
             try {
+                setLoadingManage(true)
                 axios.post(JobApplicationsAdd, postData)
                     .then((response) => {
                         const responseData = response.data
                         console.log(response, 'respose Apply Job add');
                         console.log(responseData, 'respose job adddataa');
                         if (response.status === 201) {
+                            setLoadingManage(false)
                             toast.success('Job Apply successfully!')
                             navigate('/applyjob', { state: { data: userInfo.email } })
-
+                            
                         }
                     })
-
-            } catch (error) {
-                console.error('Error during JOb add:', error);
-                toast.error(error);
-            }
+                    
+                } catch (error) {
+                    console.error('Error during JOb add:', error);
+                    toast.error(error);
+                }
+                
             handleOpenAddEducation()
         }
     }
@@ -370,11 +384,12 @@ function JobView() {
         }
         if (ReportText) {
 
-            try {
+            try {setLoadingManage(true)
                 axios.post(ReportJobPostAdd, postDatas)
                     .then((response) => {
                         if (response.status === 201) {
                             toast.success('Your Job Reported has been Recived!')
+                            setLoadingManage(false)
                         }
                     }).catch((error) => {
                         toast.error('error!!');
@@ -394,7 +409,11 @@ function JobView() {
 
 
     return (
+
         <div className='flex justify-center'>
+            <>
+                {(LoadingManage ? <div className='absolute ml-[50%] mt-[20%] bg-opacity-50 items-center '><Loader /></div> : '')}
+            </>
             <Card className='bg-[#e7e7e7] rounded-md w-[90%] mt-10   '>
 
                 <div className='xl:ml-28 lg:ml-24 2xl:28 sm:ml-6 md:ml-8 ml-8 mt-6 mb-3 '>

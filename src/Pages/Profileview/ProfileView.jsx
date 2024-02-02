@@ -6,6 +6,7 @@ import { Company_Profile, UserFollow, UserFollowers, UserFollowing, UserProfileD
 import { Button } from '@material-tailwind/react';
 import { useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast'
+import Loader from '../Loader/Loader';
 
 function ProfileView() {
     const location = useLocation()
@@ -18,7 +19,10 @@ function ProfileView() {
     const [followersCount, setfollowersCount] = useState('')
     const [followersData, setfollowersData] = useState([])
     const [ManagePage, setManagePage] = useState(false)
+    const [LoadingManage, setLoadingManage] = useState(false)
+
     useEffect(() => {
+        setLoadingManage(true)
         if (user_Id) {
             setManagePage(false)
             axios.get(`${UserProfileView}${user_Id}/`).then((response) => {
@@ -31,7 +35,11 @@ function ProfileView() {
                     });
                 } else {
                     axios.get(`${UserProfileDetails}${response.data.id}/`).then((response) => {
-                        setProfileDetails(response.data[0])
+                        let profile = response.data[0]
+                        if (!profile) {
+                            navigate('/')
+                        }
+                        setProfileDetails(profile)
                     }).catch((error) => {
                         console.error("Error fetching UserProfileDetails data:", error);
                     });
@@ -54,8 +62,9 @@ function ProfileView() {
                     console.log(error);
                 })
             }).catch((err) => { console.log(err); })
-
+            setLoadingManage(false)
         }
+
         else {
             navigate('/')
         }
@@ -69,8 +78,10 @@ function ProfileView() {
             following: user_Id,
             followers: userInfo.id
         }
+        setLoadingManage(true)
         axios.post(UserFollow, data).then((response) => {
             if (response.status === 201) {
+                setLoadingManage(false)
                 toast.success('Followed')
                 setManagePage(true)
 
@@ -79,8 +90,10 @@ function ProfileView() {
 
     }
     const unfollowFunction = () => {
+        setLoadingManage(true)
         axios.delete(`${UserUnFollow}${followersData.id}/`).then((response) => {
             if (response.status === 204) {
+                setLoadingManage(false)
                 toast.success('Unfollowed')
                 setManagePage(true)
             }
@@ -128,7 +141,7 @@ function ProfileView() {
                                 <div className="flex justify-center mb-2 gap-4">
 
                                     {(followersData ? <Button onClick={unfollowFunction} className="bg-[#051339] text-white font-prompt-normal mb-4 px-4 py-2 rounded-md mr-1">Unfollow</Button> : <Button onClick={FllowFunction} className="bg-[#051339] text-white font-prompt-normal mb-4 px-4 py-2 rounded-md mr-1">Follow</Button>)}
-                                    {(followersData ? (followersData.Connection ? <Button className="border border-[#051339] bg-white text-[#051339] mb-4 font-prompt-normal px-4 py-2 rounded-md">Message</Button> : '') : '')}
+                                    {(followersData ? (followersData.Connection ? <Button onClick={() => navigate('/chat',{state:{data:userDetails}})} className="border border-[#051339] bg-white text-[#051339] mb-4 font-prompt-normal px-4 py-2 rounded-md">Message</Button> : '') : '')}
                                 </div>
                             </div>
                         </div>

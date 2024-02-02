@@ -12,21 +12,19 @@ import { useSelector } from 'react-redux';
 import EmojiPicker from 'emoji-picker-react';
 import blankImage from '../../Assets/blankprofile.png'
 import { timeAgo } from "../../Helpers/TimeManage";
-
-// import { jwtDecode } from 'jwt-decode'
-// const token = localStorage.getItem("token");
-// const decode = jwtDecode(token);
-// console.log(decode,'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+import { useLocation } from 'react-router-dom';
 
 
 function Chat() {
+    const location = useLocation()
     const userInfo = useSelector((state) => state.user.userInfo)
+    let recipientEmail = location.state || []
     const [clientstate, setClientState] = useState('');
     const [senderdetails, setSenderDetails] = useState(userInfo);
     const [messageText, setMessageText] = useState('')
     const [messages, setMessages] = useState([]);
     const [ChatList, setChatList] = useState([]);
-    const [recipientDetails, setrecipientDetails] = useState([])
+    const [recipientDetails, setrecipientDetails] = useState(recipientEmail.data||[])
     const [manageEmoji, setmanageEmoji] = useState(false)
 
 
@@ -96,11 +94,15 @@ function Chat() {
             setChatList(response.data)
         }).catch((error) => { console.log(error); })
 
+
         if (senderdetails.id != null && recipientDetails.id != null) {
             setUpChat();
         }
 
     }, [senderdetails, recipientDetails]);
+
+
+
     const openEmoji = () => {
 
         console.log('Windows key + ; pressed');
@@ -114,50 +116,50 @@ function Chat() {
 
     const handlevideoClick = () => {
         if (senderdetails && recipientDetails) {
-          const videodata = [senderdetails, recipientDetails];
-    
-          if (videodata[1]) {
-            const messagedata = {
-              message: `${window.location.origin}/videocall?roomId=${senderdetails.id}&receiverId=${recipientDetails.id}`,
-              senderUsername: senderdetails.email,
-              recieverUsername: recipientDetails.email,
-            };
-    
-            clientstate.send(JSON.stringify(messagedata));
-    
-            navigate("/videocall", { state: { data: videodata } });
-          } else {
-            console.error("Data is empty. Unable to initiate video call.");
-          }
+            const videodata = [senderdetails, recipientDetails];
+
+            if (videodata[1]) {
+                const messagedata = {
+                    message: `${window.location.origin}/videocall?roomId=${senderdetails.id}&receiverId=${recipientDetails.id}`,
+                    senderUsername: senderdetails.email,
+                    recieverUsername: recipientDetails.email,
+                };
+
+                clientstate.send(JSON.stringify(messagedata));
+
+                navigate("/videocall", { state: { data: videodata } });
+            } else {
+                console.error("Data is empty. Unable to initiate video call.");
+            }
         } else {
-          console.error("Recipient details or sender details are missing.");
+            console.error("Recipient details or sender details are missing.");
         }
-      };
-    
-      const renderButtonIfLink = (message) => {
+    };
+
+    const renderButtonIfLink = (message) => {
         const linkRegex = /https?:\/\/[^\s]+/g; // Regular expression to match URLs
         // Check if the message contains a link
         const hasLink = linkRegex.test(message);
-    
+
         if (hasLink) {
-          return (
-            <button
-              type="button"
-              className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 "
-              onClick={() => {
-                // Handle button click action (e.g., navigate to the link)
-                window.open(message, "_blank");
-              }}
-            >
-              Video Call Link
-            </button>
-          );
-        }else{
-            return  message
+            return (
+                <button
+                    type="button"
+                    className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 "
+                    onClick={() => {
+                        // Handle button click action (e.g., navigate to the link)
+                        window.open(message, "_blank");
+                    }}
+                >
+                    Video Call Link
+                </button>
+            );
+        } else {
+            return message
         }
-    
-      };
-    
+
+    };
+
 
     return (
         <div>
@@ -235,12 +237,12 @@ function Chat() {
                             {messages.map((message) => (
                                 <div key={message.id} className={message.sender_email === userInfo.email ? 'mt-2 ml-auto' : 'mt-2 mr-auto'}>
                                     <div className={`font-prompt-normal text-lg ${message.sender_email === userInfo.email ? 'text-white bg-[#324674df] float-right max-w-96 mr-4 ' : 'text-black bg-[#d4d2d2] float-left max-w-96 ml-4 '} rounded-md shadow-black w-fit`} style={{ overflow: 'hidden', wordWrap: 'break-word', whiteSpace: 'pre-wrap', paddingLeft: '8px', paddingRight: '8px', paddingBottom: '2px', paddingTop: '2px' }}>
-                                    {renderButtonIfLink(message.message)}
+                                        {renderButtonIfLink(message.message)}
                                     </div>
                                     <br />
                                     <h1 className={`${message.sender_email === userInfo.email ? 'text-right mr-4 float-right ' : 'text-left ml-4 float-left'} text-xs`}>{timeAgo(message.timestamp) == "NaN years ago"
-                        ? "just now"
-                        : timeAgo(message.timestamp)}</h1>
+                                        ? "just now"
+                                        : timeAgo(message.timestamp)}</h1>
                                 </div>
                             ))}
                         </div>

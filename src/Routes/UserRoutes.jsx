@@ -1,5 +1,4 @@
 import React from 'react'
-import Home from '../Pages/Home/Home'
 import { Route, Routes } from 'react-router-dom'
 import UserProtected from './Protected/UserProtected'
 import UserLayout from '../Pages/User/UserLayout/UserLayout'

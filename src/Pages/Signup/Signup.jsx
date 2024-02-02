@@ -11,6 +11,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 import { setUserDetails } from '../../Redux/Users';
+import Loader from '../Loader/Loader';
 
 function Signup() {
 
@@ -19,6 +20,8 @@ function Signup() {
     const checkData = location.state || ''
     const [company_data, setCompany_data] = useState('')
     const dispatch = useDispatch()
+    const [LoadingManage, setLoadingManage] = useState(false)
+
  
     useEffect(() => {
         if (checkData) {
@@ -86,15 +89,15 @@ function Signup() {
             return true;
         };
         if (validateForm()) {
+            setLoadingManage(true)
             try {
                 const responseData = await axios.post(UserSignUpUrl, user);
                 const response = responseData.data
                 if (response.status === 200) {
+                    setLoadingManage(false)
                     toast.success('Sign Up successfully!')
                     navigate('/verification', { state: { data: user.email } })
-
                 }
-          
 
                 else if (response.status === 404) {
 
@@ -114,6 +117,7 @@ function Signup() {
             }
         }
     }
+    
 
     let googleData = ''
     const signUpWithGoogle = useGoogleLogin({
@@ -148,6 +152,7 @@ function Signup() {
                 is_google: true,
             }
             try {
+                setLoadingManage(true)
                 const googleResponse = await axios.post(User_Google_Signup, googleUser);
                 const response = googleResponse.data
                 if (response.status === 204) {
@@ -175,7 +180,7 @@ function Signup() {
                     try {
                         const token = jwtDecode(data.access)
                         const setUser = {
-                            "user_id": token.user_id,
+                            "id": token.user_id,
                             "email": token.email,
                             "is_superuser": token.is_superuser,
                             "is_company": token.is_company,
@@ -183,6 +188,7 @@ function Signup() {
                             "is_active": token.is_active,
                         }
                         dispatch(setUserDetails(setUser));
+                        setLoadingManage(false)
                         localStorage.setItem('token', JSON.stringify(data));
                         navigate('/');
 
@@ -215,6 +221,9 @@ function Signup() {
 
     return (
         <div className='flex '>
+               <>
+                {(LoadingManage ? <div className='absolute ml-[50%] mt-[20%] bg-opacity-50 items-center '><Loader /></div> : '')}
+            </>
             <div>
                 <div>
                     <img

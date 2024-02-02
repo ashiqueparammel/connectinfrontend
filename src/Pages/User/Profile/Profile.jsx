@@ -86,15 +86,12 @@ function UserProfile() {
                         temp1.cv_file = tempre
                     }
                     setUserProfile(temp1)
-                    // console.log(tempre, "jjjjjjjjjjjjjjjjjjjjj");
 
-                    // console.log(temp1, '======<<<<<<<<<<<< monna<<<<<<<<<lottta');
                     setUserName(user.username)
                     setUserLoacation(response.data[0].Location)
                     setUserDescription(response.data[0].description)
                     setUserHeader(response.data[0].header)
                     setUserContact(user.phone_number)
-                    // console.log(response.data[0], 'first daaaaaaaaaaaaattta')
                     axios.get(`${ListPersonalSkills}${response.data[0].id}/`).then((response) => {
                         setRequiredSkills(response.data);
                         console.log('finaljob skills get', response.data);
@@ -136,9 +133,7 @@ function UserProfile() {
         }
     }, [editManage]);
 
-    // console.log(companyData, "company data");
-    // console.log(userData, "user data");
-    // console.log(companyName, "company name data");
+
 
     const editCompanyDetails = () => {
         const editForm = {
@@ -190,7 +185,6 @@ function UserProfile() {
                             }
                         })
                     }
-                    console.log(response, 'check response data ');
                     setEditManage(true)
                     toast.success('Profile Updated!')
 
