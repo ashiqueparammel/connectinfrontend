@@ -3,7 +3,7 @@ import { Button, Card, Typography, Dialog, DialogHeader, DialogFooter, CardBody,
 import { Tabs, TabsHeader, TabsBody, Tab, } from "@material-tailwind/react";
 import toast, { Toaster } from 'react-hot-toast'
 import axios from 'axios';
-import { MyApplicationList, MySingleJobsListRead, MySingleJobsListUnRead, job_ApplicationsUpdate } from '../../../Constants/Constants';
+import { MyApplicationList, MySingleJobsAccepted, MySingleJobsListRead, MySingleJobsListUnRead, job_ApplicationsUpdate } from '../../../Constants/Constants';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
@@ -14,7 +14,7 @@ function ApplicationViews() {
   const job_id = location.state.data || ''
   const navigate = useNavigate()
 
-  const Head = [{ Heading: 'All' }, { Heading: 'Read' }, { Heading: 'UnRead' }]
+  const Head = [{ Heading: 'All' }, { Heading: 'Read' }, { Heading: 'UnRead' }, { Heading: 'Accepted' }]
   const [activeTab, setActiveTab] = useState('All');
 
   const formatPostedDate = (postedDate) => {
@@ -26,9 +26,11 @@ function ApplicationViews() {
   const [JobDetail, setJobDetail] = useState([])
   const [ReadApplication, setReadApplication] = useState([])
   const [UnReadApplication, setUnReadApplication] = useState([])
+  const [AcceptedApplication, setAcceptedApplication] = useState([])
   const [unReadManage, setunReadManage] = useState(false)
   const [ReadManage, setReadManage] = useState(false)
-
+  const [AcceptedManage, setAcceptedManage] = useState(false)
+//MySingleJobsAccepted
   useEffect(() => {
     if (job_id) {
       axios.get(`${MyApplicationList}${job_id}/`).then((response) => {
@@ -37,6 +39,18 @@ function ApplicationViews() {
         } else {
           const ApplicationAllData = response.data
           setJobDetail(ApplicationAllData)
+        }
+      }).catch((error) => {
+        console.error("Error fetching MyApplicationList:", error);
+      })
+      axios.get(`${MySingleJobsAccepted}${job_id}/`).then((response) => {
+        
+        if (response.data.length === 0) {
+          setAcceptedApplication([])
+        } else {
+          const ApplicationAllData = response.data
+          setAcceptedManage(true)
+          setAcceptedApplication(ApplicationAllData)
         }
       }).catch((error) => {
         console.error("Error fetching MyApplicationList:", error);
@@ -88,7 +102,6 @@ function ApplicationViews() {
         console.error("Error fetching job_ApplicationsUpdate:", error);
       });
   };
-  console.log(JobDetail, '==================>>>>>');
   return (
 
     <div className='flex justify-center'>
@@ -182,6 +195,27 @@ function ApplicationViews() {
                       </div>
                     </div>
                     <Button onClick={(e) => readManage(job.id)} className='mt-8 mr-16 h-10 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faEye} /><span>View</span></Button>
+                  </Card>
+
+                ))}
+              </div> : '') : '')}
+              {(activeTab === 'Accepted' ? (AcceptedManage ? <div className='flex flex-col w-full ml-24'>
+                {AcceptedApplication.map((job, index) => (
+
+                  <Card className=' flex flex-row mb-3 rounded-md w-[90%] mt-5 justify-between' key={index}>
+                    <div className='flex gap-5'>
+                      <div>
+                        {(job.profile.user.profile_image ? <img src={job.profile.user.profile_image} alt="profile photo" className='ml-4 rounded-md shadow-2xl  w-14 h-14  mt-4 ' /> :
+                          <UserCircleIcon className="ml-4 rounded-full w-14 h-14  mt-4 " />)}
+                      </div>
+                      <div>
+                        <Typography className='mt-2 font-prompt text-xl uppercase text-black'>{job.profile.header}</Typography>
+                        <Typography className='font-prompt text-md text-black'>{job.profile.user.username}</Typography>
+                        <Typography className='font-prompt text-sm text-black'>{job.profile.user.email}</Typography>
+                        <Typography className='font-prompt text-sm text-black'>{formatPostedDate(job.posted_date)}</Typography>
+                      </div>
+                    </div>
+                    <Button onClick={() => navigate('/company/applicationprofile', { state: { data: job.id } })} className='mt-8 mr-16 h-10 mb-4 bg-[#051339] font-prompt-normal flex gap-4'><FontAwesomeIcon icon={faEye} /><span>View</span></Button>
                   </Card>
 
                 ))}

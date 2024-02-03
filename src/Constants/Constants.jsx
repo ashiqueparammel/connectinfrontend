@@ -49,6 +49,7 @@ export const Job_MyJobsList = import.meta.env.VITE_Job_MyJobsList
 export const MySingleJobsList = import.meta.env.VITE_MySingleJobsList 
 export const MyApplicationList = import.meta.env.VITE_MyApplicationList 
 export const MySingleJobsListUnRead = import.meta.env.VITE_MySingleJobsListUnRead 
+export const MySingleJobsAccepted = import.meta.env.VITE_MySingleJobsAccepted 
 export const MySingleJobsListRead = import.meta.env.VITE_MySingleJobsListRead 
 export const job_ApplicationsUpdate = import.meta.env.VITE_job_ApplicationsUpdate 
 export const ReportJobPostAdd = import.meta.env.VITE_ReportJobPostAdd 

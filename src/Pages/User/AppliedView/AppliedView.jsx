@@ -159,7 +159,7 @@ function AppliedView() {
                                 {(ApplyDetails.ApplicationStatus === 'Pending' ? <Button disabled className='bg-[#a3a0a0] font-prompt-normal text-black'>Pending</Button> : '')}
                                 {(ApplyDetails.ApplicationStatus === 'Accept' ? <Button disabled className='bg-[#1b681c] font-prompt-normal'>Accepted</Button> : '')}
                                 {(ApplyDetails.ApplicationStatus === 'Reject' ? <Button disabled className='bg-[#7e2222] font-prompt-normal'>Rejected</Button> : '')}
-                                {(ApplyDetails.ApplicationStatus === 'Accept' ? <Button onClick={(e) => ContactHandle(CompanyUserData.id)} className='bg-[#051339] font-prompt-normal'>Contact</Button> : '')}
+                                {(ApplyDetails.ApplicationStatus === 'Accept' ? <Button onClick={(e) => ContactHandle(CompanyUserData)} className='bg-[#051339] font-prompt-normal'>Contact</Button> : '')}
 
 
                             </div>

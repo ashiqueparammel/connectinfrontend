@@ -193,7 +193,7 @@ function NavBar() {
         <div className="-m-6  max-h-[550px]  w-[calc(100%+24px)] ">
             <Navbar className="sticky top-0 z-10 mt-6 h-[80px] max-w-full bg-[#051339] rounded-none px-4 py-2 lg:px-8 lg:py-4" color="bg-[#051339]">
                 <div className="flex items-center justify-between text-white">
-                    <Typography as="a" href="#" className="mr-4  cursor-pointer py-1.5 font-medium">
+                    <Typography onClick={() => navigate('/')} className="mr-4  cursor-pointer py-1.5 font-medium">
                         <img className='w-9 h-9 ml-10  ' src={Logo} alt=" logo" />
                     </Typography>
                     <div className="flex items-center gap-4">
