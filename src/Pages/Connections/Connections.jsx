@@ -31,7 +31,6 @@ function Connections() {
     useEffect(() => {
         axios.get(`${ConnectionChatList}${userInfo.id}/`).then((response) => {
             setChatList(response.data)
-            console.log(response.data,'======================,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,');
             const count = response.data.length
             setConnectionsCount(count)
             setActiveTab(`Connections (${count})`)

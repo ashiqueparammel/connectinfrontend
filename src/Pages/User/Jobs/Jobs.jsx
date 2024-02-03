@@ -8,6 +8,7 @@ import { JobListUser, JobSearch, Job_ApplicationsListPersonal, SavePostAdd, Save
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
+import Loader from '../../Loader/Loader';
 
 
 
@@ -25,6 +26,7 @@ function Jobs() {
     const [startDay, setStartDay] = useState(new Date());
     const [manageState, setmanageState] = useState(false)
     const [CheckApplyJobs, setCheckApplyJobs] = useState([])
+    const [LoadingManage, setLoadingManage] = useState(false)
 
 
 
@@ -43,10 +45,11 @@ function Jobs() {
                     const SearchRequest = await axios.get(`${JobSearch}?search=${keyword}`);
                     setjobList(SearchRequest.data);
                 }
-
+                setLoadingManage(true)
                 const SearchRequest = await axios.get(`${JobSearch}?search=${titleSearch}&${LocationSearch}&job_type=${job_types}
                 &Experience=${jobExperience}&start=${startDay.toISOString()}&end=${currentDate.toISOString()}`);
                 setjobList(SearchRequest.data);
+                setLoadingManage(false)
             }
             catch (error) {
                 console.log(error);
@@ -79,6 +82,7 @@ function Jobs() {
 
     useEffect(() => {
         setmanageState(false)
+        setLoadingManage(true)
         const response = axios.get(JobListUser).then((response) => {
             setjobList(response.data);
         }).catch((error) => {
@@ -93,7 +97,7 @@ function Jobs() {
                     console.error("Error fetching Apply job details:", error);
                 });
             }
-
+            setLoadingManage(false)
         }).catch((error) => {
             console.error("Error fetching Apply job details:", error);
         });
@@ -147,6 +151,9 @@ function Jobs() {
     return (
         <div>
 
+            <>
+                {(LoadingManage ? <div className='absolute ml-[50%] mt-[20%] bg-opacity-50 items-center '><Loader /></div> : '')}
+            </>
             <div className='flex flex-col ml-16 mt-8 justify-center w-[90%]'>
                 <Card className=" bg-[#ededed]  rounded-md  shadow-xl shadow-blue-gray-900/2">
                     <div className='  '>
@@ -225,7 +232,7 @@ function Jobs() {
                                     <Typography className='font-prompt text-sm text-black'>Salary : {job.salary}</Typography>
                                     <Typography className='font-prompt text-sm text-black mb-1'>Posted Date : {formatPostedDate(job.posted_date)}</Typography>
                                     <div onClick={() => navigate('/jobview', { state: { data: job.id } })} className='font-prompt-normal text-sm text-white hover:cursor-pointer w-20 mb-1 rounded-sm  bg-[#0A3863] hover:bg-[#777778]' >
-                                        <Typography style={{paddingLeft: '10px'}}>{getApplicationStatus(job.id)}</Typography>
+                                        <Typography style={{ paddingLeft: '10px' }}>{getApplicationStatus(job.id)}</Typography>
 
                                     </div>
                                 </div>

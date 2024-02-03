@@ -107,11 +107,11 @@ function UserHome() {
       axios.get(`${UserFollowers}${userInfo.id}/`).then((response) => {
         let count = response.data.length
         setfollowersCount(count)
+        setLoadingManage(false)
       }).catch((error) => {
         console.log(error);
       })
 
-      setLoadingManage(false)
     
     }
 

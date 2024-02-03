@@ -7,10 +7,11 @@ import { setCompanyDetails } from '../../../Redux/Companyees';
 import { setUserDetails } from '../../../Redux/Users';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { CompanyDetails, CompanyUpdate, Company_Profile } from '../../../Constants/Constants';
+import { CompanyDetails, CompanyUpdate, Company_Profile, ConnectionChatList } from '../../../Constants/Constants';
 import { size } from '../../../Helpers/Size';
 import { allIndustries } from '../../../Helpers/Industries ';
 import toast, { Toaster } from 'react-hot-toast'
+import Loader from '../../Loader/Loader';
 
 
 function ProfileCompany() {
@@ -22,6 +23,9 @@ function ProfileCompany() {
     const [companyData, setCompanyData] = useState([]);
     const [userData, setUserData] = useState([]);
     const [editManage, setEditManage] = useState(false);
+    const [ConnetionCount, setConnetionCount] = useState('')
+    const [LoadingManage, setLoadingManage] = useState(false)
+
     //edit profile states
     const [selectedIndustry, setSelectedIndustry] = useState('');
     const [selectedSize, setSelectedSize] = useState('');
@@ -41,6 +45,7 @@ function ProfileCompany() {
     useEffect(() => {
         setEditManage(false)
         if (userInfo) {
+            setLoadingManage(true)
             const userData = axios.get(`${Company_Profile}${userInfo.id}/`).then((response) => {
                 const responseData = response.data[0];
                 const { user } = responseData
@@ -66,17 +71,21 @@ function ProfileCompany() {
                 setCompanyDescription(responseData.Description)
                 dispatch(setCompanyDetails(setCompany));
                 dispatch(setUserDetails(responseData.user));
-            })
-                .catch((error) => {
-                    navigate('/company/profileverify')
-                    console.error("Error fetching user data:", error);
-                });
+            }).catch((error) => {
+                navigate('/company/profileverify')
+                console.error("Error fetching user data:", error);
+            });
+            axios.get(`${ConnectionChatList}${userInfo.id}/`).then((response) => {
+
+                const count = response.data.length
+                setConnetionCount(count)
+                setLoadingManage(false)
+
+            }).catch((error) => { console.log(error); })
         }
     }, [editManage]);
 
-    // console.log(companyData, "company data");
-    // console.log(userData, "user data");
-    // console.log(companyName, "company name data");
+ 
 
     const editCompanyDetails = () => {
         const editForm = {
@@ -122,6 +131,7 @@ function ProfileCompany() {
 
             console.log(companyData.id, 'function is working proper');
             try {
+                setLoadingManage(true)
                 axios.patch(`${CompanyUpdate}${companyData.id}/`, editForm).then((response) => {
                     if (response.status === 200 && companyContact) {
                         const userContact = {
@@ -132,9 +142,8 @@ function ProfileCompany() {
                                 toast.error(error.response.data.phone_number[0]);
                             }
                         })
-                        console.log('=============<<<<<<<???done');
                     }
-                    console.log(response, 'check response data ');
+                    setLoadingManage(false)
                     setEditManage(true)
                     toast.success('Profile Updated!')
 
@@ -243,6 +252,9 @@ function ProfileCompany() {
 
     return (
         <div>
+              <>
+                {(LoadingManage ? <div className='absolute ml-[50%] mt-[20%] bg-opacity-50 items-center '><Loader /></div> : '')}
+            </>
             <Card className='w-[80%] ml-[10%] mt-10 mb-8 bg-[#dfdfdf] rounded-sm' >
                 <Card className='rounded-sm'>
                     <div>
@@ -300,7 +312,7 @@ function ProfileCompany() {
                                 {companyData.Location}
                             </Typography>
                             <Typography className='font-prompt' variant='h5'>
-                                74  connections
+                               {ConnetionCount}  connections
                             </Typography>
 
                         </div>

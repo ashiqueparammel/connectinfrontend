@@ -5,10 +5,11 @@ import { faClose, faEdit, faEllipsisVertical, faEye, faFilePdf, faPen, faPlus, f
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { EducationAdd, EducationUpdate, EmployeeProfileUpdate, ListPersonalEducation, ListPersonalSkills, List_Skills, PersonalSkillsAdd, RemovePersonalSkills, UserDetails, UserProfileDetails } from '../../../Constants/Constants';
+import { ConnectionChatList, EducationAdd, EducationUpdate, EmployeeProfileUpdate, ListPersonalEducation, ListPersonalSkills, List_Skills, PersonalSkillsAdd, RemovePersonalSkills, UserDetails, UserProfileDetails } from '../../../Constants/Constants';
 import toast, { Toaster } from 'react-hot-toast'
 import { pdfjs } from 'react-pdf';
 import PdfHelper from '../../../Helpers/PdfHelper';
+import Loader from '../../Loader/Loader';
 
 
 
@@ -26,6 +27,9 @@ function UserProfile() {
     const [removeskillsManage, setRemoveskillsManage] = useState(false);
     const handleRemove = () => setRemoveskillsManage(!removeskillsManage);
     const [EducationList, setEducationList] = useState([])
+    const [ConnetionCount, setConnetionCount] = useState('')
+    const [LoadingManage, setLoadingManage] = useState(false)
+    
     // education
     const [addEducationopen, setaddEducationopen] = useState(false);
     const handleOpenAddEducation = () => setaddEducationopen(!addEducationopen);
@@ -74,6 +78,7 @@ function UserProfile() {
     useEffect(() => {
         setEditManage(false)
         if (userInfo) {
+            setLoadingManage(true)
             const userData = axios.get(`${UserProfileDetails}${userInfo.id}/`).then((response) => {
                 let userprofiledata = response.data
                 if (userprofiledata.length > 0) {
@@ -125,7 +130,16 @@ function UserProfile() {
                         console.log(error, 'error get Education');
 
                     })
+
+                    axios.get(`${ConnectionChatList}${userInfo.id}/`).then((response) => {
+                        
+                        const count = response.data.length
+                        setConnetionCount(count)
+            
+                    }).catch((error) => { console.log(error); })
+            
                 }
+                setLoadingManage(false)
             })
                 .catch((error) => {
                     console.error("Error fetching user data:", error);
@@ -170,6 +184,7 @@ function UserProfile() {
         if (validForm()) {
 
             try {
+                setLoadingManage(true)
                 axios.patch(`${EmployeeProfileUpdate}${UserProfile.id}/`, editForm).then((response) => {
                     if (response.status === 200) {
                         const userForm = {
@@ -185,6 +200,7 @@ function UserProfile() {
                             }
                         })
                     }
+                    setLoadingManage(false)
                     setEditManage(true)
                     toast.success('Profile Updated!')
 
@@ -250,7 +266,6 @@ function UserProfile() {
 
 
     const AddProfileCoverImageHandle = (event) => {
-        // console.log('checkthis datachenge eork or not');
         const file = event.target.files[0];
         const AddcoverImage = new FormData();
         AddcoverImage.append('profile_cover_image', file);
@@ -314,7 +329,6 @@ function UserProfile() {
         console.log('hello', event.target.files[0]);
         const file = event.target.files[0];
         if (file.type === "application/pdf") {
-            // console.log(true);
             const AddCV = new FormData();
             AddCV.append('cv_file', file);
             axios.patch(`${EmployeeProfileUpdate}${UserProfile.id}/`, AddCV).then((response) => {
@@ -329,7 +343,7 @@ function UserProfile() {
             })
         }
         else {
-            // console.log(false)
+
             toast.error(' CV should be Pdf file !');
         }
     }
@@ -343,6 +357,7 @@ function UserProfile() {
             skills: addOnNewSkills
         }
         try {
+            setLoadingManage(true)
             axios.post(List_Skills, addOnskill).then((response) => {
                 if (response.status === 201) {
                     const res = response.data
@@ -359,7 +374,7 @@ function UserProfile() {
                                 const res = response.data
                                 setprofileAllSkills([...profileAllSkills, res])
                                 setprofileAllSkillsid([...profileAllSkillsid, res.id])
-                                // toast.success(' Skill Added');
+
                             }
                         }).catch((error) => {
                             if (error.response.data.skills) {
@@ -375,6 +390,7 @@ function UserProfile() {
                     toast.error('This skill already there!');
                 }
             });
+            setLoadingManage(false)
         } catch (error) {
             console.log('error add skills', error);
         }
@@ -418,7 +434,7 @@ function UserProfile() {
     }
 
     const removeSelectedSkills = (skills) => {
-        console.log(skills, 'helllllloooomanog');
+      
         try {
             axios.delete(`${RemovePersonalSkills}${parseInt(skills)}/`,).then((response) => {
                 if (response.status === 204) {
@@ -470,11 +486,13 @@ function UserProfile() {
         };
         if (validateForm()) {
             try {
+                setLoadingManage(true)
                 const responseData = await axios.post(EducationAdd, Education);
                 const response = responseData.data
                 console.log(responseData);
                 if (responseData.status === 201) {
                     toast.success('Education Added successfully!')
+                    setLoadingManage(false)
                     setEditManage(true)
                     handleOpenAddEducation()
                 }
@@ -489,8 +507,10 @@ function UserProfile() {
     const removeEducation = (event) => {
         console.log(event, 'removeid');
         try {
+            setLoadingManage(true)
             const responseData = axios.delete(`${EducationUpdate}${event}/`,).then((response) => {
                 if (response.status === 204) {
+                    setLoadingManage(false)
                     toast.success('Education deleted successfully!')
 
                     setEditManage(true)
@@ -564,13 +584,11 @@ function UserProfile() {
 
     }
 
-    // let  temp =  UserProfile.cv_file
-    // console.log(tempre, "lllllllllllllll");
-    console.log(UserProfile.cv_file, '<<<<<<<<<<<<<<<<<<<<<<<<<<<<hlo');
-
-    console.log(userData, '<<<<<<<<<<<<<<<<<<<<<<<<<<<<hlo lotttta');
     return (
         <div>
+              <>
+                {(LoadingManage ? <div className='absolute ml-[50%] mt-[20%] bg-opacity-50 items-center '><Loader /></div> : '')}
+            </>
             <Card className='w-[80%] ml-[10%] mt-10 mb-8 bg-[#dfdfdf] rounded-sm' >
                 <Card className='rounded-sm'>
                     <div>
@@ -631,7 +649,7 @@ function UserProfile() {
                                 {UserProfile.Location}
                             </Typography>
                             <Typography className='font-prompt' variant='h5'>
-                                74  connections
+                            {ConnetionCount}  connections
                             </Typography>
                             <Card className='w-[40%] h-14 absolute right-12  shadow-2xl border-[1px] text-center font-prompt  text-black text-lg border-[#000000] top-64 rounded-sm'>
                                 <div className='flex flex-row justify-between mt-1 ml-4'>
