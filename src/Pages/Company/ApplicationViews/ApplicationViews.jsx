@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
+import Loader from '../../Loader/Loader';
 
 function ApplicationViews() {
   const location = useLocation()
@@ -30,9 +31,11 @@ function ApplicationViews() {
   const [unReadManage, setunReadManage] = useState(false)
   const [ReadManage, setReadManage] = useState(false)
   const [AcceptedManage, setAcceptedManage] = useState(false)
-//MySingleJobsAccepted
+  const [LoadingManage, setLoadingManage] = useState(false)
+  //MySingleJobsAccepted
   useEffect(() => {
     if (job_id) {
+      setLoadingManage(true)
       axios.get(`${MyApplicationList}${job_id}/`).then((response) => {
         if (response.data.length === 0) {
           setJobDetail([])
@@ -44,7 +47,7 @@ function ApplicationViews() {
         console.error("Error fetching MyApplicationList:", error);
       })
       axios.get(`${MySingleJobsAccepted}${job_id}/`).then((response) => {
-        
+
         if (response.data.length === 0) {
           setAcceptedApplication([])
         } else {
@@ -53,7 +56,7 @@ function ApplicationViews() {
           setAcceptedApplication(ApplicationAllData)
         }
       }).catch((error) => {
-        console.error("Error fetching MyApplicationList:", error);
+        console.error("Error fetching MyApplicationListAccepted:", error);
       })
       axios.get(`${MySingleJobsListRead}${job_id}/`).then((response) => {
         if (response.data.length === 0) {
@@ -65,12 +68,14 @@ function ApplicationViews() {
           setReadApplication(ApplicationAllData)
           if (ApplicationAllData) {
             setReadManage(true)
+      setLoadingManage(false)
+
           }
         }
-
-
       }).catch((error) => {
         console.error("Error fetching MyApplicationList:", error);
+      setLoadingManage(false)
+
       })
       axios.get(`${MySingleJobsListUnRead}${job_id}/`).then((response) => {
         const ApplicationAllData = response.data
@@ -105,6 +110,9 @@ function ApplicationViews() {
   return (
 
     <div className='flex justify-center'>
+      <>
+        {(LoadingManage ? <div className='absolute ml-[50%] mt-[20%] bg-opacity-50 items-center '><Loader /></div> : '')}
+      </>
       <Card className='w-[80rem] mt-14 bg-gray-200'>
         <div className='flex justify-between border-b-[1px] border-[#a39f9f] ' >
           <Typography className='font-prompt mt-4 ml-4' variant='h4'>
