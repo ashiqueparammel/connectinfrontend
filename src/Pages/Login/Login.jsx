@@ -210,15 +210,18 @@ function Login() {
                         }
 
                     } catch (error) {
+                        setLoadingManage(false)
                         console.error('Error decoding JWT:', error);
                     }
 
                 }
             } catch (error) {
+                setLoadingManage(false)
                 console.error('Error during signup:', error);
                 toast.error(error.message);
             }
         } catch (error) {
+            setLoadingManage(false)
             console.log(error.response);
             toast.error(error.message);
         }
@@ -278,9 +281,11 @@ function Login() {
                         navigate('/login');
                     }
                 } catch (error) {
+                    setLoadingManage(false)
                     toast.error('Error decoding JWT:', error);
                 }
             } catch (error) {
+                setLoadingManage(false)
                 toast.error('Error during signup:', error);
                 const errorMessage = error.response.data.detail
                 if (errorMessage) {
