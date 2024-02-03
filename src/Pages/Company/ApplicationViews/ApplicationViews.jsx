@@ -86,6 +86,7 @@ function ApplicationViews() {
       }).catch((error) => {
         console.error("Error fetching MyApplicationList:", error);
       })
+      setLoadingManage(false)
     }
 
   }, [])

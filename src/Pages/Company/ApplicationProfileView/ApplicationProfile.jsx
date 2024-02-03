@@ -11,6 +11,7 @@ import { UserCircleIcon } from '@heroicons/react/24/solid';
 import PdfHelper from '../../../Helpers/PdfHelper';
 import { pdfjs } from 'react-pdf';
 import { useSelector } from 'react-redux';
+import Loader from '../../Loader/Loader';
 pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.js', import.meta.url,).toString();
 
 
@@ -30,6 +31,7 @@ function ApplicationProfile() {
     //  view cv 
     const [Cvopen, setCvOpen] = React.useState(false);
     const CvViewOpen = () => setCvOpen((cur) => !cur);
+    const [LoadingManage, setLoadingManage] = useState(false)
 
 
     const [JobDetail, setJobDetail] = useState([])
@@ -42,6 +44,7 @@ function ApplicationProfile() {
     useEffect(() => {
         setManagePage(false)
         if (job_id) {
+            setLoadingManage(true)
             axios.get(`${MySingleJobsList}${job_id}/`).then((response) => {
                 const ApplicationAllData = response.data
                 setApplicationData(ApplicationAllData)
@@ -64,8 +67,10 @@ function ApplicationProfile() {
                         }).catch((error) => {
                             console.error("Error fetching ListPersonalSkills:", error);
                         })
+                        setLoadingManage(false)
                 }
             }).catch((error) => {
+                setLoadingManage(false)
                 console.error("Error fetching MySingleJobsList:", error);
             })
         }
@@ -78,13 +83,16 @@ function ApplicationProfile() {
             ApplicationStatus: event,
             Updated: true
         }
+        setLoadingManage(true)
         axios.patch(`${job_ApplicationsUpdate}${ApplicationData.id}/`, data).then((response) => {
             if (response.status === 200) {
                 setManagePage(true)
+                setLoadingManage(false)
                 toast.success('updated Status')
 
             }
         }).catch((error) => {
+            setLoadingManage(false)
             console.error("Error Updating status:", error);
         })
 
@@ -97,6 +105,10 @@ function ApplicationProfile() {
 
     return (
         <div>
+            
+            <>
+                {(LoadingManage ? <div className='absolute ml-[50%] mt-[20%] bg-opacity-50 items-center '><Loader /></div> : '')}
+            </>
             <div className='flex justify-center'>
                 <Card className='bg-[#e7e7e7] rounded-md w-[90%] mt-10   '>
 
