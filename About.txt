@@ -1,0 +1,17 @@
+🚀 Excited to share my latest project "Connect In" – a comprehensive job portal with social media features!
+
+🔧 Technical Stack: Django REST Framework, React, WebSocket, JWT, Google OAuth, and more!
+
+💡 Unique Features: Real-time chat, video calls, following/followers, and public posts.
+
+👥 User Interfaces: Admin dashboard, job seeker portal, and company profiles – each with tailored functionalities.
+
+💼 Job Portal Functionality: Seamless job postings, applications, and company interactions – all in one platform!
+
+I shared Project Images  this Git path  Project Images
+
+🌐 Check out Connect In and revolutionize your job search experience: connectin.molla.cloud
+
+
+
+
