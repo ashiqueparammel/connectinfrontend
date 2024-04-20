@@ -196,14 +196,14 @@ function CompanySignup() {
               <Typography variant="h6" color="white" className="-mb-3 font-prompt">
                 Company Size
               </Typography>
-              <Select label={(selectedSize ? '' : 'Select an Company Size')}
+              <Select 
                 value={selectedSize}
                 onChange={handleSizeChange}
                 className="!border-black bg-white  focus:!border-t-black "
               >
 
                 {size.map((companySize, index) => (
-                  <Option key={`${index}:${companySize}`} value={companySize}>
+                  <Option key={`${index}:${companySize}`} value={companySize} >
                     {companySize}
                   </Option>
                 ))}

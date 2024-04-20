@@ -36,7 +36,7 @@ function UserProfile() {
 
 
     //  view cv 
-    const [Cvopen, setCvOpen] = React.useState(false);
+    const [Cvopen, setCvOpen] = useState(false);
     const CvViewOpen = () => setCvOpen((cur) => !cur);
 
     //edit Education
@@ -87,7 +87,7 @@ function UserProfile() {
                     let temp1 = response.data[0]
                     if (temp1.cv_file){
                         let tempre = temp1.cv_file;
-                        tempre = tempre.substring(0, 4) + "s" + tempre.substring(4);
+                        tempre = tempre.substring(0, 4) + "" + tempre.substring(4);
                         temp1.cv_file = tempre
                     }
                     setUserProfile(temp1)
